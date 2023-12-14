@@ -2,3 +2,8 @@ Downloads/
 temp/
 *.sqlite3
 Cache/
+
+# Python
+
+__pycache__/
+venv/

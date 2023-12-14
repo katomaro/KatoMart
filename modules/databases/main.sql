@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Platforms (
     last_accessed_at INTEGER DEFAULT 0,
     has_errors INTEGER DEFAULT 0,
     ip_banned INTEGER DEFAULT 0
-)
+);
 
 CREATE TABLE IF NOT EXISTS Accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,4 +21,4 @@ CREATE TABLE IF NOT EXISTS Accounts (
     authentication_token_expires_at INTEGER DEFAULT 0,
     platform_id INTEGER REFERENCES Platforms(id) ON DELETE CASCADE,
     UNIQUE(username, platform_id)
-)
+);

@@ -20,4 +20,3 @@ class ManagerMain:
             sql_commands = sql_file.read()
             self._cursor.executescript(sql_commands)
         self._conn.commit()
-        print('[DATABASE] Schema atualizado com sucesso.')

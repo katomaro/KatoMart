@@ -11,33 +11,30 @@ class Account(ABC):
     Atributos:
         username (str): O nome de usuário ou e-mail da conta.
         password (str): A senha da conta.
-        token (str): O token de acesso da conta, caso já exista uma sessão.
-        token_creation (int): A data de criação do token em EPOCH (segundos).
-        token_exp (int): A data de expiração do token em EPOCH (segundos).
+        platform_id (str): A ID numérica de uma plataforma suportada.
 
     Methods:
-        login: Realiza o login na conta.
-        method2: Brief description of method2.
+        _login (Protegido/Interno): Realiza o login na conta.
+        _check_session_exists (Protegido/Interno): Verifica uma sessão existe.
     """
     def __init__(self,
                  username: str='',
-                 password:str='',
-                 token:str='',
-                 token_creation:int=0,
-                 token_exp:int=0):
+                 password: str='',
+                 platform_id: int=0):
         self.username = username
         self.password = password
-        self.token = token
-        self.token_creation = token_creation
-        self.token_exp = token_exp
-
-
-    @abstractmethod
-    def login(self):
-        """Realiza o login na conta."""   
-
+        self.platform_id = platform_id
 
     def __str__(self):
         return '''Conta: {self.username}; Senha: {self.password};
-'Token: {self.token}; Data de criação do token: {self.token_creation};
-'Data de expiração do token: {self.token_exp}'''
+'plataforma: {self.platform_id}'''
+
+    @abstractmethod
+    def _login(self):
+        """Realiza o login na conta.""" 
+
+    def _check_session_exists(self):
+        """Verifica se a sessão já existe."""
+        raise NotImplementedError('Método ainda não implementado por ausência '
+                                  'do controlador de db.')
+        # return self._login()

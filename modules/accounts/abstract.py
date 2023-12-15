@@ -24,16 +24,17 @@ class Account(ABC):
         self.username = username
         self.password = password
         self.platform_id = platform_id
+        self._check_session_exists()
 
     def __str__(self):
-        return '''Conta: {self.username}; Senha: {self.password};
+        return f'''Conta: {self.username}; Senha: {self.password};
 'plataforma: {self.platform_id}'''
 
     @abstractmethod
     def _login(self):
         """Realiza o login na conta.""" 
 
-    def _check_session_exists(self):
+    def _check_session_exists(self) -> None:
         """Verifica se a sessão já existe."""
         raise NotImplementedError('Método ainda não implementado por ausência '
                                   'do controlador de db.')

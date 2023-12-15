@@ -2,13 +2,13 @@
 
 import sqlite3
 
-from os.path import abspath, dirname
+from pathlib import Path
 
 
 class ManagerMain:
     """Esta classe é responsável por gerenciar o banco de dados principal."""
     def __init__(self):
-        self.dir = dirname(abspath(__file__))
+        self.dir = str(Path(__file__).parent)
         self._conn = sqlite3.connect(self.dir + '/main.sqlite3')
         self._cursor = self._conn.cursor()
         if isinstance(self, ManagerMain):

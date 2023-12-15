@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Accounts (
 
 
 CREATE TABLE IF NOT EXISTS Courses (
-    id INTEGER, -- A ID do curso na plataforma
+    id TEXT NOT NULL, -- A ID do curso na plataforma
     name TEXT NOT NULL, -- Nome do curso
     description TEXT, -- Descrição do curso, se aplicável
     course_url TEXT NOT NULL, -- A URL da landing page do curso

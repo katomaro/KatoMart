@@ -14,6 +14,7 @@ class ManagerMain:
         if not self.main_database.exists():
             self.__should_update_schema = True
         self._conn = sqlite3.connect(self.main_database)
+        self._conn.row_factory = sqlite3.Row
         self._cursor = self._conn.cursor()
 
         if self.__should_update_schema:

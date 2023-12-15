@@ -25,4 +25,13 @@ class ManagerMain:
             sql_commands = sql_file.read()
             self._cursor.executescript(sql_commands)
         self._conn.commit()
-        print('[DATABASE] Schema atualizado com sucesso.')
+        print('[DATABASE] Schema prncipal do banco de dados atualizado com sucesso.')
+        self._update_supported_platforms()
+
+    def _update_supported_platforms(self):
+        """Atualiza as plataformas suportadas pelo programa."""
+        with open(self.main_db_dir / 'supported_platforms.sql', 'r', encoding='utf-8') as sql_file:
+            sql_commands = sql_file.read()
+            self._cursor.executescript(sql_commands)
+        self._conn.commit()
+        print('[DATABASE] Plataformas suportadas atualizadas com sucesso.')

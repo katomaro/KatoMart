@@ -1,3 +1,4 @@
+-- NUNCA JAMAIS ALTERAR AS IDS DAS PLATAFORMAS INSERIDAS AQUI!
 CREATE TABLE IF NOT EXISTS Platforms (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID incremental para cada plataforma
     name TEXT UNIQUE NOT NULL, -- Nome de Marca da Plataforma
@@ -8,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Platforms (
     ip_banned INTEGER DEFAULT 0 -- Se o IP do cliente está banido da plataforma
 );
 
+-- NUNCA JAMAIS DROPAR ESSA TABELA POR QUEBRAR OS DADOS DO USUÁRIO!
 CREATE TABLE IF NOT EXISTS Accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID Incremental de cada conta adicionada ao sistema
     username TEXT NOT NULL, -- Username ou Email da conta que possui o produto
@@ -22,6 +24,7 @@ CREATE TABLE IF NOT EXISTS Accounts (
     UNIQUE(username, platform_id) -- Cada conta é única para cada plataforma.
 );
 
+-- Essa tabela pode ser alterada, porém, não deve ser dropada.
 CREATE TABLE IF NOT EXISTS Courses (
     id TEXT NOT NULL, -- A ID do curso na plataforma
     name TEXT NOT NULL, -- Nome do curso

@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS Platforms (
     description TEXT, -- Descricao breve do conteúdo encontrado na plataforma e sua disponibilizacao
     landing_page TEXT UNIQUE NOT NULL, -- URL da pagina inicial da plataforma
     content_delivery_type TEXT NOT NULL, -- Tipo de entrega de conteúdo da plataforma API/HTML
+    has_drm INTEGER DEFAULT 0,
+    drm_type TEXT,
     last_accessed_at INTEGER DEFAULT 0, -- Qyabdi foi a ultima vez que a plataforma foi acessada
     ip_banned INTEGER DEFAULT 0 -- Se o IP do cliente está banido da plataforma
 );

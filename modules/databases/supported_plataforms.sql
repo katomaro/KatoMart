@@ -1,7 +1,7 @@
 -- Este arquivo SQL mantém a relação básica de plataformas atualmente suportadas pelo sistema.
 
 -- Plataformas previstas a ter suporte em primeiro momento
-INSERT INTO Platforms(name, description, landing_page, content_delivery_type, has_drm, drm_type) VALUES 
+INSERT OR REPLACE INTO Platforms(name, description, landing_page, content_delivery_type, has_drm, drm_type) VALUES 
 ('Hotmart', 'Conteúdo variado, desde cursos livres até e-books e software, de áreas diferentes', 'https://hotmart.com/', 'MIXED', 1, 'SOCIAL,REAL')
 ,('Udemy', 'Cursos livres de diversas áreas', 'https://udemy.com/', 'MIXED', 1, 'REAL')
 ,('Kiwify', 'Conteúdo variado, desde cursos livres até e-books de diversas áreas', 'https://kiwify.com.br/', 'API', 0, '')
@@ -24,8 +24,3 @@ INSERT INTO Platforms(name, description, landing_page, content_delivery_type, ha
 ,('Medcel', 'Cursos preparatórios para a área de Medicina', 'https://www.medcel.com.br/', 'API', 1, 'SOCIAL,MONITOR')
 ,('MedCurso', 'Cursos preparatórios para a área de Medicina', 'https://www.medcurso.com.br/', 'API', 1, 'REAL,SOCIAL,MONITOR')
 ,('MedCof', 'Cursos preparatórios para a área de Medicina', 'https://www.medcof.com.br/', 'HTML', 1, 'SOCIAL,MONITOR');
-
--- Dummy account
-INSERT INTO Accounts(username, password, has_authenticated, platform_id, authentication_token, authentication_token_expires_at) 
-VALUES 
-('dummy', 'dummy', 1, 1, `eyblablabla`, 1702725030);

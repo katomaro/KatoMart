@@ -34,4 +34,5 @@ class ManagerMain:
             sql_commands = sql_file.read()
             self._cursor.executescript(sql_commands)
         self._conn.commit()
-        print('[DATABASE] Plataformas suportadas atualizadas com sucesso.')
+        total = self._conn.execute('select count(name) from Platforms').fetchone()[0]
+        print(f'[DATABASE] {total} Plataformas suportadas atualizadas com sucesso.')

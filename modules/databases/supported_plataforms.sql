@@ -24,3 +24,8 @@ INSERT INTO Platforms(name, description, landing_page, content_delivery_type, ha
 ,('Medcel', 'Cursos preparatórios para a área de Medicina', 'https://www.medcel.com.br/', 'API', 1, 'SOCIAL,MONITOR')
 ,('MedCurso', 'Cursos preparatórios para a área de Medicina', 'https://www.medcurso.com.br/', 'API', 1, 'REAL,SOCIAL,MONITOR')
 ,('MedCof', 'Cursos preparatórios para a área de Medicina', 'https://www.medcof.com.br/', 'HTML', 1, 'SOCIAL,MONITOR');
+
+-- Dummy account
+INSERT INTO Accounts(username, password, has_authenticated, platform_id, authentication_token, authentication_token_expires_at) 
+VALUES 
+('dummy', 'dummy', 1, 1, `eyblablabla`, 1702725030);

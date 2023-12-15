@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS Platforms (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID incremental para cada plataforma
-    name TEXT NOT NULL, -- Nome de Marca da Plataforma
+    name TEXT UNIQUE NOT NULL, -- Nome de Marca da Plataforma
     description TEXT, -- Descricao breve do conteúdo encontrado na plataforma e sua disponibilizacao
-    landing_page TEXT NOT NULL, -- URL da pagina inicial da plataforma
+    landing_page TEXT UNIQUE NOT NULL, -- URL da pagina inicial da plataforma
     content_delivery_type TEXT NOT NULL, -- Tipo de entrega de conteúdo da plataforma API/HTML
     last_accessed_at INTEGER DEFAULT 0, -- Qyabdi foi a ultima vez que a plataforma foi acessada
     ip_banned INTEGER DEFAULT 0 -- Se o IP do cliente está banido da plataforma
@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS Accounts (
     platform_id INTEGER REFERENCES Platforms(id) ON DELETE CASCADE, -- A id da plataforma que a conta pertence
     UNIQUE(username, platform_id) -- Cada conta é única para cada plataforma.
 );
-
 
 CREATE TABLE IF NOT EXISTS Courses (
     id TEXT NOT NULL, -- A ID do curso na plataforma

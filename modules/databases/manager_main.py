@@ -40,3 +40,11 @@ class ManagerMain:
         cursor.close()
         total = self._main_conn.execute('select count(name) from Platforms').fetchone()[0]
         print(f'[DATABASE] {total} Plataformas suportadas atualizadas com sucesso.')
+
+    def get_supported_platforms(self):
+        """Retorna as plataformas suportadas pelo programa."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('select * from Platforms')
+        platforms = cursor.fetchall()
+        cursor.close()
+        return platforms

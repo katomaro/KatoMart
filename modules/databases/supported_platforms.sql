@@ -13,7 +13,7 @@ INSERT OR REPLACE INTO Platforms(name, description, landing_page, content_delive
 ,('Treina Web', 'Cursos livres da área de TI', 'https://www.treinaweb.com.br', 'API', 1, 'MONITOR')
 ,('School Of Net', 'Cursos livres da área de TI', 'https://www.schoolofnet.com/', 'API', 1, 'MONITOR')
 ,('Full Cycle', 'Cursos de especialização em TI', 'https://fullcycle.com.br/', 'API', 1, 'REAL,MONITOR')
-,('Estratégia Medicina', 'Cursos preparatórios para a área de Medicina', 'https://med.estrategia.com', 'API', 1, 'SOCIAL',)
+,('Estratégia Medicina', 'Cursos preparatórios para a área de Medicina', 'https://med.estrategia.com', 'API', 1, 'SOCIAL')
 ,('Estratégia Concursos', 'Cursos preparatórios para concursos públicos', 'https://www.estrategiaconcursos.com.br/', 'MIXED', 1, 'SOCIAL,REAL')
 ,('Estratégia Jurídico', 'Cursos preparatórios para a área de Direito', 'https://cj.estrategia.com/', 'API', 1, 'SOCIAL')
 ,('Alfacon', 'Cursos preparatórios para concursos públicos', 'https://www.alfaconcursos.com.br', 'API', 1, 'SOCIAL')

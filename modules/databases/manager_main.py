@@ -4,6 +4,8 @@ import sqlite3
 
 from pathlib import Path
 
+from modules.accounts.abstract import Account
+
 
 class ManagerMain:
     """Esta classe é responsável por gerenciar o banco de dados principal."""
@@ -38,13 +40,22 @@ class ManagerMain:
             cursor.executescript(sql_commands)
         self._main_conn.commit()
         cursor.close()
-        total = self._main_conn.execute('select count(name) from Platforms').fetchone()[0]
+        total = self._main_conn.execute('SELECT count(name) SELECT Platforms').fetchone()[0]
         print(f'[DATABASE] {total} Plataformas suportadas atualizadas com sucesso.')
 
     def get_supported_platforms(self):
         """Retorna as plataformas suportadas pelo programa."""
         cursor = self._main_conn.cursor()
-        cursor.execute('select * from Platforms')
+        cursor.execute('SELECT * from Platforms')
         platforms = cursor.fetchall()
         cursor.close()
         return platforms
+
+    def insert_new_account(self, new_account) -> Account:
+        """Insere uma nova conta no banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('INSERT OR IGNORE INTO Accounts (username, password, platform_id) values (?, ?, ?)',
+                       (new_account.username, new_account.password, new_account.platform_id))
+        self._main_conn.commit()
+        cursor.close()
+        return new_account

@@ -76,3 +76,12 @@ class ManagerMain:
         account = cursor.fetchone()
         cursor.close()
         return account
+
+    def update_account(self, account_id: int, new_account: Account=Account) -> Account:
+        """Atualiza uma conta específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('UPDATE Accounts SET username = ?, password = ?, platform_id = ? WHERE id = ?',
+                       (new_account.username, new_account.password, new_account.platform_id, account_id))
+        self._main_conn.commit()
+        cursor.close()
+        return new_account

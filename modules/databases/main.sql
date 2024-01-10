@@ -19,12 +19,9 @@ CREATE TABLE IF NOT EXISTS Accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID Incremental de cada conta adicionada ao sistema
     username TEXT NOT NULL, -- Username ou Email da conta que possui o produto
     password TEXT, -- Senha da conta que possui o produto
+    added_at INTEGER DEFAULT 0, -- Quando a conta foi criada
     is_valid INTEGER DEFAULT 0, -- Se a conta está autenticando ou não
-    validated_at INTEGER DEFAULT 0, -- Quando a conta foi adicionada como válida
-    has_authenticated INTEGER DEFAULT 0, -- Se a conta possui sessão ativa na plataforma
-    authenticated_at INTEGER DEFAULT 0, -- Quando a sessão foi criada
-    authentication_token TEXT, -- O token de autorização da sessão
-    authentication_token_expires_at INTEGER DEFAULT 0, -- A data de expiração do Token
+    last_validated_at INTEGER DEFAULT 0, -- Quando a conta foi validada por último
     platform_id INTEGER REFERENCES Platforms(id) ON DELETE CASCADE, -- A id da plataforma que a conta pertence
     UNIQUE(username, platform_id) -- Cada conta é única para cada plataforma.
 );

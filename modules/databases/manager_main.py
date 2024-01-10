@@ -68,3 +68,11 @@ class ManagerMain:
         accounts = cursor.fetchall()
         cursor.close()
         return accounts
+    
+    def get_account(self, account_id: int) -> sqlite3.Row:
+        """Retorna uma conta específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT * from Accounts WHERE id = ?', (account_id,))
+        account = cursor.fetchone()
+        cursor.close()
+        return account

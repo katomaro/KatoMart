@@ -20,22 +20,44 @@ class Account(ABC):
     def __init__(self,
                  username: str='',
                  password: str='',
-                 platform_id: int=0):
+                 database_manager=None):
         self.username = username
         self.password = password
-        self.platform_id = platform_id
+        self.platform_id = 0
+        self.is_valid = False
+        self.validated_at = 0
+        self.has_authenticated = False
+        self.authenticated_at = 0
+        self.auth_token = ''
+        self.auth_token_expires_at = 0
+        self.refresh_token = ''
+        self.refresh_token_expires_at = 0
+        self.other_data = {}
+
+        self._database_manager = database_manager
+
         self._check_session_exists()
 
     def __str__(self):
         return f'''Conta: {self.username}; Senha: {self.password};
 'plataforma: {self.platform_id}'''
 
-    @abstractmethod
-    def _login(self):
-        """Realiza o login na conta.""" 
-
     def _check_session_exists(self) -> None:
         """Verifica se a sessão já existe."""
-        raise NotImplementedError('Método ainda não implementado por ausência '
-                                  'do controlador de db.')
-        # return self._login()
+        account_data = self._database_manager.check_account_session(self)
+        self.auth_token = account_data['auth_token']
+        self.auth_token_expires_at = account_data['auth_token_expires_at']
+        self.refresh_token = account_data['refresh_token']
+        self.refresh_token_expires_at = account_data['refresh_token_expires_at']
+    
+    @abstractmethod
+    def _login(self):
+        """Realiza o login na conta."""
+
+    @abstractmethod
+    def _get_account_products(self):
+        """Retorna os produtos da conta."""
+    
+    @abstractmethod
+    def _get_product_information(self):
+        """Retorna as informações de um produto."""

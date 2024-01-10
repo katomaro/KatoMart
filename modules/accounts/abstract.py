@@ -44,6 +44,7 @@ class Account(ABC):
 
     def _check_session_exists(self) -> None:
         """Verifica se a sessão já existe."""
+        # Não é por que você pode fazer, que você deve fazer.
         account_data = self._database_manager.check_account_session(self)
         self.auth_token = account_data['auth_token']
         self.auth_token_expires_at = account_data['auth_token_expires_at']

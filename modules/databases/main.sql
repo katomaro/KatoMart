@@ -40,3 +40,15 @@ CREATE TABLE IF NOT EXISTS Courses (
     platform_id INTEGER REFERENCES Platforms(id) ON DELETE CASCADE, -- Plataforma a qual o curso pertence
     UNIQUE(id, platform_id) -- Cada curso é único para cada plataforma.
 );
+
+CREATE TABLE IF NOT EXISTS Auths (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID incremental de cada sessão
+    account_id INTEGER REFERENCES Accounts(id) ON DELETE CASCADE, -- ID da conta da sessão
+    auth_token TEXT NOT NULL, -- Token da sessão
+    session_token_expires_at INTEGER DEFAULT 0, -- Data de expiração do token // int(time.time())
+    refresh_token TEXT NOT NULL, -- Token de atualização da sessão
+    refresh_token_expires_at INTEGER DEFAULT 0, -- Data de expiração do token de atualização // int(time.time())
+    other_data TEXT, -- Outros dados da sessão, conforme necessário, json convertido para string // json.dumps({})
+
+    UNIQUE(session_token, account_id) -- Cada sessão é única para cada conta.
+);

@@ -1,12 +1,13 @@
 """Ponto de inicialização para um futuro server Flask"""
 
-# from modules.databases.manager_main import ManagerMain
-# from modules.accounts.abstract import Account
+from modules.databases.manager_main import ManagerMain
+from modules.accounts.hotmart import Hotmart
 
 if __name__ == '__main__':
-    # manager = ManagerMain()
+    manager = ManagerMain()
     # print(manager.get_supported_platforms())
-    # account = Account('teste', 'teste', 1)
+    account = Hotmart('teste', 'teste', database_manager=manager)
+    account._login()
     # a = manager.insert_new_account(account)
     # print(a)
 

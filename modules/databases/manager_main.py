@@ -41,7 +41,7 @@ class ManagerMain:
             cursor.executescript(sql_commands)
         self._main_conn.commit()
         cursor.close()
-        total = self._main_conn.execute('SELECT count(name) SELECT Platforms').fetchone()[0]
+        total = self._main_conn.execute('SELECT count(name) FROM Platforms').fetchone()[0]
         print(f'[DATABASE] {total} Plataformas suportadas atualizadas com sucesso.')
 
     def get_supported_platforms(self) -> Tuple[sqlite3.Row, ...]:
@@ -93,3 +93,11 @@ class ManagerMain:
         self._main_conn.commit()
         cursor.close()
     
+    def check_account_session(self, account: Account=Account) -> sqlite3.Row:
+        """Retorna os dados da conta que existem na DB para manipulação posterior."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT Accounts.*, Auths.* FROM Accounts JOIN Auths ON Accounts.id = Auths.account_id WHERE Accounts.username like ?', 
+                       (f'%{account.username.lower()}%',))
+        account = cursor.fetchone()
+        cursor.close()
+        return account

@@ -60,3 +60,11 @@ class ManagerMain:
         self._main_conn.commit()
         cursor.close()
         return new_account
+    
+    def get_accounts(self) -> Tuple[sqlite3.Row, ...]:
+        """Retorna todas as contas do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT * from Accounts')
+        accounts = cursor.fetchall()
+        cursor.close()
+        return accounts

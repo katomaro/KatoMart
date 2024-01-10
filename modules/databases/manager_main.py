@@ -85,3 +85,11 @@ class ManagerMain:
         self._main_conn.commit()
         cursor.close()
         return new_account
+    
+    def delete_account(self, account_id: int) -> None:
+        """Deleta uma conta específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('DELETE FROM Accounts WHERE id = ?', (account_id,))
+        self._main_conn.commit()
+        cursor.close()
+    

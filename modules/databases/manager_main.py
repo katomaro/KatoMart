@@ -52,7 +52,7 @@ class ManagerMain:
         cursor.close()
         return platforms
 
-    def insert_new_account(self, new_account: Account=Account('Invalida', '123', 1)) -> Account:
+    def insert_new_account(self, new_account: Account=Account) -> Account:
         """Insere uma nova conta no banco de dados."""
         cursor = self._main_conn.cursor()
         cursor.execute('INSERT OR IGNORE INTO Accounts (username, password, platform_id) values (?, ?, ?)',

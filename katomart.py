@@ -5,6 +5,7 @@ from flask import Flask, render_template
 from modules.databases.manager_main import ManagerMain
 from modules.accounts.hotmart import Hotmart
 
+database_manager = ManagerMain()
 
 app = Flask(__name__, template_folder='modules/templates')
 
@@ -14,7 +15,6 @@ def katomart_root():
 
 
 if __name__ == '__main__':
-    # manager = ManagerMain()
     # print(manager.get_supported_platforms())
     # account = Hotmart('teste', 'teste', database_manager=manager)
     # a = manager.insert_new_account(account)

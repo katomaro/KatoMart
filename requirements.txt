@@ -2,6 +2,7 @@ beautifulsoup4==4.12.2
 Brotli==1.1.0
 certifi==2023.11.17
 charset-normalizer==3.3.2
+Flask==3.0.0
 idna==3.6
 m3u8==4.0.0
 mutagen==1.47.0

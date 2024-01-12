@@ -1,3 +1,28 @@
+CREATE TABLE IF NOT EXISTS GlobalSettings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    database_instanced_at INTEGER DEFAULT 0, -- Quando o banco de dados foi instanciado
+    last_executed_at INTEGER DEFAULT 0, -- Quando foi a última vez que o software foi executado
+    user_consent INTEGER DEFAULT 0, -- Se o usuário concordou com os termos de uso do software e está ciente dos riscos
+    download_path TEXT NOT NULL, -- Caminho para salvar os arquivos baixados
+    user_os TEXT NOT NULL, -- Sistema operacional do usuário
+    default_user_agent TEXT NOT NULL -- User-Agent padrão para o software
+    use_custom_ffmpeg INTEGER DEFAULT 0, -- Se o usuário deseja usar um ffmpeg customizado ao invés do ffmpeg do sistema
+);
+
+CREATE TABLE IF NOT EXISTS CustomSettings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL, -- Chave do valor
+    value TEXT NOT NULL -- Valor da chave
+);
+
+CREATE TABLE IF NOT EXISTS Logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    log_type TEXT NOT NULL, -- Tipo de log
+    sensitive_data INTEGER DEFAULT 0, -- Se esse log possui dados sensíveis
+    log_data TEXT NOT NULL, -- Dados do log
+    log_created_at INTEGER DEFAULT 0 -- Quando o log foi criado
+);
+
 -- NUNCA JAMAIS ALTERAR AS IDS DAS PLATAFORMAS INSERIDAS AQUI!
 CREATE TABLE IF NOT EXISTS Platforms (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID incremental para cada plataforma

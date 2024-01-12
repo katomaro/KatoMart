@@ -1,9 +1,11 @@
 """Este módulo é responsável por gerenciar o banco de dados principal"""
 
+import time
 import sqlite3
+import sys
 
-from pathlib import Path
 from typing import Tuple
+from pathlib import Path
 
 from modules.accounts.abstract import Account
 
@@ -11,6 +13,7 @@ from modules.accounts.abstract import Account
 class ManagerMain:
     """Esta classe é responsável por gerenciar o banco de dados principal."""
     def __init__(self):
+        self.start_time = int(time.time())
         self.main_db_dir = Path(__file__).parent
         self.main_database = self.main_db_dir / 'main.sqlite3'
         self.__should_update_schema = False
@@ -22,6 +25,22 @@ class ManagerMain:
         if self.__should_update_schema:
             self.__update_schema()
 
+    def __set_database_defaults(self) -> None:
+        """Insere os valores padrões no banco de dados principal."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('database_instanced_at', self.start_time))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('last_executed_at', self.start_time))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('user_consent', '0'))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('download_path', './Cursos/'))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('user_os', sys.platform))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('default_user_agent',
+                                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'))
+        
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('use_custom_ffmpeg', '0'))
+        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('custom_ffmpeg_path', 'SYSTEM'))
+        self._main_conn.commit()
+        cursor.close()
+
     def __update_schema(self) -> None:
         """Atualiza o schema do banco de dados, pelo mais atual."""
         cursor = self._main_conn.cursor()
@@ -29,6 +48,9 @@ class ManagerMain:
             sql_commands = sql_file.read()
             cursor.executescript(sql_commands)
         self._main_conn.commit()
+
+        self.__set_database_defaults()
+        
         cursor.close()
         print('[DATABASE] Schema prncipal do banco de dados atualizado com sucesso.')
         self.__update_supported_platforms()

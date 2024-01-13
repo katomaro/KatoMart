@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="drac-text-white">
+        <h1>Boas vindas ao Katomart!</h1>
+        <p>O Katomart agora está de cara nova (e passando por cirurgias plásticas) e você pode controlar e acompanhar seu progresso a partir do seu navegador web.
+        <strong><span class="drac-glow-red drac-text-black">NÃO FECHE O TERMINAL QUE TE TROUXE ATÉ ESTE SITE</span></strong>, porém,
+        você pode fechar esta aba do navegador e voltar aqui quando quiser pela url {{ host_url }}, o carregamento do 
+        conteúdo é dinâmico e o funcionamento é controlado por você.
+        </p>
+        <p>Como você pode ver, logo acima temos os menus para configurar o funcionamento do software, adicionar logins, 
+            acompanhar o progresso de download e ir atrás de suporte, quando estiver pronto para começar, revise as configurações indo até
+            <a href="{{ url_for('settings') }}" class="drac-text-pink"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações</a> 
+            e depois adicione suas contas em <a href="{{ url_for('accounts') }}" class="drac-text-pink"><i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas</a>
+             para então iniciar downloads em <a href="{{ url_for('courses') }}" class="drac-text-pink"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos</a>
+        </p>
+        <p>Caso você encontre um erro, gere um log de utilização pela aba <a href="{{ url_for('log') }}" class="drac-text-pink"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs</a>
+            e siga as instruções na tela para a submissão do mesmo para os <strong>desenvolvedores listados na página de suporte</strong>
+        </p>
+        <p><strong>Lembre-se que você é responsável pelo que faz pelo material gerado pelo software, ele presume que você tem o direito de consumo.</strong></p>
+</section>
+
+<section class="drac-text-white">
+    <h3>Esta seção abaixo é utilizada para puxar mensagens que os desenvolvedores julgarem como importante, diretamente do repositório de código do programa.</h3>
+    <div id="aviso" class="drac-card-subtle drac-bg-grey">
+        <p>Carregando avisos...</p>
+{% endblock %}

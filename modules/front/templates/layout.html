@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://kit.fontawesome.com/c53a3e6f23.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <link
+        rel="stylesheet" 
+        href="https://unpkg.com/dracula-ui@1.0.3/styles/dracula-ui.css" 
+      />
+    <title>🐾Katomart</title>
+    
+</head>
+
+<body class="drac-bg-black drac-text-center drac-scrollbar-cyan">
+    <nav class="drac-text-cyan-green drac-py-none drac-flex drac-justify-between drac-tabs">
+        <a id="homebtn" href="{{ url_for('home') }}" class="drac-btn"><i class="fa-solid fa-house" aria-hidden="true"></i> Home/Katomart!</a>
+        <a id="settingsbtn" href="{{ url_for('settings') }}" class="drac-btn"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações</a>
+        <a id="accountsbtn" href="{{ url_for('accounts') }}" class="drac-btn"><i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas</a>
+        <a id="coursesbtn" href="{{ url_for('courses') }}" class="drac-btn"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos</a>
+        <a id="logbtn" href="{{ url_for('log') }}" class="drac-btn"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs</a>
+        <a id="supportbtn" href="{{ url_for('support') }}" class="drac-btn"><i class="fa-solid fa-paper-plane"></i> Suporte</a>
+    </nav>
+
+    <main id="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="drac-text-center drac-text-cyan-green drac-p-none drac-m-auto">
+        <div class="drac-card-subtle">
+        <p><i class="fa-solid fa-code"></i> Desenvolvido por <a href="mailto:admin@katomaro.com">@Katomaro</a> e inúmeros colaboradores/usuários listados no Github.</p>
+        <p><a href="https://github.com/katomaro/katomart"><i class="fa-brands fa-github"></i> Repositório no Github</a></p>
+        <p>Nenhuma marca aqui citada faz parte do projeto, e tem seus direitos reservados. O uso deste software cai dentro dos direitos de consumo individuais e os esforços são feitos para penalizar aqueles que infringirem direitos autorais.</p>
+    </div>
+    
+
+</body>
+
+<script>
+let currentLocation = window.location.pathname.split('/').pop();
+if (currentLocation === null) { currentLocation = 'home' };
+let navbtn = document.getElementById(`${currentLocation}btn`);
+navbtn.classList.add('drac-btn-outline');
+</script>
+
+</html>

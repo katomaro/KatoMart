@@ -38,6 +38,8 @@
 
 </body>
 
+{% block scripts %}{% endblock %}
+
 <script>
 let currentLocation = window.location.pathname.split('/').pop();
 if (currentLocation === null) { currentLocation = 'home' };

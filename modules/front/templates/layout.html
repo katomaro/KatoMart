@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://kit.fontawesome.com/c53a3e6f23.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fa-c53a3e6f23.js') }}" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <link
         rel="stylesheet" 
@@ -34,17 +34,9 @@
         <p><a href="https://github.com/katomaro/katomart"><i class="fa-brands fa-github drac-text-black"></i> Repositório no Github</a></p>
         <p>Nenhuma marca aqui citada faz parte do projeto, e tem seus direitos reservados. O uso deste software cai dentro dos direitos de consumo individuais e os esforços são feitos para penalizar aqueles que infringirem direitos autorais.</p>
     </div>
-    
 
 </body>
 
 {% block scripts %}{% endblock %}
-
-<script>
-let currentLocation = window.location.pathname.split('/').pop();
-if (currentLocation === null) { currentLocation = 'home' };
-let navbtn = document.getElementById(`${currentLocation}btn`);
-navbtn.classList.add('drac-btn-outline');
-</script>
 
 </html>

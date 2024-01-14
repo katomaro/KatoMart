@@ -1,10 +1,9 @@
 """Ponto de inicialização para um futuro server Flask"""
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 from modules.databases.manager_main import ManagerMain
 
-database_manager = ManagerMain()
 
 app = Flask(__name__,
              template_folder='modules/front/templates',
@@ -25,6 +24,16 @@ def settings():
 @app.route('/accounts')
 def accounts():
     return render_template('accounts.html')
+@app.route('/api/get_accounts')
+def get_accounts():
+    database_manager = ManagerMain()
+    all_accounts = database_manager.get_accounts()
+    return jsonify(all_accounts)
+@app.route('/api/get_auths')
+def get_auths():
+    database_manager = ManagerMain()
+    auths = database_manager.get_auths()
+    return jsonify(auths)
 
 @app.route('/courses')
 def courses():
@@ -37,8 +46,6 @@ def log():
 @app.route('/support')
 def support():
     return render_template('support.html')
-
-
 
 
 if __name__ == '__main__':

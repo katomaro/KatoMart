@@ -21,6 +21,11 @@ class Account(ABC):
                  username: str='',
                  password: str='',
                  database_manager=None):
+        
+        self.LOGIN_URL = ''
+        self.REFRESH_URL = ''
+        self.PRODUCTS_URL = ''
+
         self.username = username
         self.password = password
         self.platform_id = 0

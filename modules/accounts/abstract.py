@@ -1,6 +1,8 @@
 """Este módulo contém a classe abstrata Account, 
 que representa um usuário de forma geral."""
 
+import requests
+
 from abc import ABC, abstractmethod
 
 class Account(ABC):
@@ -41,11 +43,17 @@ class Account(ABC):
 
         self._database_manager = database_manager
 
+        self.session = self._restart_session()
+
         self._check_session_exists()
 
-    def __str__(self):
-        return f'''Conta: {self.username}; Senha: {self.password};
-'plataforma: {self.platform_id}'''
+    def _restart_session(self) -> requests.Session:
+        """Inicia uma sessão limpa da biblioteca requests."""
+        session = requests.Session()
+        settings = self._database_manager.get_all_settings()
+        # TODO: Implementar um sistema de escolha de User-Agent
+        session.headers['User-Agent'] = settings[5]['value']
+        return session
 
     def _check_session_exists(self) -> None:
         """Verifica se a sessão já existe."""

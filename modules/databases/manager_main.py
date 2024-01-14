@@ -9,7 +9,11 @@ from pathlib import Path
 
 from modules.accounts.abstract import Account
 
-
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 class ManagerMain:
     """Esta classe é responsável por gerenciar o banco de dados principal."""
     def __init__(self):
@@ -20,7 +24,7 @@ class ManagerMain:
         if not self.main_database.exists():
             self.__should_update_schema = True
         self._main_conn = sqlite3.connect(self.main_database)
-        self._main_conn.row_factory = sqlite3.Row
+        self._main_conn.row_factory = dict_factory
 
         if self.__should_update_schema:
             self.__update_schema()
@@ -172,3 +176,7 @@ class ManagerMain:
         cursor.execute('DELETE FROM Auths WHERE id = ?', (auth_id,))
         self._main_conn.commit()
         cursor.close()
+
+    def _close(self) -> None:
+        """Fecha a conexão com o banco de dados."""
+        self._main_conn.close()

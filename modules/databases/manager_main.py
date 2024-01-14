@@ -74,14 +74,24 @@ class ManagerMain:
         cursor.close()
         return platforms
 
-    def insert_new_account(self, new_account: Account=Account) -> Account:
+    def insert_new_account(self, new_account: Account=Account) -> None:
         """Insere uma nova conta no banco de dados."""
         cursor = self._main_conn.cursor()
-        cursor.execute('INSERT OR IGNORE INTO Accounts (username, password, platform_id) values (?, ?, ?)',
-                       (new_account.username, new_account.password, new_account.platform_id))
+
+        cursor.execute('INSERT OR UPDATE INTO Accounts (username, password, added_at, is_valid, last_validated_at, platform_id) values (?, ?, ?, ?, ?, ?)',
+                       (new_account.username, new_account.password, new_account.validated_at, bool(new_account.is_valid), new_account.validated_at, new_account.platform_id))
+    
         self._main_conn.commit()
         cursor.close()
-        return new_account
+    
+    def insert_new_auth(self, new_account: Account=Account) -> None:
+        """Insere uma nova autenticação no banco de dados."""
+        cursor = self._main_conn.cursor()
+        account_id = cursor.execute('SELECT id FROM Accounts WHERE username like ?', (f'%{new_account.username.lower()}%',)).fetchone()[0]
+        cursor.execute('INSERT OR UPDATE INTO Auths (account_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data) values (?, ?, ?, ?, ?, ?)',
+                       (account_id, new_account.auth_token, new_account.auth_token_expires_at, new_account.refresh_token, new_account.refresh_token_expires_at, new_account.other_data))
+        self._main_conn.commit()
+        cursor.close()
     
     def get_accounts(self) -> Tuple[sqlite3.Row, ...]:
         """Retorna todas as contas do banco de dados."""

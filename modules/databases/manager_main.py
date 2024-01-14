@@ -123,3 +123,11 @@ class ManagerMain:
         account = cursor.fetchone()
         cursor.close()
         return account
+
+    def get_all_settings(self) -> Tuple[sqlite3.Row, ...]:
+        """Retorna todas as configurações do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT * from Settings')
+        settings = cursor.fetchall()
+        cursor.close()
+        return settings

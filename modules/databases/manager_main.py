@@ -141,3 +141,34 @@ class ManagerMain:
                        (account_id, new_account.auth_token, new_account.auth_token_expires_at, new_account.refresh_token, new_account.refresh_token_expires_at, new_account.other_data))
         self._main_conn.commit()
         cursor.close()
+
+    def get_auths(self) -> Tuple[sqlite3.Row, ...]:
+        """Retorna todas as autenticações do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT * from Auths')
+        auths = cursor.fetchall()
+        cursor.close()
+        return auths
+    
+    def get_auth(self, auth_id: int) -> sqlite3.Row:
+        """Retorna uma autenticação específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('SELECT * from Auths WHERE id = ?', (auth_id,))
+        auth = cursor.fetchone()
+        cursor.close()
+        return auth
+    
+    def update_auth(self, auth_id: int, new_account: Account=Account):
+        """Atualiza uma autenticação específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('UPDATE Auths SET auth_token = ?, auth_token_expires_at = ?, refresh_token = ?, refresh_token_expires_at = ?, other_data = ? WHERE id = ?',
+                       (new_account.auth_token, new_account.auth_token_expires_at, new_account.refresh_token, new_account.refresh_token_expires_at, new_account.other_data, auth_id))
+        self._main_conn.commit()
+        cursor.close()
+    
+    def delete_auth(self, auth_id: int) -> None:
+        """Deleta uma autenticação específica do banco de dados."""
+        cursor = self._main_conn.cursor()
+        cursor.execute('DELETE FROM Auths WHERE id = ?', (auth_id,))
+        self._main_conn.commit()
+        cursor.close()

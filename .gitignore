@@ -3,7 +3,8 @@ temp/
 *.sqlite3
 Cache/
 
-# Python
+test_stuff/
 
+# Python, adicionar seus arquivos/pastas antes de commitar, obg
 __pycache__/
 venv/

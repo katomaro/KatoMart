@@ -2,6 +2,8 @@
 que representa um usuário de forma geral."""
 
 import requests
+import time
+import json
 
 from abc import ABC, abstractmethod
 
@@ -27,6 +29,8 @@ class Account(ABC):
         self.LOGIN_URL = ''
         self.REFRESH_URL = ''
         self.PRODUCTS_URL = ''
+        
+        self.current_time = self.get_current_time()
 
         self.username = username
         self.password = password
@@ -39,13 +43,21 @@ class Account(ABC):
         self.auth_token_expires_at = 0
         self.refresh_token = ''
         self.refresh_token_expires_at = 0
-        self.other_data = {}
+        self.other_data = ''
 
         self._database_manager = database_manager
 
         self.session = self._restart_session()
 
         self._check_session_exists()
+
+    def get_current_time(self) -> int:
+        """Retorna o tempo atual em segundos."""
+        return int(time.time())
+    
+    def dump_json_data(self, data) -> str:
+        """Retorna os dados da conta em formato JSON."""
+        return json.dumps(data, indent=4, ensure_ascii=False)
 
     def _restart_session(self) -> requests.Session:
         """Inicia uma sessão limpa da biblioteca requests."""

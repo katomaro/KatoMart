@@ -1,6 +1,6 @@
 """Ponto de inicialização para um futuro server Flask"""
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, g
 
 from modules.databases.manager_main import ManagerMain
 
@@ -10,6 +10,12 @@ app = Flask(__name__,
                static_folder='modules/front/static'
             )
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+def db_as_a_service(): # we do some clowning here
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = ManagerMain()
+    return db
 
 
 @app.route('/')

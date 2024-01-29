@@ -38,12 +38,12 @@ def accounts():
     return render_template('accounts.html')
 @app.route('/api/get_accounts')
 def get_accounts():
-    database_manager = ManagerMain()
+    database_manager = db_as_a_service()
     all_accounts = database_manager.get_accounts()
     return jsonify(all_accounts)
 @app.route('/api/get_auths')
 def get_auths():
-    database_manager = ManagerMain()
+    database_manager = db_as_a_service()
     auths = database_manager.get_auths()
     return jsonify(auths)
 

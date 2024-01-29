@@ -11,11 +11,17 @@ app = Flask(__name__,
             )
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+
 def db_as_a_service(): # we do some clowning here
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = ManagerMain()
     return db
+
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 
 @app.route('/')

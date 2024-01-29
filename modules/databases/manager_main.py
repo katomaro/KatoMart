@@ -177,6 +177,6 @@ class ManagerMain:
         self._main_conn.commit()
         cursor.close()
 
-    def _close(self) -> None:
+    def close(self) -> None:
         """Fecha a conexão com o banco de dados."""
         self._main_conn.close()

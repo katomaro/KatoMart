@@ -1,45 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-    <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/fa-c53a3e6f23.js') }}" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-        rel="stylesheet" 
-        href="https://unpkg.com/dracula-ui@1.0.3/styles/dracula-ui.css" 
-      />
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='images/favicon-32x32.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ url_for('static', filename='images/favicon-16x16.png') }}"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ url_for('static', filename='images/apple-touch-icon.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/daisyui-4.7.1.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fa-c53a3e6f23.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tailwind-3.4.1.js') }}"></script>
     <title>Katomart</title>
-    
-</head>
-
-<body class="drac-bg-grey drac-text-center drac-scrollbar-cyan" style="height: 100dvh;">
-    <nav class="drac-text-cyan-green drac-py-none drac-flex drac-justify-between drac-tabs">
-        <a id="homebtn" href="{{ url_for('home') }}" class="drac-btn"><i class="fa-solid fa-house drac-text-black" aria-hidden="true"></i> Home/Katomart!</a>
-        <a id="settingsbtn" href="{{ url_for('settings') }}" class="drac-btn"><i class="fa-solid fa-sliders drac-text-black" aria-hidden="true"></i> Configurações</a>
-        <a id="accountsbtn" href="{{ url_for('accounts') }}" class="drac-btn"><i class="fa-solid fa-users drac-text-black" aria-hidden="true"></i> Gerenciar Contas</a>
-        <a id="coursesbtn" href="{{ url_for('courses') }}" class="drac-btn"><i class="fa-solid fa-cloud-arrow-down drac-text-black" aria-hidden="true"></i> Gerenciar Cursos</a>
-        <a id="logbtn" href="{{ url_for('log') }}" class="drac-btn"><i class="fa-solid fa-layer-group drac-text-black" aria-hidden="true"></i> LOGs</a>
-        <a id="supportbtn" href="{{ url_for('support') }}" class="drac-btn"><i class="fa-solid fa-paper-plane drac-text-black"></i> Suporte</a>
+  </head>
+  <body>
+    <nav class="navbar py-4 bg-base-100 shadow-lg rounded-b-lg flex justify-around">
+      <a id="homebtn" href="{{ url_for('home') }}" class="btn btn-primary">
+        <i class="fa-solid fa-house" aria-hidden="true"></i> Home/Katomart!
+      </a>
+      <a id="settingsbtn" href="{{ url_for('settings') }}" class="btn btn-primary">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações
+      </a>
+      <a id="accountsbtn" href="{{ url_for('accounts') }}" class="btn btn-primary">
+        <i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas
+      </a>
+      <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary">
+        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
+      </a>
+      <a id="logbtn" href="{{ url_for('log') }}" class="btn btn-primary">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs
+      </a>
+      <a id="supportbtn" href="{{ url_for('support') }}" class="btn btn-primary">
+        <i class="fa-solid fa-paper-plane"></i> Suporte
+      </a>
     </nav>
-
-    <main id="content">
-        {% block content %}{% endblock %}
+    <main id="content" class="container mx-auto p-4 mb-24">
+      {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <div class="drac-card-subtle drac-text-center" style="position: relative; bottom: 0; width: 98.5dvw;">
-        <p class="drac-text-cyan-green"><i class="fa-solid fa-code drac-text-pink"></i> Desenvolvido por <a href="mailto:admin@katomaro.com" class="drac-anchor">@Katomaro</a> e inúmeros colaboradores/usuários listados no Github. <a href="https://github.com/katomaro/katomart" class="drac-anchor"><i class="fa-brands fa-github drac-text-pink"></i> Repositório no Github</a></p>
-        <p class="drac-text-red"><strong>Nenhuma marca aqui citada faz parte do projeto, e tem seus direitos reservados.</strong>
-            <br/> O uso deste software cai dentro dos direitos de consumo individuais e os esforços são feitos para penalizar aqueles que infringirem direitos autorais.</p>
-    </div>
+    <footer
+      class="fixed bottom-0 w-full p-2 bg-neutral text-neutral-content shadow-lg h-1/12"
+    >
+      <p class="text-center">
+        <i class="fa-solid fa-code"></i> Desenvolvido por
+        <a class="underline font-semibold" href="mailto:admin@katomaro.com">@Katomaro</a>
+        e inúmeros colaboradores/usuários listados no
+        <a
+          href="https://github.com/katomaro/katomart"
+          class="font-semibold text-blue-500"
+        >
+          <i class="fa-brands fa-github"></i> Repositório no Github
+        </a>
+      </p>
+      <p class="text-center mt-2">
+        <strong class="font-bold text-red-500">
+          Nenhuma marca aqui citada faz parte do projeto, e tem seus direitos reservados.
+        </strong>
+        <br />
+        O uso deste software cai dentro dos direitos de consumo individuais e os esforços
+        são feitos para penalizar aqueles que infringirem direitos autorais.
+      </p>
+    </footer>
 
-</body>
+    <script>
+      let currentLocation = window.location.pathname.split("/").pop()
+      if (currentLocation == null || currentLocation == "") {
+        currentLocation = "home"
+      }
+      let navbtn = document.getElementById(`${currentLocation}btn`)
+      navbtn.classList.remove("btn-primary")
+      navbtn.classList.add("btn-accent")
+    </script>
 
-{% block scripts %}{% endblock %}
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "{{ url_for("static", filename="js/vue.esm-browser.js") }}"
+        }
+      }
+    </script>
 
+    {% block scripts %}{% endblock %}
+  </body>
 </html>

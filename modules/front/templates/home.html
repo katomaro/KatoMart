@@ -1,59 +1,135 @@
 {% extends 'layout.html' %}
 
+<!-- Content -->
 {% block content %}
+<section class="mt-1">
+  <h1 class="text-2xl text-center my-2">Boas vindas ao Katomart!</h1>
+  <p>
+    O Katomart agora está de cara nova (e passando por cirurgias plásticas) e você pode
+    controlar e acompanhar seu progresso a partir do seu navegador web.
+    <strong class="text-red-500">
+      <span>NÃO FECHE O TERMINAL QUE TE TROUXE ATÉ ESTE SITE</span>
+    </strong>
+    , porém, você pode fechar esta aba do navegador e voltar aqui quando quiser através de
+    <a href="http://127.0.0.1:6102/home" class="btn btn-link px-0 py-0"
+      >http://127.0.0.1:6102/home</a
+    >, o carregamento do conteúdo é dinâmico e o funcionamento é controlado por você.
+  </p>
+  <p>
+    Como você pode ver, logo acima temos os menus para configurar o funcionamento do
+    software, adicionar logins, acompanhar o progresso de download e ir atrás de suporte.
+    Segue breve descrição de cada funcionalidade.
+  </p>
 
-<section class="drac-text-white">
-        <h1>Boas vindas ao Katomart!</h1>
-        <p>O Katomart agora está de cara nova (e passando por cirurgias plásticas) e você pode controlar e acompanhar seu progresso a partir do seu navegador web.
-        <strong><span class="drac-glow-red drac-text-black">NÃO FECHE O TERMINAL QUE TE TROUXE ATÉ ESTE SITE</span></strong>, porém,
-        você pode fechar esta aba do navegador e voltar aqui quando quiser através de <a href="http://127.0.0.1:6102/home" class="drac-text-pink">http://127.0.0.1:6102/home</a>, o carregamento do 
-        conteúdo é dinâmico e o funcionamento é controlado por você.
-        </p>
-        <p>Como você pode ver, logo acima temos os menus para configurar o funcionamento do software, adicionar logins, 
-            acompanhar o progresso de download e ir atrás de suporte, quando estiver pronto para começar, revise as configurações indo até
-            <a href="{{ url_for('settings') }}" class="drac-text-pink"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações</a> 
-            e depois adicione suas contas em <a href="{{ url_for('accounts') }}" class="drac-text-pink"><i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas</a>
-             para então iniciar downloads em <a href="{{ url_for('courses') }}" class="drac-text-pink"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos</a>
-        </p>
-        <p>Caso você encontre um erro, gere um log de utilização pela aba <a href="{{ url_for('log') }}" class="drac-text-pink"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs</a>
-            e siga as instruções na tela para a submissão do mesmo para os <strong>desenvolvedores listados na página de suporte</strong>
-        </p>
-        <p><strong>Lembre-se que você é responsável pelo que faz pelo material gerado pelo software, ele presume que você tem o direito de consumo.</strong></p>
+  <div class="grid grid-cols-3 gap-2 my-4 space-y-3">
+    <div class="card bg-base-200 shadow-xl" v-for="card in cards">
+      <div class="card-body py-3 px-4">
+        <div class="card-title font-medium">
+          <i :class="card.icon" aria-hidden="true"></i>
+          {% raw %}{{ card.title }}{% endraw %}
+        </div>
+        <p v-html="card.description"></p>
+      </div>
+    </div>
+  </div>
+  <p class="text-center my-3 text-primary">
+    <strong class="font-bold">
+      Lembre-se que você é responsável pelo que faz pelo material gerado pelo software,
+      ele presume que você tem o direito de consumo.
+    </strong>
+  </p>
 </section>
 
-<section class="drac-text-white">
-    <h3>Esta seção abaixo é utilizada para puxar mensagens que os desenvolvedores julgarem como importante, diretamente do repositório de código do programa.</h3>
-    <div id="aviso" class="drac-card-subtle drac-bg-grey" style="overflow-y: auto; position:relative">
-        <p>Carregando avisos...</p>
-    </div>
-
+<section>
+  <h3 class="alert mb-3" role="alert">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    Esta seção abaixo é utilizada para puxar mensagens que os desenvolvedores julgarem
+    como importante, diretamente do repositório de código do programa.
+  </h3>
+  <div
+    id="aviso"
+    class="p-4 border-2 rounded-lg border-accent border-dotted overflow-y-auto h-screen"
+  >
+    <p class="alert alert-warning" role="alert">
+      <span class="loading loading-spinner loading-xs"></span>
+      Carregando avisos...
+    </p>
+  </div>
+</section>
 {% endblock %}
 
+<!-- Scripts -->
 {% block scripts %}
 
 <script>
-    $(document).ready(function() {
-        $.ajax({
-            url: GITHUB_MESSAGE_URL,
-            type: "GET",
-            dataType: "html",
-            success: function(data) {
-                $('#aviso').html(data);
-            },
-            error: function() {
-                $('#aviso').html('<p>Não foi possível carregar o aviso atual, verifique o estado do repositório no Github ou procure informações como descrito na seção de suporte.</p>');
-            }
-        });
+  $(document).ready(function () {
+    $.ajax({
+      url: GITHUB_MESSAGE_URL,
+      type: "GET",
+      dataType: "html",
+      success: function (data) {
+        $("#aviso").html(data)
+      },
+      error: function () {
+        $("#aviso").html(
+          "<p>Não foi possível carregar o aviso atual, verifique o estado do repositório no Github ou procure informações como descrito na seção de suporte.</p>"
+        )
+      },
     })
+  })
 </script>
 
-<script>
-    let currentLocation = window.location.pathname.split('/').pop();
-    if (currentLocation == null || currentLocation == '') { 
-        currentLocation = 'home'
-    };
-    let navbtn = document.getElementById(`${currentLocation}btn`);
-    navbtn.classList.add('drac-btn-outline');
-</script>
+<script type="module">
+  import { createApp } from "vue"
 
+  const app = createApp({
+    setup() {
+      const cards = [
+        {
+          title: "Configurações",
+          icon: "fa-solid fa-sliders",
+          description: `Quando estiver pronto para começar, revise as Configurações indo até
+          <a href="{{ url_for('settings') }}" class="text-accent">
+            <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+            Configurações
+          </a>`,
+        },
+        {
+          title: "Gerenciar Contas",
+          icon: "fa-solid fa-users",
+          description: `Em
+          <a href="{{ url_for('accounts') }}" class="text-accent">
+            <i class="fa-solid fa-users" aria-hidden="true"></i>
+            Gerenciar Contas
+          </a>
+          você pode gerenciar suas contas (logins) que irá interagir com a aplicação`,
+        },
+        {
+          title: "Gerenciar Cursos",
+          icon: "fa-solid fa-cloud-arrow-down",
+          description: `Aqui você consegue visualizar cursos das plataformas disponíveis na qual você
+          tem acesso pelas suas contas e iniciar download dos mesmos.`,
+        },
+        {
+          title: "LOGs",
+          icon: "fa-solid fa-layer-group",
+          description: `Caso você encontre um erro, gere um log de utilização pela aba <a href="{{ url_for('log') }}" class="text-accent">
+            <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            LOGs
+          </a> e siga as instruções na tela para a submissão do mesmo para os
+          <strong class="font-semibold">
+            desenvolvedores listados na página de suporte
+          </strong>`,
+        },
+        {
+          title: "Suporte",
+          icon: "fa-solid fa-paper-plane",
+          description: `Aba responsável por contar desenvolvedores que contribuiram para o projeto e que podem oferecer suporte em caso de erros.`,
+        },
+      ]
+
+      return { cards }
+    },
+  }).mount("#content")
+</script>
 {% endblock %}

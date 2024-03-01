@@ -84,7 +84,14 @@ class DatabaseManager:
         with self.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(query)
-            settings = {row[0]: row[1] for row in cursor.fetchall()}
+            settings = {
+                row[0]: (
+                    row[1]
+                    if not str(row[1]) in ("0", "1")
+                    else row[1] in ("1", 1)
+                )
+                for row in cursor.fetchall()
+            }
         return settings
 
     def get_setting(self, key):
@@ -106,6 +113,18 @@ class DatabaseManager:
         query = "SELECT name, description, download FROM MediaDeliverySources"
         return self.execute_query(query)
 
+    def update_media_delivery_source_download(self, name, download):
+        """
+        Atualiza o campo `download` de uma fonte de entrega de mídia.
+
+        `download` indica se bot deve baixar o conteúdo desta fonte ou não.
+        """
+        query = "UPDATE MediaDeliverySources SET download = ? WHERE name = ?"
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, (download, name))
+            conn.commit()
+
     def get_all_drm_types(self):
         """
         Retorna todos os tipos de DRM do banco de dados.
@@ -114,6 +133,18 @@ class DatabaseManager:
         """
         query = "SELECT name, description, download FROM DRMTypes"
         return self.execute_query(query)
+
+    def update_drm_type_download(self, name, download):
+        """
+        Atualiza o campo `download` de um tipo de DRM.
+
+        `download` indica se bot deve baixar o conteúdo deste tipo de DRM ou não.
+        """
+        query = "UPDATE DRMTypes SET download = ? WHERE name = ?"
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, (download, name))
+            conn.commit()
 
     def update_setting(self, key, value):
         """

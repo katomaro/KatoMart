@@ -39,7 +39,8 @@ class Account(ABC):
         """
         session = requests.Session()
         settings = self._database_manager.get_all_settings()
-        session.headers['User-Agent'] = settings[5]['value']
+        session.headers['User-Agent'] = settings.get('default_user_agent',
+                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0')
         return session
     
     def get_current_time(self) -> int:

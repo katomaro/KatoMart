@@ -16,7 +16,7 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 INSERT OR IGNORE INTO MediaDeliverySources (name, description) VALUES 
 ('Arquivo Direto (HTTP)', 'Arquivo hospedado pela plataforma'),
 ('Link Drive', 'Link de compartilhamento do Google Drive'),
-('Video Nativo HLS'),
+('Video Nativo HLS', ''),
 ('Youtube', 'Vídeo hospedado no Youtube'),
 ('Vimeo', 'Vídeo hospedado no Vimeo'),
 ('PandaVideo', 'Vídeo hospedado no PandaVideo. Pode conter dados ou usar o Widevine'),

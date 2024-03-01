@@ -31,7 +31,28 @@
                 <label for="{{ key }}">Caminho COMPLETO para o ffmpe.exe (incluir ffmpeg.exe no final):</label>
                 <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
                 <br>
+                <hr/>
               {% endif %}
+            {% endif %}
+
+            {% if key == 'media_type' %}
+                {% for media_type in settings.get('media_type') %}
+                    # Yuu, durange a estilização coloca aqueles hover que abre a descrição do tipo do media
+                    <label for="{{ media_type }}">Baixar {{ media_type }}?</label>
+                    <input type="checkbox" id="{{ media_type }}" name="{{ media_type }}" value="True" {% if value[media_type] == 'True' %}checked{% endif %}>
+                    <br>
+                {% endfor %}
+                <hr/>
+            {% endif %}
+
+            {% if key == 'drm_types' %}
+                {% for drm_type in settings.get('drm_types') %}
+                    # Yuu, durange a estilização coloca aqueles hover que abre a descrição do tipo do DRM
+                    <label for="{{ drm_type }}">Baixar {{ drm_type }}?</label>
+                    <input type="checkbox" id="{{ drm_type }}" name="{{ drm_type }}" value="True" {% if value[drm_type] == 'True' %}checked{% endif %}>
+                    <br>
+                {% endfor %}
+                <hr/>
             {% endif %}
             
             {% endfor %}

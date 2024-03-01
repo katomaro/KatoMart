@@ -1,18 +1,22 @@
-from flask import Flask, render_template, jsonify, g
-from modules.databases.manager_main import ManagerMain
+from pathlib import Path
+from flask import Flask, request, redirect, render_template, url_for, jsonify, g
+from modules.databases.manager_main import DatabaseManager
 
 # Configuração inicial do aplicativo Flask
 app = Flask(__name__, 
-            template_folder='modules/front/templates', 
+            template_folder='modules/front/templates',
             static_folder='modules/front/static')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 def get_db():
     """
-    Função para obter uma instância do banco de dados, seguindo o padrão application factory.
+    Obtém uma instância do gerenciador de banco de dados, seguindo o padrão application factory.
     """
     if 'db' not in g:
-        g.db = ManagerMain()
+        execution_path = Path(__file__).parent
+        db_folder_path = execution_path / 'modules' / 'databases'
+        database_path = execution_path / 'main.sqlite3'
+        g.db = DatabaseManager(db_folder_path=db_folder_path, db_path=database_path)
     return g.db
 
 @app.teardown_appcontext
@@ -22,7 +26,7 @@ def close_db(error):
     """
     db = g.pop('db', None)
     if db is not None:
-        db.close()
+        del db
 
 # Rotas do aplicativo
 @app.route('/')
@@ -32,23 +36,62 @@ def home():
 
 @app.route('/settings')
 def settings():
-    return render_template('settings.html')
+    db_manager = get_db()
+    settings = db_manager.get_all_settings()
+    media_types = db_manager.get_all_media_delivery_sources()
+    drm_types = db_manager.get_all_drm_types()
+    settings.update({'media_types': media_types, 'drm_types': drm_types})
+    settings['use_custom_ffmpeg'] = bool(settings['use_custom_ffmpeg'])
+    return render_template('settings.html', settings=settings)
+
+@app.route('/api/settings', methods=['POST'])
+def update_settings():
+    db_manager = get_db()
+    if request.form.get('download_path'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    if request.form.get('some_setting'):
+        db_manager.update_setting('download_path', request.form.get('download_path'))
+    return redirect(url_for('settings'))
 
 @app.route('/accounts')
 def accounts():
     return render_template('accounts.html')
 
-@app.route('/api/get_accounts')
-def get_accounts():
-    database_manager = get_db()
-    all_accounts = database_manager.get_accounts()
-    return jsonify(all_accounts)
+# @app.route('/api/get_accounts')
+# def get_accounts():
+#     database_manager = get_db()
+#     all_accounts = database_manager.get_accounts()
+#     return jsonify(all_accounts)
 
-@app.route('/api/get_auths')
-def get_auths():
-    database_manager = get_db()
-    auths = database_manager.get_auths()
-    return jsonify(auths)
+# @app.route('/api/get_auths')
+# def get_auths():
+#     database_manager = get_db()
+#     auths = database_manager.get_auths()
+#     return jsonify(auths)
 
 @app.route('/courses')
 def courses():

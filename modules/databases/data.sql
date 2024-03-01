@@ -1,7 +1,7 @@
 -- Este arquivo SQL mantém os dados base da aplicação. A tabela Platform não deve ter as IDs alteradas.
 
 INSERT INTO Settings(key, value) VALUES
-('last_executed_at', self.start_time),
+('last_executed_at', 0),
 ('user_consent', '0'),
 ('download_path', './Cursos/'),
 ('user_os', ''),

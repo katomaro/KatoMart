@@ -96,7 +96,7 @@ class DatabaseManager:
 
         :return: Lista com todas as fontes de entrega de mídia.
         """
-        query = "SELECT name, description FROM MediaDeliverySources"
+        query = "SELECT name, description, download FROM MediaDeliverySources"
         return self.execute_query(query)
 
     def get_all_drm_types(self):
@@ -105,7 +105,7 @@ class DatabaseManager:
 
         :return: Lista com todos os tipos de DRM.
         """
-        query = "SELECT name, description FROM DRMTypes"
+        query = "SELECT name, description, download FROM DRMTypes"
         return self.execute_query(query)
 
     def update_setting(self, key, value):

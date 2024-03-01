@@ -174,7 +174,8 @@
 <script>
   const customFfmpegInput = document.getElementById("customFfmpegInput")
   const useCustomFfmpeg = document.getElementById("use_custom_ffmpeg")
-  let useCustomFfmpegChecked = "{{ settings.get('use_custom_ffmpeg', 1) }}" == "1"
+  let useCustomFfmpegChecked =
+    "{{ 1 if settings.get('use_custom_ffmpeg') else 0 }}" == "1"
   useCustomFfmpeg.checked = useCustomFfmpegChecked
 
   const toggleCustomFfmpeg = () => {

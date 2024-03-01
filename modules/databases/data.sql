@@ -2,20 +2,34 @@
 
 INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('last_executed_at', 0),
-('user_consent', '0'),
+('user_consent', 0),
 ('download_path', './Cursos/'),
+('download_from_players', ''),
+('download_drm_content', 0),
+('download_drm_types', ''),
 ('user_os', ''),
 ('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM');
 
 
+INSERT OR IGNORE INTO MediaDeliverySources (name, description) VALUES 
+('Arquivo Direto (HTTP)', 'Arquivo hospedado pela plataforma'),
+('Link Drive', 'Link de compartilhamento do Google Drive'),
+('Video Nativo HLS'),
+('Youtube', 'Vídeo hospedado no Youtube'),
+('Vimeo', 'Vídeo hospedado no Vimeo'),
+('PandaVideo', 'Vídeo hospedado no PandaVideo. Pode conter dados ou usar o Widevine'),
+('SafeVideo', 'Vídeo hospedado no SafeVideo. Existe um segmento de 6 segundos a cada ~24 segundos com dados na tela.'),
+('API', 'Conteúdo acessado por meio de API'),
+('HTML', 'Conteúdo acessado por meio de HTML');
+
 INSERT OR IGNORE INTO DRMTypes (name, description) VALUES 
 ('VISUAL', 'DRM FALSO, onde a plataforma renderiza dados do lado do cliente, não existem dados nos arquivos baixados'),
 ('SOCIAL', 'DRM REAL, porém a proteção se dá por meio de impor "medo de responsabilidade" ao usuário, como marca dágua com nome do usuário, etc. Será baixado normalmente, usuários mal intencionados simplesmente usam dados falsos sempres, a lei pressupõe inocência, então desde que você não compartilhe os arquivos baixados, não há infração legal.'),
 ('REAL', 'DRM real, como Widevine, PlayReady, FairPlay, etc. Pode até ser baixado dependendo da boa vontade dos mantenedore$. Não é coisa que usuários leigos conseguiram fazer por precisar lidar com chaves e requisições. Download desativado por padrão'),
 ('ONLINE PASS', 'DRM que requer conexão com a internet para funcionar. Será baixado mas tal proteção não será removida em nenhum cenário.'),
-('OFFLINE PASS', 'DRM do tipo arquivo com senha. Será baixado e por conveniência, na maioria dos casos a senha será removida automaticamente.'),
+('OFFLINE PASS', 'DRM do tipo arquivo com senha. Será baixado normalmente, mas a senha não será removida. O usuário terá que inserir a senha manualmente para acessar o conteúdo baixado.');,
 ('MIXED', 'Conteúdo com mais de um tipo de proteção, como por exemplo, conteúdo com DRM REAL e SOCIAL ao mesmo tempo.'),
 ('NONE', 'Conteúdo sem proteção alguma.');
 

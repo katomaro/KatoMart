@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <section>
+        <h1>Configurações YUU ESTILIZA ISSO</h1>
+        <hr/>
+        <form action="/api/settings" method="post">
+            {% for key, value in settings.items() %}
+            {% if key == 'download_path' %}
+                <label for="{{ key }}">Caminho completo para salvar os cursos (Por padrão ele salva na pasta do script dentro de uma pasta chamada "Cursos"):</label>
+                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                <br>
+                <hr/>
+              {% endif %}
+              {% if key == 'default_user_agent' %}
+                <label for="{{ key }}">Navegador simulado (Não alterar se não souber o que estiver fazendo):</label>
+                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                <br>
+                <hr/>
+              {% endif %}
+              {% if key == 'use_custom_ffmpeg' %}
+                <label for="{{ key }}">Usar FFMPEG Não acessível pelo terminal?</label>
+                <input type="checkbox" id="{{ key }}" name="{{ key }}" value="True" {% if value == 'True' %}checked{% endif %}>
+                <br>
+                <hr/>
+            {% endif %}
+            
+            {% if key == 'custom_ffmpeg_path' %}
+              {% if settings.use_custom_ffmpeg == 'True' %}
+                <p>"SYSTEM" indica para usar o padrão do terminal, você não deveria ver esse campo se não alterou o anterior para verdadeiro.</p>
+                <label for="{{ key }}">Caminho COMPLETO para o ffmpe.exe (incluir ffmpeg.exe no final):</label>
+                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                <br>
+              {% endif %}
+            {% endif %}
+            
+            {% endfor %}
+            
+            <input type="submit" value="Salvar Configurações (Isso é um botão que o Yuu vai estilizar)">
+    </section>
+{% endblock %}

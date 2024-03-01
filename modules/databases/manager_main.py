@@ -64,6 +64,19 @@ class DatabaseManager:
             cursor.execute(query, params)
             result = cursor.fetchone() if fetchone else cursor.fetchall()
             return result
+    
+    def get_all_settings(self):
+        """
+        Retorna todas as configurações do banco de dados.
+
+        :return: Dicionário com todas as configurações.
+        """
+        query = "SELECT key, value FROM Settings"
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            settings = {row[0]: row[1] for row in cursor.fetchall()}
+        return settings
 
 if __name__ == "__main__":
     db_manager = DatabaseManager("main.sqlite3")

@@ -15,7 +15,7 @@ INSERT INTO DRMTypes (name, description) VALUES
 ('SOCIAL', 'DRM REAL, porém a proteção se dá por meio de impor "medo de responsabilidade" ao usuário, como marca dágua com nome do usuário, etc. Será baixado normalmente, usuários mal intencionados simplesmente usam dados falsos sempres, a lei pressupõe inocência, então desde que você não compartilhe os arquivos baixados, não há infração legal.'),
 ('REAL', 'DRM real, como Widevine, PlayReady, FairPlay, etc. Pode até ser baixado dependendo da boa vontade dos mantenedore$. Não é coisa que usuários leigos conseguiram fazer por precisar lidar com chaves e requisições. Download desativado por padrão'),
 ('ONLINE PASS', 'DRM que requer conexão com a internet para funcionar. Será baixado mas tal proteção não será removida em nenhum cenário.'),
-('OFFLINE PASS', 'DRM do tipo arquivo com senha. Será baixado e por conveniência, na maioria dos casos a senha será removida automaticamente.')
+('OFFLINE PASS', 'DRM do tipo arquivo com senha. Será baixado e por conveniência, na maioria dos casos a senha será removida automaticamente.'),
 ('MIXED', 'Conteúdo com mais de um tipo de proteção, como por exemplo, conteúdo com DRM REAL e SOCIAL ao mesmo tempo.'),
 ('NONE', 'Conteúdo sem proteção alguma.');
 
@@ -28,7 +28,7 @@ INSERT INTO DRMTypes (name, description) VALUES
 
 
 -- Plataformas previstas a ter suporte em primeiro momento
-INSERT OR REPLACE INTO Platforms(name, description, landing_page, content_delivery_type,) VALUES 
+INSERT OR IGNORE INTO Platforms(name, description, landing_page, content_delivery_type) VALUES 
 ('Hotmart', 'Conteúdo variado, desde cursos livres até e-books e software, de áreas diferentes', 'https://hotmart.com/', 'MIXED'),
 ('Udemy', 'Cursos livres de diversas áreas', 'https://udemy.com/', 'MIXED'),
 ('Kiwify', 'Conteúdo variado, desde cursos livres até e-books de diversas áreas', 'https://kiwify.com.br/', 'API'),

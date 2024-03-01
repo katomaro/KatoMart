@@ -1,64 +1,187 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block content %}
+<section class="py-4">
+  <h1 class="text-3xl font-bold text-center mb-8">
+    <i class="fas fa-cogs"></i> Configurações
+  </h1>
 
-{% block content %}
-    <section>
-        <h1>Configurações YUU ESTILIZA ISSO</h1>
-        <hr/>
-        <form action="/api/settings" method="post">
-            {% for key, value in settings.items() %}
-            {% if key == 'download_path' %}
-                <label for="{{ key }}">Caminho completo para salvar os cursos (Por padrão ele salva na pasta do script dentro de uma pasta chamada "Cursos"):</label>
-                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
-                <br>
-                <hr/>
-              {% endif %}
-              {% if key == 'default_user_agent' %}
-                <label for="{{ key }}">Navegador simulado (Não alterar se não souber o que estiver fazendo):</label>
-                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
-                <br>
-                <hr/>
-              {% endif %}
-              {% if key == 'use_custom_ffmpeg' %}
-                <label for="{{ key }}">Usar FFMPEG Não acessível pelo terminal?</label>
-                <input type="checkbox" id="{{ key }}" name="{{ key }}" value="True" {% if value == 'True' %}checked{% endif %}>
-                <br>
-                <hr/>
-            {% endif %}
-            
-            {% if key == 'custom_ffmpeg_path' %}
-              {% if settings.use_custom_ffmpeg == 'True' %}
-                <p>"SYSTEM" indica para usar o padrão do terminal, você não deveria ver esse campo se não alterou o anterior para verdadeiro.</p>
-                <label for="{{ key }}">Caminho COMPLETO para o ffmpe.exe (incluir ffmpeg.exe no final):</label>
-                <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
-                <br>
-                <hr/>
-              {% endif %}
-            {% endif %}
+  <div
+    class="container max-w-6xl mx-auto bg-base-100 shadow-xl rounded-lg p-6 border-2 border-primary"
+  >
+    <form action="/api/settings" method="post">
+      <div class="form-control">
+        {% for key, value in settings.items() %}
+        <!-- Download Path -->
+        {% if key == 'download_path' %}
+        <label class="label" for="{{ key }}">
+          <span class="label-text font-semibold mb-2 text-lg">
+            <div
+              class="tooltip tooltip-info"
+              data-tip='Por padrão ele salva na pasta do
+            script dentro de uma pasta chamada "Cursos"'
+            >
+              <i class="fas fa-folder-open"></i>
+              Caminho completo para salvar os cursos:
+            </div>
+          </span>
+        </label>
+        <input
+          type="text"
+          id="{{ key }}"
+          name="{{ key }}"
+          value="{{ value }}"
+          class="input input-bordered input-sm w-full"
+        />
+        <div class="divider divider-neutral"></div>
 
-            {% if key == 'media_types' %}
-            # Yuu, durante a estilização coloca aqueles hover que abre a descrição do tipo do media
-                <p>Tipo de conteúdo a ser baixado</p>
-                {% for media_type in settings.get('media_types') %}
-                    <label for="{{ media_type }}"><b>Baixar {{ media_type[0] }}</b>? ({{ media_type[1] }})</label>
-                    <input type="checkbox" id="{{ media_type[0] }}" name="{{ media_type[0] }}" value="True" {% if value[media_type[2]] %}checked{% endif %}>
-                    <br>
-                {% endfor %}
-                <hr/>
-            {% endif %}
+        <!-- User Agent -->
+        {% elif key == 'default_user_agent' %}
+        <label class="label" for="{{ key }}">
+          <span class="label-text font-semibold mb-2 text-lg">
+            <div
+              class="tooltip tooltip-warning"
+              data-tip="Não alterar se não souber o que estiver fazendo"
+            >
+              <i class="fas fa-user-secret"></i>
+              Navegador Simulado (<span class="text-accent italic">User-Agent</span>):
+            </div>
+          </span>
+        </label>
+        <input
+          type="text"
+          id="{{ key }}"
+          name="{{ key }}"
+          value="{{ value }}"
+          class="input input-bordered input-sm w-full"
+        />
+        <div class="divider divider-neutral"></div>
 
-            {% if key == 'drm_types' %}
-            # Yuu, durante a estilização coloca aqueles hover que abre a descrição do tipo do DRM
-                <p>DRM a ser baixado</p>
-                {% for drm_type in settings.get('drm_types') %}
-                    <label for="{{ drm_type }}"><b>Baixar {{ drm_type[0] }}</b>? ({{ drm_type[1] }})</label>
-                    <input type="checkbox" id="{{ drm_type[0] }}" name="{{ drm_type[0] }}" value="True" {% if value[drm_type[2]] %}checked{% endif %}>
-                    <br>
-                {% endfor %}
-                <hr/>
-            {% endif %}
-            
-            {% endfor %}
-            
-            <input type="submit" value="Salvar Configurações (Isso é um botão que o Yuu vai estilizar)">
-    </section>
+        <!-- Use Custom FFMPEG -->
+        {% elif key == 'use_custom_ffmpeg' %}
+        <label class="cursor-pointer label">
+          <span class="label-text font-semibold mb-2 text-lg">
+            <i class="fas fa-video"></i>
+            Usar FFMPEG Não acessível pelo terminal?
+          </span>
+          <input
+            type="checkbox"
+            id="{{ key }}"
+            name="{{ key }}"
+            class="checkbox checkbox-primary"
+          />
+        </label>
+
+        <!-- Custom FFMPEG Path -->
+        {% elif key == 'custom_ffmpeg_path' %}
+        <div id="customFfmpegInput">
+          <p class="mb-2">
+            <span class="text-accent">"SYSTEM"</span> indica para usar o padrão do
+            terminal, você não deveria ver esse campo se não alterou o anterior para
+            verdadeiro.
+          </p>
+          <label class="label" for="{{ key }}">
+            <span class="label-text mb-2 text-md">
+              Caminho COMPLETO para o ffmpe.exe (incluir ffmpeg.exe no final):
+            </span>
+          </label>
+          <input
+            type="text"
+            id="{{ key }}"
+            name="{{ key }}"
+            value="{{ value }}"
+            class="input input-bordered input-sm w-full"
+          />
+        </div>
+
+        <!-- Media Types -->
+        {% elif key == 'media_types' %}
+        <div class="divider divider-neutral"></div>
+
+        <p class="font-semibold mb-2 text-lg">
+          <i class="fa-solid fa-download"></i>
+          Tipo de conteúdo a ser baixado
+        </p>
+        <div class="grid grid-cols-3 gap-2">
+          {% for media_type in settings.get('media_types') %}
+          <label class="inline-flex items-center mb-1">
+            <input
+              type="checkbox"
+              id="{{ media_type[0] }}"
+              name="{{ media_type[0] }}"
+              class="checkbox checkbox-primary"
+              {%
+              if
+              media_type[2]
+              %}checked{%
+              endif
+              %}
+            />
+            <div
+              class="tooltip tooltip-info tooltip-right"
+              data-tip="{{ media_type[1] }}"
+            >
+              <span class="ml-2">
+                Baixar <span class="text-primary">{{ media_type[0] }}</span>?
+              </span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        <div class="divider divider-neutral"></div>
+
+        {% elif key == 'drm_types' %}
+        <p class="font-semibold mb-2 text-lg">
+          <i class="fas fa-lock"></i> DRM a ser baixado
+        </p>
+        <div class="grid grid-cols-3 gap-2">
+          {% for drm_type in settings.get('drm_types', []) %}
+          <label class="inline-flex items-center mb-1">
+            <input
+              type="checkbox"
+              id="{{ drm_type[0] }}"
+              name="{{ drm_type[0] }}"
+              class="checkbox checkbox-primary"
+              {%
+              if
+              drm_type[2]
+              %}checked{%
+              endif
+              %}
+            />
+            <div
+              class="tooltip tooltip-right tooltip-accent"
+              data-tip="{{ drm_type[1] }}"
+            >
+              <span class="ml-2">
+                Baixar <span class="text-secondary">{{ drm_type[0] }}</span>?
+              </span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        <div class="divider divider-neutral"></div>
+        {% endif %}
+        <!--  -->
+        {% endfor %}
+      </div>
+
+      <button class="btn btn-primary mt-4 flex mx-auto">
+        Salvar Configurações <i class="text-lg fas fa-save ml-2"></i>
+      </button>
+    </form>
+  </div>
+</section>
+
+<script>
+  const customFfmpegInput = document.getElementById("customFfmpegInput")
+  const useCustomFfmpeg = document.getElementById("use_custom_ffmpeg")
+  let useCustomFfmpegChecked = "{{ settings.get('use_custom_ffmpeg', 1) }}" == "1"
+  useCustomFfmpeg.checked = useCustomFfmpegChecked
+
+  const toggleCustomFfmpeg = () => {
+    customFfmpegInput.classList.toggle("hidden", !useCustomFfmpeg.checked)
+  }
+
+  useCustomFfmpeg.addEventListener("change", toggleCustomFfmpeg)
+  toggleCustomFfmpeg()
+</script>
 {% endblock %}

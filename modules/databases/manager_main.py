@@ -6,12 +6,14 @@ class DatabaseManager:
     Gerencia a conexão com o banco de dados e operações relacionadas.
     """
     
-    def __init__(self, db_path):
+    def __init__(self, db_folder_path: Path = Path('.'), db_path: Path = Path('main.sqlite3')):
         """
         Inicializa a instância do gerenciador do banco de dados.
 
+        :param db_folder_path: Caminho para a pasta do banco de dados.
         :param db_path: Caminho para o arquivo do banco de dados.
         """
+        self.db_folder_path = db_folder_path
         self.db_path = db_path
         self.initialize_database()
 
@@ -36,7 +38,7 @@ class DatabaseManager:
         Cria o esquema do banco de dados (tabelas, índices, etc.).
         """
 
-        with self.get_connection() as conn, open('main.sql', 'r', encoding='utf-8') as sql_file:
+        with self.get_connection() as conn, open(self.db_folder_path / 'main.sql', 'r', encoding='utf-8') as sql_file:
             sql_commands = sql_file.read()
             conn.executescript(sql_commands)
         conn.commit()
@@ -45,7 +47,7 @@ class DatabaseManager:
         """
         Insere dados iniciais no banco de dados.
         """
-        with self.get_connection() as conn, open('data.sql', 'r', encoding='utf-8') as sql_file:
+        with self.get_connection() as conn, open(self.db_folder_path / 'data.sql', 'r', encoding='utf-8') as sql_file:
             sql_commands = sql_file.read()
             conn.executescript(sql_commands)
         conn.commit()
@@ -79,6 +81,8 @@ class DatabaseManager:
         return settings
 
 if __name__ == "__main__":
-    db_manager = DatabaseManager("main.sqlite3")
+    manager_path = Path(__file__).resolve().parent
+    db_manager = DatabaseManager(manager_path, manager_path / 'main.sqlite3')
     db_manager.create_schema()
     db_manager.insert_starter_data()
+    print(db_manager.get_all_settings())

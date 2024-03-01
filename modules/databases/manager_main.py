@@ -90,6 +90,15 @@ class DatabaseManager:
         query = "SELECT value FROM Settings WHERE key = ?"
         return self.execute_query(query, (key,), fetchone=True)[0]
 
+    def get_all_media_delivery_sources(self):
+        """
+        Retorna todas as fontes de entrega de mídia do banco de dados.
+
+        :return: Lista com todas as fontes de entrega de mídia.
+        """
+        query = "SELECT name, description FROM MediaDeliverySources"
+        return self.execute_query(query)
+
     def update_setting(self, key, value):
         """
         Atualiza uma configuração no banco de dados.

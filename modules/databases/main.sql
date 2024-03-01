@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS MediaDeliverySources (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE, -- Nome do player ou tipo de conteúdo (ex.: 'Arquivo Direto', 'Link Drive', 'Youtube', 'Vimeo')
     description TEXT -- Descrição opcional do tipo de entrega de conteúdo
-)
+);
 
 CREATE TABLE IF NOT EXISTS DRMTypes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

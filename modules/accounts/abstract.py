@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
-
-import time
 import json
+import time
+from abc import ABC, abstractmethod
+from typing import Optional
+
 import requests
 
 from modules.databases.manager_main import DatabaseManager
@@ -15,7 +16,12 @@ class Account(ABC):
     de plataformas de cursos.
     """
 
-    def __init__(self, username: str = '', password: str = '', database_manager: DatabaseManager = None):
+    def __init__(
+        self,
+        username: str = "",
+        password: str = "",
+        database_manager: Optional[DatabaseManager] = None,
+    ):
         self.username = username
         self.password = password
         self.platform_id = 0
@@ -23,12 +29,14 @@ class Account(ABC):
         self.validated_at = 0
         self.has_authenticated = False
         self.authenticated_at = 0
-        self.auth_token = ''
+        self.auth_token = ""
         self.auth_token_expires_at = 0
-        self.refresh_token = ''
+        self.refresh_token = ""
         self.refresh_token_expires_at = 0
-        self.other_data = ''
-        self._database_manager = database_manager
+        self.other_data = ""
+        self._database_manager = (
+            database_manager if database_manager else DatabaseManager()
+        )
         self.session = self._restart_requests_session()
 
     def _restart_requests_session(self) -> requests.Session:
@@ -39,10 +47,12 @@ class Account(ABC):
         """
         session = requests.Session()
         settings = self._database_manager.get_all_settings()
-        session.headers['User-Agent'] = settings.get('default_user_agent',
-                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0')
+        session.headers["User-Agent"] = settings.get(
+            "default_user_agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+        )
         return session
-    
+
     def get_current_time(self) -> int:
         """
         Retorna o tempo atual em segundos.

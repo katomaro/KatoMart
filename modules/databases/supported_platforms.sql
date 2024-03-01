@@ -1,5 +1,15 @@
 -- Este arquivo SQL mantém os dados base da aplicação. A tabela Platform não deve ter as IDs alteradas.
 
+INSERT INTO Settings(key, value) VALUES
+('last_executed_at', self.start_time),
+('user_consent', '0'),
+('download_path', './Cursos/'),
+('user_os', ''),
+('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
+('use_custom_ffmpeg', '0'),
+('custom_ffmpeg_path', 'SYSTEM');
+
+
 INSERT INTO DRMTypes (name, description) VALUES 
 ('VISUAL', 'DRM FALSO, onde a plataforma renderiza dados do lado do cliente, não existem dados nos arquivos baixados'),
 ('SOCIAL', 'DRM REAL, porém a proteção se dá por meio de impor "medo de responsabilidade" ao usuário, como marca dágua com nome do usuário, etc. Será baixado normalmente, usuários mal intencionados simplesmente usam dados falsos sempres, a lei pressupõe inocência, então desde que você não compartilhe os arquivos baixados, não há infração legal.'),

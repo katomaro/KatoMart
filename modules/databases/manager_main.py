@@ -1,182 +1,71 @@
-"""Este módulo é responsável por gerenciar o banco de dados principal"""
-
-import time
 import sqlite3
-import sys
-
-from typing import Tuple
 from pathlib import Path
 
-from modules.accounts.abstract import Account
+class DatabaseManager:
+    """
+    Gerencia a conexão com o banco de dados e operações relacionadas.
+    """
+    
+    def __init__(self, db_path):
+        """
+        Inicializa a instância do gerenciador do banco de dados.
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-class ManagerMain:
-    """Esta classe é responsável por gerenciar o banco de dados principal."""
-    def __init__(self):
-        self.start_time = int(time.time())
-        self.main_db_dir = Path(__file__).parent
-        self.main_database = self.main_db_dir / 'main.sqlite3'
-        self.__should_update_schema = False
-        if not self.main_database.exists():
-            self.__should_update_schema = True
-        self._main_conn = sqlite3.connect(self.main_database)
-        self._main_conn.row_factory = dict_factory
+        :param db_path: Caminho para o arquivo do banco de dados.
+        """
+        self.db_path = db_path
+        self.initialize_database()
 
-        if self.__should_update_schema:
-            self.__update_schema()
+    def initialize_database(self):
+        """
+        Inicializa o banco de dados, criando-o se não existir.
+        """
+        if not Path(self.db_path).exists():
+                self.create_schema()
+                self.insert_starter_data()
 
-    def __set_database_defaults(self) -> None:
-        """Insere os valores padrões no banco de dados principal."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('database_instanced_at', self.start_time))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('last_executed_at', self.start_time))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('user_consent', '0'))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('download_path', './Cursos/'))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('user_os', sys.platform))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('default_user_agent',
-                                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'))
-        
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('use_custom_ffmpeg', '0'))
-        cursor.execute('INSERT INTO Settings(key, value) VALUES (?, ?)', ('custom_ffmpeg_path', 'SYSTEM'))
-        self._main_conn.commit()
-        cursor.close()
+    def get_connection(self):
+        """
+        Obtém uma conexão com o banco de dados.
 
-    def __update_schema(self) -> None:
-        """Atualiza o schema do banco de dados, pelo mais atual."""
-        cursor = self._main_conn.cursor()
-        with open(self.main_db_dir / 'main.sql', 'r', encoding='utf-8') as sql_file:
+        :return: Conexão com o banco de dados.
+        """
+        return sqlite3.connect(self.db_path)
+
+    def create_schema(self):
+        """
+        Cria o esquema do banco de dados (tabelas, índices, etc.).
+        """
+
+        with self.get_connection() as conn, open('main.sql', 'r', encoding='utf-8') as sql_file:
             sql_commands = sql_file.read()
-            cursor.executescript(sql_commands)
-        self._main_conn.commit()
-
-        self.__set_database_defaults()
-        
-        cursor.close()
-        print('[DATABASE] Schema prncipal do banco de dados atualizado com sucesso.')
-        self.__update_supported_platforms()
-
-    def __update_supported_platforms(self) -> None:
-        """Atualiza as plataformas suportadas pelo programa."""
-        cursor = self._main_conn.cursor()
-        with open(self.main_db_dir / 'supported_platforms.sql', 'r', encoding='utf-8') as sql_file:
+            conn.executescript(sql_commands)
+        conn.commit()
+    
+    def insert_starter_data(self):
+        """
+        Insere dados iniciais no banco de dados.
+        """
+        with self.get_connection() as conn, open('data.sql', 'r', encoding='utf-8') as sql_file:
             sql_commands = sql_file.read()
-            cursor.executescript(sql_commands)
-        self._main_conn.commit()
-        cursor.close()
-        total = self._main_conn.execute('SELECT count(name) FROM Platforms').fetchone()[0]
-        print(f'[DATABASE] {total} Plataformas suportadas atualizadas com sucesso.')
+            conn.executescript(sql_commands)
+        conn.commit()
 
-    def get_all_settings(self) -> Tuple[sqlite3.Row, ...]:
-        """Retorna todas as configurações do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Settings')
-        settings = cursor.fetchall()
-        cursor.close()
-        return settings
-    
-    def get_supported_platforms(self) -> Tuple[sqlite3.Row, ...]:
-        """Retorna as plataformas suportadas pelo programa."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Platforms')
-        platforms = cursor.fetchall()
-        cursor.close()
-        return platforms
-    
-    def insert_new_account(self, new_account: Account=Account) -> None:
-        """Insere uma nova conta no banco de dados."""
-        cursor = self._main_conn.cursor()
+    def execute_query(self, query, params=(), fetchone=False):
+        """
+        Executa uma consulta SQL no banco de dados.
 
-        cursor.execute('INSERT OR UPDATE INTO Accounts (username, password, added_at, is_valid, last_validated_at, platform_id) values (?, ?, ?, ?, ?, ?)',
-                       (new_account.username, new_account.password, new_account.validated_at, bool(new_account.is_valid), new_account.validated_at, new_account.platform_id))
-    
-        self._main_conn.commit()
-        cursor.close()
-    
-    def get_accounts(self) -> Tuple[sqlite3.Row, ...]:
-        """Retorna todas as contas do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Accounts')
-        accounts = cursor.fetchall()
-        cursor.close()
-        return accounts
-    
-    def get_account(self, account_id: int) -> sqlite3.Row:
-        """Retorna uma conta específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Accounts WHERE id = ?', (account_id,))
-        account = cursor.fetchone()
-        cursor.close()
-        return account
+        :param query: String da consulta SQL.
+        :param params: Parâmetros para a consulta SQL.
+        :param fetchone: Se deve buscar apenas um resultado.
+        :return: Resultado da consulta.
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            result = cursor.fetchone() if fetchone else cursor.fetchall()
+            return result
 
-    def update_account(self, account_id: int, new_account: Account=Account) -> Account:
-        """Atualiza uma conta específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('UPDATE Accounts SET username = ?, password = ?, platform_id = ? WHERE id = ?',
-                       (new_account.username, new_account.password, new_account.platform_id, account_id))
-        self._main_conn.commit()
-        cursor.close()
-        return new_account
-    
-    def delete_account(self, account_id: int) -> None:
-        """Deleta uma conta específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('DELETE FROM Accounts WHERE id = ?', (account_id,))
-        self._main_conn.commit()
-        cursor.close()
-    
-    def check_account_session(self, account: Account=Account) -> sqlite3.Row:
-        """Retorna os dados da conta que existem na DB para manipulação posterior."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT Accounts.*, Auths.* FROM Accounts JOIN Auths ON Accounts.id = Auths.account_id WHERE Accounts.username like ?', 
-                       (f'%{account.username.lower()}%',))
-        account = cursor.fetchone()
-        cursor.close()
-        return account
-
-    def insert_new_auth(self, new_account: Account=Account) -> None:
-        """Insere uma nova autenticação no banco de dados."""
-        cursor = self._main_conn.cursor()
-        account_id = cursor.execute('SELECT id FROM Accounts WHERE username like ?', (f'%{new_account.username.lower()}%',)).fetchone()[0]
-        cursor.execute('INSERT OR UPDATE INTO Auths (account_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data) values (?, ?, ?, ?, ?, ?)',
-                       (account_id, new_account.auth_token, new_account.auth_token_expires_at, new_account.refresh_token, new_account.refresh_token_expires_at, new_account.other_data))
-        self._main_conn.commit()
-        cursor.close()
-
-    def get_auths(self) -> Tuple[sqlite3.Row, ...]:
-        """Retorna todas as autenticações do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Auths')
-        auths = cursor.fetchall()
-        cursor.close()
-        return auths
-    
-    def get_auth(self, auth_id: int) -> sqlite3.Row:
-        """Retorna uma autenticação específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('SELECT * from Auths WHERE id = ?', (auth_id,))
-        auth = cursor.fetchone()
-        cursor.close()
-        return auth
-    
-    def update_auth(self, auth_id: int, new_account: Account=Account):
-        """Atualiza uma autenticação específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('UPDATE Auths SET auth_token = ?, auth_token_expires_at = ?, refresh_token = ?, refresh_token_expires_at = ?, other_data = ? WHERE id = ?',
-                       (new_account.auth_token, new_account.auth_token_expires_at, new_account.refresh_token, new_account.refresh_token_expires_at, new_account.other_data, auth_id))
-        self._main_conn.commit()
-        cursor.close()
-    
-    def delete_auth(self, auth_id: int) -> None:
-        """Deleta uma autenticação específica do banco de dados."""
-        cursor = self._main_conn.cursor()
-        cursor.execute('DELETE FROM Auths WHERE id = ?', (auth_id,))
-        self._main_conn.commit()
-        cursor.close()
-
-    def close(self) -> None:
-        """Fecha a conexão com o banco de dados."""
-        self._main_conn.close()
+if __name__ == "__main__":
+    db_manager = DatabaseManager("main.sqlite3")
+    db_manager.create_schema()
+    db_manager.insert_starter_data()

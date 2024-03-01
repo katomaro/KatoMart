@@ -85,4 +85,3 @@ if __name__ == "__main__":
     db_manager = DatabaseManager(manager_path, manager_path / 'main.sqlite3')
     db_manager.create_schema()
     db_manager.insert_starter_data()
-    print(db_manager.get_all_settings())

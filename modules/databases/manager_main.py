@@ -6,7 +6,7 @@ class DatabaseManager:
     Gerencia a conexão com o banco de dados e operações relacionadas.
     """
     
-    def __init__(self, db_folder_path: Path = Path('.'), db_path: Path = Path('main.sqlite3')):
+    def __init__(self, db_folder_path: Path = '', db_path: Path = ''):
         """
         Inicializa a instância do gerenciador do banco de dados.
 
@@ -79,8 +79,21 @@ class DatabaseManager:
             cursor.execute(query)
             settings = {row[0]: row[1] for row in cursor.fetchall()}
         return settings
+    
+    def get_setting(self, key):
+        """
+        Retorna uma configuração do banco de dados.
+
+        :param key: Chave da configuração.
+        :return: Valor da configuração.
+        """
+        query = "SELECT value FROM Settings WHERE key = ?"
+        return self.execute_query(query, (key,), fetchone=True)[0]
 
     def update_setting(self, key, value):
+        """
+        Atualiza uma configuração no banco de dados.
+        """
         with self.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE Settings SET value = ? WHERE key = ?", (value, key))

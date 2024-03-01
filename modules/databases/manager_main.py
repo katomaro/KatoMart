@@ -1,12 +1,15 @@
 import sqlite3
 from pathlib import Path
 
+
 class DatabaseManager:
     """
     Gerencia a conexão com o banco de dados e operações relacionadas.
     """
-    
-    def __init__(self, db_folder_path: Path = '', db_path: Path = ''):
+
+    def __init__(
+        self, db_folder_path: Path = Path("."), db_path: Path = Path(".")
+    ):
         """
         Inicializa a instância do gerenciador do banco de dados.
 
@@ -22,8 +25,8 @@ class DatabaseManager:
         Inicializa o banco de dados, criando-o se não existir.
         """
         if not Path(self.db_path).exists():
-                self.create_schema()
-                self.insert_starter_data()
+            self.create_schema()
+            self.insert_starter_data()
 
     def get_connection(self):
         """
@@ -38,16 +41,20 @@ class DatabaseManager:
         Cria o esquema do banco de dados (tabelas, índices, etc.).
         """
 
-        with self.get_connection() as conn, open(self.db_folder_path / 'main.sql', 'r', encoding='utf-8') as sql_file:
+        with self.get_connection() as conn, open(
+            self.db_folder_path / "main.sql", "r", encoding="utf-8"
+        ) as sql_file:
             sql_commands = sql_file.read()
             conn.executescript(sql_commands)
         conn.commit()
-    
+
     def insert_starter_data(self):
         """
         Insere dados iniciais no banco de dados.
         """
-        with self.get_connection() as conn, open(self.db_folder_path / 'data.sql', 'r', encoding='utf-8') as sql_file:
+        with self.get_connection() as conn, open(
+            self.db_folder_path / "data.sql", "r", encoding="utf-8"
+        ) as sql_file:
             sql_commands = sql_file.read()
             conn.executescript(sql_commands)
         conn.commit()
@@ -66,7 +73,7 @@ class DatabaseManager:
             cursor.execute(query, params)
             result = cursor.fetchone() if fetchone else cursor.fetchall()
             return result
-    
+
     def get_all_settings(self):
         """
         Retorna todas as configurações do banco de dados.
@@ -79,7 +86,7 @@ class DatabaseManager:
             cursor.execute(query)
             settings = {row[0]: row[1] for row in cursor.fetchall()}
         return settings
-    
+
     def get_setting(self, key):
         """
         Retorna uma configuração do banco de dados.
@@ -114,11 +121,14 @@ class DatabaseManager:
         """
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("UPDATE Settings SET value = ? WHERE key = ?", (value, key))
+            cursor.execute(
+                "UPDATE Settings SET value = ? WHERE key = ?", (value, key)
+            )
             conn.commit()
+
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent
-    db_manager = DatabaseManager(manager_path, manager_path / 'main.sqlite3')
+    db_manager = DatabaseManager(manager_path, manager_path / "main.sqlite3")
     db_manager.create_schema()
     db_manager.insert_starter_data()

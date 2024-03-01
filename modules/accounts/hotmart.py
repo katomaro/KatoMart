@@ -2,13 +2,16 @@
 
 from .abstract import Account
 
+
 class Hotmart(Account):
     """
     Representa um usuário da Hotmart, especializando a classe Account para
     lidar com as especificidades desta plataforma.
     """
-    
-    def __init__(self, username: str='', password: str='', database_manager=None):
+
+    def __init__(
+        self, username: str = "", password: str = "", database_manager=None
+    ):
         """
         Inicializa uma instância de Hotmart.
 
@@ -16,10 +19,13 @@ class Hotmart(Account):
         :param password: Senha da conta.
         :param database_manager: Gerenciador de banco de dados para esta conta.
         """
-        super().__init__(username=username, password=password, database_manager=database_manager)
+        super().__init__(
+            username=username,
+            password=password,
+            database_manager=database_manager,
+        )
         self.platform_id = 1  # Identificador único para a plataforma Hotmart.
-        self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
-        
+        self.LOGIN_URL = "https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token"
 
     def _login(self):
         """

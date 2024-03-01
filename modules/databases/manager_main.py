@@ -80,6 +80,12 @@ class DatabaseManager:
             settings = {row[0]: row[1] for row in cursor.fetchall()}
         return settings
 
+    def update_setting(self, key, value):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE Settings SET value = ? WHERE key = ?", (value, key))
+            conn.commit()
+
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent
     db_manager = DatabaseManager(manager_path, manager_path / 'main.sqlite3')

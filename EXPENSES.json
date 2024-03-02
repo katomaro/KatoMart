@@ -1,0 +1,10 @@
+[
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
+        "expense_type": "EXEMPLOS: JURÍDICO, ACESSO, SERVIÇO EXTERNO, ETC",
+        "expent_amount": 1.00,
+        "expense_reason": "MOTIVO PARA O GASTO",
+        "expense_date": "2021-08-01",
+        "contribution_reference_id": "ID Do COMPROVANTE DO PAGAMENTO COM ***** EM PARTES DELE"
+    }
+]

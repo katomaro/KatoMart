@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS MediaDeliverySources (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE, -- Nome do player ou tipo de conteúdo (ex.: 'Arquivo Direto', 'Link Drive', 'Youtube', 'Vimeo')
     description TEXT, -- Descrição opcional do tipo de entrega de conteúdo
-    download TEXT DEFAULT '0'
+    download INTEGER DEFAULT 0 CHECK(download IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS DRMTypes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE, -- Nome do tipo de DRM (ex.: 'SOCIAL', 'REAL', 'Widevine')
     description TEXT, -- Descrição opcional do DRM, indicará se vai ser suportado ou não o download e o motivo
-    download TEXT DEFAULT '0'
+    download INTEGER DEFAULT 0 CHECK(download IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS Platforms (

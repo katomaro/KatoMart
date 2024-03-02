@@ -2,7 +2,6 @@ from pathlib import Path
 from flask import Flask, request, redirect, render_template, url_for, jsonify, g
 from modules.databases.manager_main import DatabaseManager
 
-# Configuração inicial do aplicativo Flask
 app = Flask(__name__, 
             template_folder='modules/front/templates',
             static_folder='modules/front/static')
@@ -57,32 +56,71 @@ def settings():
     if not consent:
         return redirect(url_for('agreement'))
     selected_settings = db_manager.get_all_settings()
+
     media_types = db_manager.get_all_media_delivery_sources()
-    media_types = [(x[0], x[1], not bool(x[2])) for x in media_types]
+
     drm_types = db_manager.get_all_drm_types()
-    drm_types = [(x[0], x[1], not bool(x[2])) for x in drm_types]
+
     selected_settings.update({'media_types': media_types, 'drm_types': drm_types})
     selected_settings['use_custom_ffmpeg'] = bool(selected_settings['use_custom_ffmpeg'])
-    return render_template('settings.html', settings=selected_settings)
+
+    drm_types = [(x[0], x[1], bool(x[2])) for x in drm_types]
+
+    selected_settings.update({"media_types": media_types, "drm_types": drm_types})
+
+    return render_template("settings.html", settings=selected_settings)
 
 @app.route('/api/settings', methods=['POST'])
 def update_settings():
     db_manager = get_db()
-    if request.form.get('download_path'):
-        db_manager.update_setting('download_path', request.form.get('download_path'))
-    if request.form.get('download_from_players'):
-        db_manager.update_setting('download_from_players', request.form.get('download_from_players'))
-    if request.form.get('download_drm_content'):
-        db_manager.update_setting('download_drm_content', request.form.get('download_drm_content'))
-    if request.form.get('download_drm_types'):
-        db_manager.update_setting('download_drm_types', request.form.get('download_drm_types'))
-    if request.form.get('default_user_agent'):
-        db_manager.update_setting('default_user_agent', request.form.get('default_user_agent'))
-    if request.form.get('use_custom_ffmpeg'):
-        db_manager.update_setting('use_custom_ffmpeg', request.form.get('use_custom_ffmpeg'))
-    if request.form.get('custom_ffmpeg_path'):
-        db_manager.update_setting('custom_ffmpeg_path', request.form.get('custom_ffmpeg_path'))
-    return redirect(url_for('settings'))
+
+    field_settings = [
+        "download_path",
+        "default_user_agent",
+    ]
+
+    # acredito que isso daqui venha depois...
+    field_boolean_settings = [
+        # "download_from_players",
+        # "download_drm_content",
+        # "download_drm_types"
+    ]
+
+    if request.form.get("use_custom_ffmpeg") == "on":
+        db_manager.update_setting("use_custom_ffmpeg", 1)
+        db_manager.update_setting(
+            "custom_ffmpeg_input",
+            request.form.get("custom_ffmpeg_input") or "SYSTEM",
+        )
+    else:
+        db_manager.update_setting("use_custom_ffmpeg", 0)
+
+    for field in field_settings:
+        value = request.form.get(field, None)
+        if value == "on":
+            value = True
+        if value is not None:
+            db_manager.update_setting(field, value)
+
+    for field in field_boolean_settings:
+        value = request.form.get(field, None) == "on"
+        db_manager.update_setting(field, value)
+
+    media_types = db_manager.get_all_media_delivery_sources()
+    for name, _, download in media_types:
+        value = request.form.get(name)
+        value = 1 if value == "on" else 0
+        if value != download:
+            db_manager.update_media_delivery_source_download(name, value)
+            
+    drm_types = db_manager.get_all_drm_types()
+    for name, _, download in drm_types:
+        value = request.form.get(name)
+        value = 1 if value == "on" else 0
+        if value != download:
+            db_manager.update_drm_type_download(name, value)
+
+    return redirect(url_for("settings"))
 
 @app.route('/accounts')
 def accounts():

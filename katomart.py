@@ -31,7 +31,9 @@ def close_db(error):
         
 @app.route('/agreement')
 def agreement():
-    return render_template('agreement.html')
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    return render_template('agreement.html', consent=consent)
 
 @app.route('/api/agreement', methods=['POST'])
 def update_agreement():

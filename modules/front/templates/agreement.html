@@ -82,7 +82,7 @@
       </div>
       <button class="btn btn-primary mt-4" id="agreementSubmit">
         <i class="fa-solid fa-check"></i>
-        Aceitar
+        <span>Aceitar</span>
       </button>
     </form>
   </div>
@@ -91,6 +91,15 @@
 <script>
   const agreementCheckbox = document.getElementById("agreementCheckbox")
   const agreementSubmit = document.getElementById("agreementSubmit")
+  const alreadyConsent = "{{ consent }}" === "1"
+
+  if (alreadyConsent) {
+    const agreementSubmitText = agreementSubmit.querySelector("span")
+    agreementSubmitText.innerText = "Termos de Uso já Aceito"
+    agreementSubmit.classList.add("btn-disabled")
+    agreementCheckbox.checked = true
+    agreementCheckbox.disabled = true
+  }
 
   const toggleSubmit = () => {
     agreementSubmit.disabled = !agreementCheckbox.checked

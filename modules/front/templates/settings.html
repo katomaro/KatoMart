@@ -179,8 +179,9 @@
         {% endfor %}
       </div>
 
-      <button class="btn btn-primary mt-0.5 flex mx-auto">
-        Salvar Configurações <i class="text-lg fas fa-save ml-2"></i>
+      <button class="btn btn-primary mt-0.5 flex mx-auto" id="submitBtn">
+        <span>Salvar Configurações</span>
+        <div><i class="fas fa-save"></i></div>
       </button>
     </form>
   </div>
@@ -224,6 +225,18 @@
       clearTimeout(timer)
       showToast(toastTrigger.getAttribute("data-toast"))
     })
+  })
+</script>
+
+<script>
+  const submitBtn = document.getElementById("submitBtn")
+  submitBtn.addEventListener("click", () => {
+    submitBtn.querySelector(
+      "div"
+    ).innerHTML = `<span class="loading loading-dots loading-xs"></span>`
+    submitBtn.querySelector("span").innerText = "Salvando..."
+    submitBtn.disabled = true
+    document.querySelector("form").submit()
   })
 </script>
 {% endblock %}

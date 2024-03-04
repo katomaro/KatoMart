@@ -56,19 +56,25 @@ class Account(ABC):
         return json.dumps(data, indent=4, ensure_ascii=False)
 
     @abstractmethod
-    def _login(self):
+    def get_platform_id(self) -> int:
+        """
+        Retorna o ID da plataforma de cursos.
+        """
+    
+    @abstractmethod
+    def login(self):
         """
         Método abstrato para realizar o login na plataforma.
         """
 
     @abstractmethod
-    def _get_account_products(self):
+    def get_account_products(self):
         """
         Método abstrato para obter os produtos associados à conta.
         """
 
     @abstractmethod
-    def _get_product_information(self, product_id):
+    def get_product_information(self, product_id):
         """
         Método abstrato para obter informações de um produto específico.
         """

@@ -17,23 +17,34 @@ class Hotmart(Account):
         :param database_manager: Gerenciador de banco de dados para esta conta.
         """
         super().__init__(username=username, password=password, database_manager=database_manager)
-        self.platform_id = 1  # Identificador único para a plataforma Hotmart.
+        self.platform_id = self.get_platform_id()
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         
 
-    def _login(self):
+    def get_platform_id(self):
+        """
+        Retorna o ID da plataforma de cursos.
+        """
+        platform_id = self._database_manager.execute_query(
+            'SELECT id FROM platforms WHERE name = ? LIMIT 1', 
+            ('Hotmart',), 
+            fetchone=True
+            )
+        return platform_id
+
+    def login(self):
         """
         Realiza o login na conta da Hotmart, autenticando o usuário e obtendo tokens de acesso.
         """
         raise NotImplementedError("Método não implementado.")
 
-    def _get_account_products(self):
+    def get_account_products(self):
         """
         Retorna os produtos associados à conta do usuário na Hotmart.
         """
         raise NotImplementedError("Método não implementado.")
 
-    def _get_product_information(self, product_id):
+    def get_product_information(self, product_id):
         """
         Retorna informações de um produto específico associado à conta do usuário.
         """

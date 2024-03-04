@@ -1,10 +1,42 @@
 [
     {
         "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
-        "expense_type": "EXEMPLOS: JURÍDICO, ACESSO, SERVIÇO EXTERNO, ETC",
-        "expent_amount": 1.00,
-        "expense_reason": "MOTIVO PARA O GASTO",
-        "expense_date": "2021-08-01",
-        "contribution_reference_id": "ID Do COMPROVANTE DO PAGAMENTO COM ***** EM PARTES DELE"
+        "expense_type": "JURÍDICO",
+        "expent_amount": 2850.00,
+        "expense_reason": "Geração de Atas Notariais, provas validáveis digitais, advogados, etc. Tudo contra uma pessoa em específico que além de cometer diversos crimes contra mim, também tentou me acusar de praticar pirataria. Inclui gastos para re-avaliação de TEA, também o motivo de eu não ter publicado o software ainda",
+        "expense_date": "XX/11/2023 - Em Andamento",
+        "contribution_reference_id": "Múltiplas Transações"
+    },
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
+        "expense_type": "ACESSO",
+        "expent_amount": 300.00,
+        "expense_reason": "FullCycle 3.0, <strong>não contabilizei o valor dele por completo(3500)</strong>, mas o mínimo por ele ter me dado algumas ideias para este projeto",
+        "expense_date": "09/10/2023",
+        "contribution_reference_id": "E182*************************84"
+    },
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
+        "expense_type": "JURÍDICO",
+        "expent_amount": 350.00,
+        "expense_reason": "Consultoria Jurídica contra DMCA recebido da AXUR em nome da Hotmart pela existência do Software, quando derrubaram o repositório pelo uso da marca por ausência de aviso da minha parte.",
+        "expense_date": "20/10/21",
+        "contribution_reference_id": "E182************************bdd"
+    },
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
+        "expense_type": "ACESSO",
+        "expent_amount": 90.00,
+        "expense_reason": "Hotmart: Técnicas de Ilustração Digital",
+        "expense_date": "27/11/2020",
+        "contribution_reference_id": "HP***160****990*"
+    },
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
+        "expense_type": "ACESSO",
+        "expent_amount": 195.00,
+        "expense_reason": "Hotmart: Como Desenhar Chibis, o início do programa!",
+        "expense_date": "20/06/2020",
+        "contribution_reference_id": "HP***159****264*"
     }
 ]

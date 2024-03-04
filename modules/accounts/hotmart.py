@@ -8,7 +8,7 @@ class Hotmart(Account):
     lidar com as especificidades desta plataforma.
     """
     
-    def __init__(self, username: str='', password: str='', database_manager=None):
+    def __init__(self, account_id: int = 0):
         """
         Inicializa uma instância de Hotmart.
 
@@ -16,7 +16,7 @@ class Hotmart(Account):
         :param password: Senha da conta.
         :param database_manager: Gerenciador de banco de dados para esta conta.
         """
-        super().__init__(username=username, password=password, database_manager=database_manager)
+        super().__init__(account_id=account_id)
         self.platform_id = self.get_platform_id()
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         

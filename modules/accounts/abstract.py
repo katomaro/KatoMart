@@ -19,7 +19,6 @@ class Account(ABC):
         self.account_id = account_id
         self.username = ''
         self.password = ''
-        self.platform_id = 0
         self.is_valid = False
         self.validated_at = 0
         self.has_authenticated = False
@@ -31,6 +30,7 @@ class Account(ABC):
         self.other_data = ''
         self._database_manager = DatabaseManager()
         self.session = self._restart_requests_session()
+        self.load_account_information()
 
     def _restart_requests_session(self) -> requests.Session:
         """
@@ -56,25 +56,17 @@ class Account(ABC):
         """
         return json.dumps(data, indent=4, ensure_ascii=False)
 
-    def get_account_information(self) -> dict:
+    def load_account_information(self) -> None:
         """
-        Retorna informações da conta em formato de dicionário.
+        Configura os atributos da conta com informações do banco de dados.
         """
-        return {
-            'account_id': self.account_id,
-            'username': self.username,
-            'password': self.password,
-            'platform_id': self.platform_id,
-            'is_valid': self.is_valid,
-            'validated_at': self.validated_at,
-            'has_authenticated': self.has_authenticated,
-            'authenticated_at': self.authenticated_at,
-            'auth_token': self.auth_token,
-            'auth_token_expires_at': self.auth_token_expires_at,
-            'refresh_token': self.refresh_token,
-            'refresh_token_expires_at': self.refresh_token_expires_at,
-            'other_data': self.other_data
-        }
+        data = self._database_manager.execute_query("""
+            SELECT username, password, added_at, is_valid, last_validated_at WHERE id = ?""",
+            (self.account_id,), fetchone=True)
+        self.username = data[0]
+        self.password = data[1]
+        self.is_valid = bool(data[3])
+        self.validated_at = data[4]
     
     @abstractmethod
     def get_platform_id(self) -> int:

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS Courses (
     course_url TEXT NOT NULL,
     downloaded_at INTEGER DEFAULT 0,
     last_verified_at INTEGER DEFAULT 0,
+    account_id INTEGER NOT NULL REFERENCES Accounts(id) ON DELETE CASCADE,
     platform_id INTEGER NOT NULL REFERENCES Platforms(id) ON DELETE CASCADE,
     PRIMARY KEY (id, platform_id)
 );

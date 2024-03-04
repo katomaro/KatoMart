@@ -3,6 +3,88 @@
 <!-- Content -->
 {% block content %}
 
-<h1>Fazendo...</h1>
+{% if courses %}
+<h1 class="text-3xl font-bold text-center mb-8">
+    <i class="fa-solid fa-cart-arrow-down"></i> Cursos na Conta Inicializada
+</h1>
+    {% for product in courses %}
+        <div class="border-b border-gray-200 py-4">
+            <!-- Cabeçalho do Produto com Nome Centralizado e Checkbox -->
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-center flex-grow">{{ product.subdomain }} ({{ product.status}})</h2>
+                <input type="checkbox" class="load-more mr-2" data-product-id="{{ product.id }}"> 
+                <label for="checkbox">Selecionar para download</label>
+            </div>
 
+            <!-- Conteúdo Colapsável com Detalhes do Produto -->
+            <div class="collapse hidden" id="collapse{{ product.id }}">
+                <div class="mt-4">
+                    <table class="table-auto w-full">
+                        <!-- Cabeçalhos da Tabela -->
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2">Campo</th>
+                                <th class="px-4 py-2">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border px-4 py-2">ID do produto</td>
+                                <td class="border px-4 py-2">{{ product.id }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">Subdomínio do produto (área de membros)</td>
+                                <td class="border px-4 py-2">{{ product.subdomain }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">Status da Compra/Assinatura</td>
+                                <td class="border px-4 py-2">{{ product.status }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">ID da área de usuário</td>
+                                <td class="border px-4 py-2">{{ product.user_area_id }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">Seus cargos dentro do produto</td>
+                                <td class="border px-4 py-2">{{ product.roles }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-4 py-2">Domínio ASSUMIDO do produto</td>
+                                <td class="border px-4 py-2">{{ product.domain }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Botão Carregar Mais Detalhes -->
+                    <button class="btn btn-primary mt-4" onclick="loadMoreDetails({{ product.id }})">Carregar Mais Detalhes</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="flex justify-center mt-4">
+        <button class="btn btn-primary mt-4" disabled>Iniciar Downloads</button>
+    </div>
+
+{% else %}
+    <h1 class="text-3xl font-bold text-center mb-8">
+        <i class="fa-solid fa-shield-cat"></i> Nenhum curso na conta inicializada (ou precisa atualizar o softwate)
+    </h1>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadMoreDetails(productId) {
+    // Implementação da função para carregar mais detalhes
+    console.log("Carregar mais detalhes para o produto: " + productId);
+    // AJAX pro katomart para carregar mais detalhes do produto
+}
+
+$(document).ready(function(){
+    $('.load-more').change(function(){
+        const productId = $(this).data('product-id');
+        $('#collapse'+productId).toggle(); // Simples toggle para exibir/esconder o colapso
+    });
+});
+</script>
 {% endblock %}

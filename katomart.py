@@ -35,9 +35,7 @@ def close_db(error):
     if db is not None:
         del db
 
-@app.teardown_appcontext
-def teardown_appcontext(exception=None):
-    g.pop('selected_platform_instance', None)
+selected_platform_instance = None
 
 # Rotas do aplicativo
         
@@ -221,6 +219,7 @@ def update_token():
 
 @app.route('/api/select_account', methods=['POST'])
 def select_account():
+    global selected_platform_instance
     account_id = int(request.json.get('account_id'))
     platform_id = int(request.json.get('platform_id'))
 
@@ -231,7 +230,7 @@ def select_account():
     if not platform_class:
         return jsonify({"error": "Invalid Platform ID."}), 400
 
-    g.selected_platform_instance = platform_class(account_id, DatabaseManager(db_folder_path=db_folder_path, db_path=database_path))
+    selected_platform_instance = platform_class(account_id, DatabaseManager(db_folder_path=db_folder_path, db_path=database_path))
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})
 
@@ -242,7 +241,12 @@ def courses():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return redirect(url_for('agreement'))
-    return render_template('courses.html')
+    
+    global selected_platform_instance
+    if selected_platform_instance is None:
+        return redirect(url_for('accounts'))
+    
+    return render_template('courses.html', courses=selected_platform_instance.get_account_products())
 
 @app.route('/log')
 def log():

@@ -18,7 +18,9 @@ class Hotmart(Account):
         """
         super().__init__(account_id=account_id, database_manager=database_manager)
         self.platform_id = self.get_platform_id()
+        # Estas URLs estão para mudar!
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
+        self.PRODUCTS_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/check_token'
 
         self.load_account_information()
         self.load_tokens()
@@ -69,7 +71,27 @@ class Hotmart(Account):
         """
         Retorna os produtos associados à conta do usuário na Hotmart.
         """
-        raise NotImplementedError("Método não implementado.")
+        data = {
+            'token': self.auth_token
+        }
+        response = self.session.get(self.PRODUCTS_URL, params=data)
+        if response.status_code != 200:
+            raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
+        response = response.json()['resources']
+        products = []
+        for resource in response:
+            if resource.get('type') == 'PRODUCT':
+                product_dict = {
+                    'id': int(resource.get('resource', {}).get('productId')),
+                    'subdomain': resource.get('resource', {}).get('subdomain'),
+                    'status': resource.get('resource', {}).get('status'),
+                    'user_area_id': resource.get('resource', {}).get('userAreaId'),
+                    'roles': resource.get('resource', {}).get('roles'),
+                    'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com"
+                }
+                products.append(product_dict)
+        return products
+
 
     def get_product_information(self, product_id):
         """

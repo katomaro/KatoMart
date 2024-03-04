@@ -30,27 +30,27 @@
     <script src="{{ url_for('static', filename='js/tailwind-3.4.1.js') }}"></script>
     <title>Katomart</title>
   </head>
-  <body>
-    <nav class="navbar py-4 bg-base-100 shadow-lg rounded-b-lg flex justify-around">
-      <a id="agreementbtn" href="{{ url_for('agreement') }}" class="btn btn-primary">
+  <body class="text-xs">
+    <nav class="navbar py-2 bg-base-100 shadow-lg rounded-b-lg flex justify-around">
+      <a id="agreementbtn" href="{{ url_for('agreement') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-circle-exclamation"></i> Termos de Uso
       </a>
-      <a id="homebtn" href="{{ url_for('home') }}" class="btn btn-primary">
+      <a id="homebtn" href="{{ url_for('home') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-house" aria-hidden="true"></i> Home/Katomart!
       </a>
-      <a id="settingsbtn" href="{{ url_for('settings') }}" class="btn btn-primary">
+      <a id="settingsbtn" href="{{ url_for('settings') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-sliders" aria-hidden="true"></i> Configurações
       </a>
-      <a id="accountsbtn" href="{{ url_for('accounts') }}" class="btn btn-primary">
+      <a id="accountsbtn" href="{{ url_for('accounts') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas
       </a>
-      <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary">
+      <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
       </a>
-      <a id="logbtn" href="{{ url_for('log') }}" class="btn btn-primary">
+      <a id="logbtn" href="{{ url_for('log') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs
       </a>
-      <a id="supportbtn" href="{{ url_for('support') }}" class="btn btn-primary">
+      <a id="supportbtn" href="{{ url_for('support') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-paper-plane"></i> Suporte
       </a>
     </nav>

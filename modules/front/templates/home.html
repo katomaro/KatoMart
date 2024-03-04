@@ -3,7 +3,7 @@
 <!-- Content -->
 {% block content %}
 <section class="mt-1">
-  <h1 class="text-2xl text-center my-2">Boas vindas ao Katomart!</h1>
+  <h1 class="text-xl text-center my-2">Boas vindas ao Katomart!</h1>
   <p>
     O Katomart agora está de cara nova (e passando por cirurgias plásticas) e você pode
     controlar e acompanhar seu progresso a partir do seu navegador web.
@@ -21,10 +21,10 @@
     Segue breve descrição de cada funcionalidade.
   </p>
 
-  <div class="grid grid-cols-3 gap-2 my-4 space-y-3">
-    <div class="card bg-base-200 shadow-xl" v-for="card in cards">
+  <div class="grid grid-cols-3 gap-2 my-2 space-y-2">
+    <div class="card bg-base-200 shadow-xl py-0" v-for="card in cards">
       <div class="card-body py-3 px-4">
-        <div class="card-title font-medium">
+        <div class="card-title font-medium text-xs flex justify-center">
           <i :class="card.icon" aria-hidden="true"></i>
           {% raw %}{{ card.title }}{% endraw %}
         </div>

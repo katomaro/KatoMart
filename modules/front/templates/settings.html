@@ -1,6 +1,9 @@
-{% extends 'layout.html' %} {% block content %}
-<section class="py-4">
-  <h1 class="text-3xl font-bold text-center mb-8">
+{% extends 'layout.html' %}
+
+<!-- Content -->
+{% block content %}
+<section class="py-2">
+  <h1 class="text-xl font-bold text-center mb-4">
     <i class="fas fa-cogs"></i> Configurações
   </h1>
 
@@ -13,14 +16,14 @@
         <!-- Download Path -->
         {% if key == 'download_path' %}
         <label class="label" for="{{ key }}">
-          <span class="label-text font-semibold mb-2 text-lg">
+          <span class="label-text mb-2">
             <div
               class="tooltip tooltip-info"
               data-tip='Por padrão ele salva na pasta do
             script dentro de uma pasta chamada "Cursos"'
             >
               <i class="fas fa-folder-open"></i>
-              Caminho completo para salvar os cursos:
+              <span class="font-semibold">Caminho completo para salvar os cursos:</span>
             </div>
           </span>
         </label>
@@ -29,20 +32,22 @@
           id="{{ key }}"
           name="{{ key }}"
           value="{{ value }}"
-          class="input input-bordered input-sm w-full"
+          class="input input-bordered input-xs w-full"
         />
-        <div class="divider divider-neutral"></div>
+        <div class="divider divider-neutral my-0.5"></div>
 
         <!-- User Agent -->
         {% elif key == 'default_user_agent' %}
         <label class="label" for="{{ key }}">
-          <span class="label-text font-semibold mb-2 text-lg">
+          <span class="label-text mb-2">
             <div
               class="tooltip tooltip-warning"
               data-tip="Não alterar se não souber o que estiver fazendo"
             >
               <i class="fas fa-user-secret"></i>
-              Navegador Simulado (<span class="text-accent italic">User-Agent</span>):
+              <span class="font-semibold">
+                Navegador Simulado (<span class="text-accent italic">User-Agent</span>):
+              </span>
             </div>
           </span>
         </label>
@@ -51,22 +56,22 @@
           id="{{ key }}"
           name="{{ key }}"
           value="{{ value }}"
-          class="input input-bordered input-sm w-full"
+          class="input input-bordered input-xs w-full"
         />
-        <div class="divider divider-neutral"></div>
+        <div class="divider divider-neutral my-0.5"></div>
 
         <!-- Use Custom FFMPEG -->
         {% elif key == 'use_custom_ffmpeg' %}
         <label class="cursor-pointer label">
-          <span class="label-text font-semibold mb-2 text-lg">
+          <span class="label-text mb-2">
             <i class="fas fa-video"></i>
-            Usar FFMPEG Não acessível pelo terminal?
+            <span class="font-semibold">Usar FFMPEG Não acessível pelo terminal?</span>
           </span>
           <input
             type="checkbox"
             id="{{ key }}"
             name="{{ key }}"
-            class="checkbox checkbox-primary"
+            class="checkbox checkbox-primary checkbox-sm"
           />
         </label>
 
@@ -79,7 +84,7 @@
             verdadeiro.
           </p>
           <label class="label" for="{{ key }}">
-            <span class="label-text mb-2 text-md">
+            <span class="label-text mb-2">
               Caminho COMPLETO para o ffmpe.exe (incluir ffmpeg.exe no final):
             </span>
           </label>
@@ -88,88 +93,105 @@
             id="{{ key }}"
             name="{{ key }}"
             value="{{ value }}"
-            class="input input-bordered input-sm w-full"
+            class="input input-bordered input-xs w-full"
           />
         </div>
+        <div class="divider divider-neutral my-0.5"></div>
 
         <!-- Media Types -->
         {% elif key == 'media_types' %}
-        <div class="divider divider-neutral"></div>
-
-        <p class="font-semibold mb-2 text-lg">
-          <i class="fa-solid fa-download"></i>
-          Tipo de conteúdo a ser baixado
-        </p>
-        <div class="grid grid-cols-3 gap-2">
-          {% for media_type in settings.get('media_types') %}
-          <label class="inline-flex items-center mb-1">
-            <input
-              type="checkbox"
-              id="{{ media_type[0] }}"
-              name="{{ media_type[0] }}"
-              class="checkbox checkbox-primary"
-              {%
-              if
-              media_type[2]
-              %}checked{%
-              endif
-              %}
-            />
-            <div
-              class="tooltip tooltip-info tooltip-right"
-              data-tip="{{ media_type[1] }}"
-            >
-              <span class="ml-2">
-                Baixar <span class="text-primary">{{ media_type[0] }}</span>?
-              </span>
+        <div class="collapse collapse-arrow">
+          <input type="checkbox" class="peer" />
+          <div class="collapse-title pl-0.5">
+            <i class="fa-solid fa-download"></i>
+            <span class="font-semibold text-base">Tipo de Conteúdo a ser baixado</span>
+          </div>
+          <div class="collapse-content">
+            <div class="grid grid-cols-3 gap-2">
+              {% for media_type in settings.get('media_types', []) %}
+              <label class="inline-flex items-center mb-1">
+                <input
+                  type="checkbox"
+                  id="{{ media_type[0] }}"
+                  name="{{ media_type[0] }}"
+                  class="checkbox checkbox-primary checkbox-sm"
+                  {%
+                  if
+                  media_type[2]
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span
+                  class="ml-2 toast-trigger hover:underline"
+                  data-toast="{{ media_type[1] }}"
+                >
+                  Baixar <span class="text-primary">{{ media_type[0] }}</span>?
+                </span>
+              </label>
+              {% endfor %}
             </div>
-          </label>
-          {% endfor %}
+          </div>
         </div>
-        <div class="divider divider-neutral"></div>
+
+        <div class="divider divider-neutral my-0.5"></div>
 
         {% elif key == 'drm_types' %}
-        <p class="font-semibold mb-2 text-lg">
-          <i class="fas fa-lock"></i> DRM a ser baixado
-        </p>
-        <div class="grid grid-cols-3 gap-2">
-          {% for drm_type in settings.get('drm_types', []) %}
-          <label class="inline-flex items-center mb-1">
-            <input
-              type="checkbox"
-              id="{{ drm_type[0] }}"
-              name="{{ drm_type[0] }}"
-              class="checkbox checkbox-primary"
-              {%
-              if
-              drm_type[2]
-              %}checked{%
-              endif
-              %}
-            />
-            <div
-              class="tooltip tooltip-right tooltip-accent"
-              data-tip="{{ drm_type[1] }}"
-            >
-              <span class="ml-2">
-                Baixar <span class="text-secondary">{{ drm_type[0] }}</span>?
-              </span>
+        <div class="collapse collapse-arrow">
+          <input type="checkbox" class="peer" />
+          <div class="collapse-title pl-0.5">
+            <i class="fas fa-lock"></i>
+            <span class="font-semibold text-base">
+              DRM a ser baixado Tipo de Conteúdo a ser baixado
+            </span>
+          </div>
+          <div class="collapse-content">
+            <div class="grid grid-cols-3 gap-2">
+              {% for drm_type in settings.get('drm_types', []) %}
+              <label class="inline-flex items-center mb-1">
+                <input
+                  type="checkbox"
+                  id="{{ drm_type[0] }}"
+                  name="{{ drm_type[0] }}"
+                  class="checkbox checkbox-primary checkbox-sm"
+                  {%
+                  if
+                  drm_type[2]
+                  %}checked{%
+                  endif
+                  %}
+                />
+                <span
+                  class="ml-2 gap-1 toast-trigger hover:underline"
+                  data-toast="{{ drm_type[1] }}"
+                >
+                  Baixar <span class="text-secondary">{{ drm_type[0] }}</span>?
+                </span>
+              </label>
+              {% endfor %}
             </div>
-          </label>
-          {% endfor %}
+          </div>
         </div>
-        <div class="divider divider-neutral"></div>
+
+        <div class="divider divider-neutral my-0.5"></div>
         {% endif %}
         <!--  -->
         {% endfor %}
       </div>
 
-      <button class="btn btn-primary mt-4 flex mx-auto">
-        Salvar Configurações <i class="text-lg fas fa-save ml-2"></i>
+      <button class="btn btn-primary mt-0.5 flex mx-auto" id="submitBtn">
+        <span>Salvar Configurações</span>
+        <div><i class="fas fa-save"></i></div>
       </button>
     </form>
   </div>
 </section>
+
+<div class="toast toast-top toast-center max-w-lg w-full hidden" id="toast">
+  <div class="alert alert-info break-words whitespace-pre-wrap">
+    <p></p>
+  </div>
+</div>
 
 <script>
   const customFfmpegInput = document.getElementById("customFfmpegInput")
@@ -183,5 +205,38 @@
 
   useCustomFfmpeg.addEventListener("change", toggleCustomFfmpeg)
   toggleCustomFfmpeg()
+</script>
+
+<script>
+  const toast = document.getElementById("toast")
+  const toastTriggers = document.querySelectorAll(".toast-trigger")
+  let timer = null
+
+  const showToast = (toastText) => {
+    toast.classList.remove("hidden")
+    toast.querySelector("p").innerText = toastText
+    timer = setTimeout(() => {
+      toast.classList.add("hidden")
+    }, 3500)
+  }
+
+  toastTriggers.forEach((toastTrigger) => {
+    toastTrigger.addEventListener("mouseenter", () => {
+      clearTimeout(timer)
+      showToast(toastTrigger.getAttribute("data-toast"))
+    })
+  })
+</script>
+
+<script>
+  const submitBtn = document.getElementById("submitBtn")
+  submitBtn.addEventListener("click", () => {
+    submitBtn.querySelector(
+      "div"
+    ).innerHTML = `<span class="loading loading-dots loading-xs"></span>`
+    submitBtn.querySelector("span").innerText = "Salvando..."
+    submitBtn.disabled = true
+    document.querySelector("form").submit()
+  })
 </script>
 {% endblock %}

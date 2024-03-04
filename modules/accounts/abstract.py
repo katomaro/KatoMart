@@ -30,7 +30,6 @@ class Account(ABC):
         self.other_data = ''
         self._database_manager = DatabaseManager()
         self.session = self._restart_requests_session()
-        self.load_account_information()
 
     def _restart_requests_session(self) -> requests.Session:
         """
@@ -67,6 +66,21 @@ class Account(ABC):
         self.password = data[1]
         self.is_valid = bool(data[3])
         self.validated_at = data[4]
+    
+    def load_tokens(self) -> None:
+        """
+        Carrega os tokens de autenticação da conta.
+        """
+        data = self._database_manager.execute_query("""
+            SELECT auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data
+            FROM Auths WHERE account_id = ? AND platform_id = ?""",
+            (self.account_id, self.get_platform_id()), fetchone=True)
+        if data:
+            self.auth_token = data[0]
+            self.auth_token_expires_at = data[1]
+            self.refresh_token = data[2]
+            self.refresh_token_expires_at = data[3]
+            self.other_data = data[4]
     
     @abstractmethod
     def get_platform_id(self) -> int:

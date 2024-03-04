@@ -231,8 +231,6 @@ def select_account():
     if not platform_class:
         return jsonify({"error": "Invalid Platform ID."}), 400
 
-    # Aqui, estamos armazenando a instância da plataforma de forma global
-    # Isso é apenas um exemplo; a gestão de estado global deve ser feita com cuidado
     g.selected_platform_instance = platform_class(account_id)
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})

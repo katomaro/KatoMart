@@ -15,9 +15,10 @@ class Account(ABC):
     de plataformas de cursos.
     """
 
-    def __init__(self, username: str = '', password: str = '', database_manager: DatabaseManager = None):
-        self.username = username
-        self.password = password
+    def __init__(self, account_id: int = 0):
+        self.account_id = account_id
+        self.username = ''
+        self.password = ''
         self.platform_id = 0
         self.is_valid = False
         self.validated_at = 0
@@ -28,7 +29,7 @@ class Account(ABC):
         self.refresh_token = ''
         self.refresh_token_expires_at = 0
         self.other_data = ''
-        self._database_manager = database_manager
+        self._database_manager = DatabaseManager()
         self.session = self._restart_requests_session()
 
     def _restart_requests_session(self) -> requests.Session:
@@ -55,6 +56,26 @@ class Account(ABC):
         """
         return json.dumps(data, indent=4, ensure_ascii=False)
 
+    def get_account_information(self) -> dict:
+        """
+        Retorna informações da conta em formato de dicionário.
+        """
+        return {
+            'account_id': self.account_id,
+            'username': self.username,
+            'password': self.password,
+            'platform_id': self.platform_id,
+            'is_valid': self.is_valid,
+            'validated_at': self.validated_at,
+            'has_authenticated': self.has_authenticated,
+            'authenticated_at': self.authenticated_at,
+            'auth_token': self.auth_token,
+            'auth_token_expires_at': self.auth_token_expires_at,
+            'refresh_token': self.refresh_token,
+            'refresh_token_expires_at': self.refresh_token_expires_at,
+            'other_data': self.other_data
+        }
+    
     @abstractmethod
     def get_platform_id(self) -> int:
         """

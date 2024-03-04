@@ -132,6 +132,12 @@ def accounts():
         return redirect(url_for('agreement'))
     return render_template('accounts.html')
 
+@app.route('/api/platforms', methods=['GET'])
+def get_platforms():
+    db_manager = get_db()
+    platforms = db_manager.fetch_platforms()
+    return jsonify(platforms)
+
 @app.route('/api/get_accounts')
 def get_accounts():
     db_manager = get_db()

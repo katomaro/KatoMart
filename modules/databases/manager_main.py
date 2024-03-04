@@ -147,6 +147,15 @@ class DatabaseManager:
             cursor = conn.cursor()
             cursor.execute("UPDATE Settings SET value = ? WHERE key = ?", (value, key))
             conn.commit()
+    
+    def fetch_platforms(self):
+        """
+        Retorna todas as plataformas do banco de dados.
+
+        :return: Lista com todas as plataformas.
+        """
+        query = "SELECT id, name FROM Platforms"
+        return self.execute_query(query)
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent

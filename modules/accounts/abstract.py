@@ -15,7 +15,7 @@ class Account(ABC):
     de plataformas de cursos.
     """
 
-    def __init__(self, account_id: int = 0):
+    def __init__(self, account_id: int = 0, database_manager: DatabaseManager = None):
         self.account_id = account_id
         self.username = ''
         self.password = ''
@@ -28,7 +28,7 @@ class Account(ABC):
         self.refresh_token = ''
         self.refresh_token_expires_at = 0
         self.other_data = ''
-        self._database_manager = DatabaseManager()
+        self._database_manager = database_manager
         self.session = self._restart_requests_session()
 
     def _restart_requests_session(self) -> requests.Session:

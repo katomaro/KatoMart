@@ -15,14 +15,14 @@ app = Flask(__name__,
             static_folder='modules/front/static')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
+execution_path = Path(__file__).parent
+db_folder_path = execution_path / 'modules' / 'databases'
+database_path = execution_path / 'main.sqlite3'
 def get_db():
     """
     Obtém uma instância do gerenciador de banco de dados, seguindo o padrão application factory.
     """
     if 'db' not in g:
-        execution_path = Path(__file__).parent
-        db_folder_path = execution_path / 'modules' / 'databases'
-        database_path = execution_path / 'main.sqlite3'
         g.db = DatabaseManager(db_folder_path=db_folder_path, db_path=database_path)
     return g.db
 
@@ -221,8 +221,8 @@ def update_token():
 
 @app.route('/api/select_account', methods=['POST'])
 def select_account():
-    account_id = request.json.get('account_id')
-    platform_id = request.json.get('platform_id')
+    account_id = int(request.json.get('account_id'))
+    platform_id = int(request.json.get('platform_id'))
 
     if not account_id or not platform_id:
         return jsonify({"error": "Account ID and Platform ID are required."}), 400
@@ -231,7 +231,7 @@ def select_account():
     if not platform_class:
         return jsonify({"error": "Invalid Platform ID."}), 400
 
-    g.selected_platform_instance = platform_class(account_id)
+    g.selected_platform_instance = platform_class(account_id, DatabaseManager(db_folder_path=db_folder_path, db_path=database_path))
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})
 

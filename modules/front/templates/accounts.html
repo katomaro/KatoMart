@@ -62,11 +62,16 @@ document.getElementById("username").addEventListener("blur", function() {
     fetchSessionToken();
 });
 
+function convertUnixTimestampToDate(timestamp) {
+    var date = new Date(timestamp * 1000);
+    return date.toLocaleDateString("pt-BR");
+}
+
 function fetchSessionToken() {
     const username = document.getElementById("username").value;
     const platformId = document.getElementById("platformSelect").value;
     if (username && platformId) {
-        fetch(`/api/get_token_info?username=${encodeURIComponent(username)}&platform_id=${platformId}`)
+        fetch(`/api/get_session_token?username=${encodeURIComponent(username)}&platform_id=${platformId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

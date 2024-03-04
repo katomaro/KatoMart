@@ -135,6 +135,9 @@ def accounts():
 @app.route('/api/platforms', methods=['GET'])
 def get_platforms():
     db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return jsonify([])
     platforms = db_manager.fetch_platforms()
     return jsonify(platforms)
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 from flask import Flask, request, redirect, render_template, url_for, jsonify, g
 from modules.databases.manager_main import DatabaseManager
 
@@ -149,6 +150,21 @@ def get_accounts():
         return jsonify([])
     all_accounts = []
     return jsonify(all_accounts)
+
+@app.route('/api/accounts', methods=['POST'])
+def add_or_update_account():
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return jsonify({'success': True})
+    platform_id = request.form['platform_id']
+    email = request.form['email']
+    password = request.form['password']
+    added_at = int(time.time())
+    is_valid = request.form.get('is_valid', False)
+    last_validated_At = int(time.time()) if is_valid else None
+    db_manager.add_or_update_account(platform_id, email, password, added_at, last_validated_At, is_valid)
+    return jsonify({'success': True})
 
 @app.route('/api/get_auths')
 def get_auths():

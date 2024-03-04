@@ -156,6 +156,24 @@ class DatabaseManager:
         """
         query = "SELECT id, name FROM Platforms"
         return self.execute_query(query)
+    
+    def add_or_update_account(self, platform_id, email, password, added_at, last_validated_at, is_valid):
+        with self.get_connection() as conn:
+            is_valid_int = 1 if is_valid else 0
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT id FROM Accounts WHERE username = ? AND platform_id = ?", (email, platform_id))
+            account = cursor.fetchone()
+
+            if account:
+                cursor.execute("UPDATE Accounts SET password = ?, added_at = ?, is_valid = ?, last_validated_at = ? WHERE id = ?",
+                            (password, added_at, is_valid_int, last_validated_at, account[0]))
+            else:
+                cursor.execute("INSERT INTO Accounts (username, password, added_at, is_valid, last_validated_at, platform_id) VALUES (?, ?, ?, ?, ?, ?)",
+                            (email, password, added_at, is_valid_int, last_validated_at, platform_id))
+
+        conn.commit()
+        conn.close()
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent

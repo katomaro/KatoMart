@@ -3,6 +3,13 @@ import time
 from flask import Flask, request, redirect, render_template, url_for, jsonify, g
 from modules.databases.manager_main import DatabaseManager
 
+from modules.accounts.hotmart import Hotmart
+
+platform_classes = {
+    1: Hotmart,
+}
+
+
 app = Flask(__name__, 
             template_folder='modules/front/templates',
             static_folder='modules/front/static')
@@ -27,6 +34,10 @@ def close_db(error):
     db = g.pop('db', None)
     if db is not None:
         del db
+
+@app.teardown_appcontext
+def teardown_appcontext(exception=None):
+    g.pop('selected_platform_instance', None)
 
 # Rotas do aplicativo
         
@@ -148,7 +159,13 @@ def get_accounts():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return jsonify([])
-    all_accounts = []
+
+    platform_id = request.args.get('platform_id', default=None, type=int)
+    if platform_id is None:
+        return jsonify([])  # Ou retorne um erro, dependendo da sua lógica de aplicação
+
+    # Substitua a chamada abaixo pela sua lógica de busca de contas associadas à plataforma
+    all_accounts = db_manager.get_accounts_by_platform(platform_id)
     return jsonify(all_accounts)
 
 @app.route('/api/accounts', methods=['POST'])
@@ -157,14 +174,32 @@ def add_or_update_account():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return jsonify({'success': False})
-    platform_id = request.form['platform_id']
-    email = request.form['email']
-    password = request.form['password']
+    
+    # Usar request.json para acessar os dados enviados em formato JSON
+    data = request.json
+    platform_id = data['platform_id']
+    username = data['username']
+    password = data['password']
     added_at = int(time.time())
-    is_valid = request.form.get('is_valid', False)
+    is_valid = data.get('is_valid', False)
     last_validated_At = int(time.time()) if is_valid else None
-    db_manager.add_or_update_account(platform_id, email, password, added_at, last_validated_At, is_valid)
+
+    db_manager.add_or_update_account(platform_id, username, password, added_at, last_validated_At, is_valid)
     return jsonify({'success': True})
+
+@app.route('/api/get_session_token', methods=['GET'])
+def get_session_token():
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return jsonify({'success': False})
+    platform_id = request.args.get('platform_id')
+    username = request.args.get('username')
+    token_info = db_manager.get_session_token_by_email(platform_id, username)
+    if token_info:
+        return jsonify({'success': True, 'token': token_info['auth_token'], 'expires_at': token_info['auth_token_expires_at']})
+    else:
+        return jsonify({'success': False})
 
 @app.route('/api/update_token', methods=['POST'])
 def update_token():
@@ -184,14 +219,24 @@ def update_token():
     
     return jsonify({'success': True})
 
-@app.route('/api/get_auths')
-def get_auths():
-    db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
-    if not consent:
-        return jsonify([])
-    auths = []
-    return jsonify(auths)
+@app.route('/api/select_account', methods=['POST'])
+def select_account():
+    account_id = request.json.get('account_id')
+    platform_id = request.json.get('platform_id')
+
+    if not account_id or not platform_id:
+        return jsonify({"error": "Account ID and Platform ID are required."}), 400
+
+    platform_class = platform_classes.get(platform_id)
+    if not platform_class:
+        return jsonify({"error": "Invalid Platform ID."}), 400
+
+    # Aqui, estamos armazenando a instância da plataforma de forma global
+    # Isso é apenas um exemplo; a gestão de estado global deve ser feita com cuidado
+    g.selected_platform_instance = platform_class(account_id)
+
+    return jsonify({"message": f"Platform instance for account {account_id} selected."})
+
 
 @app.route('/courses')
 def courses():

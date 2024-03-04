@@ -195,6 +195,50 @@ class DatabaseManager:
             """, (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data))
 
         conn.commit()
+    
+    def get_session_token_by_email(self, platform_id, email):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # Primeiro, encontre o account_id correspondente ao email e platform_id fornecidos
+            cursor.execute("""
+                SELECT a.id FROM Accounts a
+                WHERE a.username = ? AND a.platform_id = ?
+            """, (email, platform_id))
+            account_result = cursor.fetchone()
+
+            if account_result:
+                account_id = account_result[0]
+
+                cursor.execute("""
+                    SELECT auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data
+                    FROM Auths
+                    WHERE account_id = ? AND platform_id = ?
+                """, (account_id, platform_id))
+                token_info = cursor.fetchone()
+
+                if token_info:
+                    # Convertendo a tupla em um dicionário para facilitar pq o pai n ta tankando nkkkkkkkkkkk
+                    keys = ["auth_token", "auth_token_expires_at", "refresh_token", "refresh_token_expires_at", "other_data"]
+                    return dict(zip(keys, token_info))
+                else:
+                    return None
+            else:
+                return None
+    
+    def get_accounts_by_platform(self, platform_id):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # Assumindo que 'Accounts' tenha uma coluna 'platform_id' que relaciona com 'Platforms'
+            query = '''
+            SELECT id, username, platform_id FROM Accounts
+            WHERE platform_id = ?
+            '''
+            cursor.execute(query, (platform_id,))
+            accounts = [{"id": row[0], "username": row[1], "platform_id": row[2]} for row in cursor.fetchall()]
+
+            return accounts
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent

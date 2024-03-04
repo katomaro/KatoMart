@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2>Adicionar Conta</h2>
+        <form id="accountForm">
+            <div class="form-group">
+                <label for="platformSelect">Plataforma:</label>
+                <select id="platformSelect" class="form-control" onchange="platformChanged()">
+                    <option value="">Selecione uma plataforma</option>
+                    <!-- As opções serão preenchidas pelo JavaScript -->
+                </select>
+            </div>
+            <div id="accountDetails" style="display: none;">
+                <div class="form-group">
+                    <label for="username">Email:</label>
+                    <input type="email" id="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <div id="tokenDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="token">Token da Sessão:</label>
+                        <input type="text" id="token" class="form-control" readonly>
+                    </div>
+                    <div class="form-group" id="tokenInfo" style="display: none;">
+                        <p id="tokenExpiresAt"></p>
+                    </div>
+                    <button type="button" id="validateTokenBtn" class="btn btn-warning" onclick="validateToken()" style="display: none;">Validar Token</button>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Conta</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de contas como seletores radio -->
+    <div id="accountsList" style="display: none;">
+        <h3>Contas da Plataforma</h3>
+        <form id="accountsForm">
+            <!-- Os seletores radio serão inseridos aqui pelo JavaScript -->
+        </form>
+        <!-- Botão para inicializar a conta, inicialmente escondido -->
+    <button id="initializeAccountBtn" class="btn btn-primary" onclick="initializeAccount()" style="display: none;">Inicializar Conta</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    loadPlatforms();
+
+    document.getElementById("accountForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        saveAccount();
+    });
+});
+
+document.getElementById("username").addEventListener("blur", function() {
+    fetchSessionToken();
+});
+
+function fetchSessionToken() {
+    const username = document.getElementById("username").value;
+    const platformId = document.getElementById("platformSelect").value;
+    if (username && platformId) {
+        fetch(`/api/get_token_info?username=${encodeURIComponent(username)}&platform_id=${platformId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const authTokenExpiresAt = convertUnixTimestampToDate(data.auth_token_expires_at);
+                    document.getElementById("token").value = `Token: ${data.auth_token}, Expira: ${authTokenExpiresAt}`;
+
+                    const now = Math.floor(Date.now() / 1000);
+                    if (data.auth_token_expires_at < now) {
+                        document.getElementById("token").value = 'TOKEN EXPIRADO, FAÇA LOGIN';
+                        document.getElementById("validateTokenBtn").disabled = true;
+                    } else {
+                        document.getElementById("validateTokenBtn").style.display = 'block';
+                        document.getElementById("validateTokenBtn").disabled = false;
+                    }
+                } else {
+                    document.getElementById("token").value = '';
+                    document.getElementById("validateTokenBtn").style.display = 'none';
+                }
+            });
+    } else {
+        document.getElementById("token").value = '';
+        document.getElementById("validateTokenBtn").style.display = 'none';
+    }
+}
+
+function loadPlatforms() {
+    // Substitua a URL pela sua rota Flask que retorna as plataformas
+    fetch('/api/platforms')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Adicione esta linha para inspecionar os dados
+            const select = document.getElementById("platformSelect");
+            // Assegurando que as opções sejam limpas antes de adicionar novas
+            select.options.length = 0;
+            // Adicionando uma opção padrão
+            select.add(new Option("Selecione uma plataforma", ""));
+            // Adicionando as plataformas como opções
+            data.forEach(platformTuple => {
+                let option = new Option(platformTuple[1], platformTuple[0]); // Ajustando para a estrutura de tuplas
+                select.add(option);
+            });
+        })
+        .catch(error => console.error('Erro ao carregar plataformas:', error));
+}
+
+function platformChanged() {
+    const accountDetails = document.getElementById("accountDetails");
+    const select = document.getElementById("platformSelect");
+    if (select.value) {
+        accountDetails.style.display = 'block';
+    } else {
+        accountDetails.style.display = 'none';
+    }
+    // Limpar o formulário
+    document.getElementById("username").value = '';
+    document.getElementById("password").value = '';
+    document.getElementById("token").value = '';
+    fetchAccounts();
+}
+
+function saveAccount() {
+    const platformId = document.getElementById("platformSelect").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const token = document.getElementById("token").value;
+    
+    // Substitua a URL pela sua rota Flask para salvar/atualizar a conta
+    fetch('/api/accounts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ platform_id: platformId, username: username, password: password, token: token })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Conta salva com sucesso!");
+            // Opcional: Limpar formulário ou recarregar a página
+        } else {
+            alert("Falha ao salvar a conta.");
+        }
+    });
+}
+
+function fetchAccounts() {
+    const platformId = document.getElementById("platformSelect").value;
+    if (!platformId) {
+        document.getElementById("accountsList").style.display = 'none';
+        document.getElementById("initializeAccountBtn").style.display = 'none'; // Esconder o botão
+        return;
+    }
+
+    fetch(`/api/get_accounts?platform_id=${platformId}`)
+        .then(response => response.json())
+        .then(accounts => {
+            const accountsForm = document.getElementById("accountsForm");
+            accountsForm.innerHTML = '';  // Limpar a lista atual de contas
+
+            if (accounts.length > 0) {
+                accounts.forEach((account, index) => {
+                    const radioHtml = `<input type="radio" id="account${index}" name="account" value="${account.id}" onchange="accountSelected()">
+                                       <label for="account${index}">${account.username}</label><br>`;
+                    accountsForm.innerHTML += radioHtml;
+                });
+                document.getElementById("accountsList").style.display = 'block';
+                document.getElementById("initializeAccountBtn").style.display = 'inline-block'; // Mostrar o botão apenas se houver contas
+            } else {
+                document.getElementById("accountsList").style.display = 'none';
+                document.getElementById("initializeAccountBtn").style.display = 'none'; // Esconder o botão se não houver contas
+            }
+        });
+}
+
+function accountSelected() {
+    document.getElementById("initializeAccountBtn").disabled = false;
+}
+
+function initializeAccount() {
+    const selectedAccountId = document.querySelector('input[name="account"]:checked').value;
+    const platformId = document.getElementById("platformSelect").value;
+
+    fetch('/api/select_account', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ account_id: selectedAccountId, platform_id: platformId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.href = '/courses'; // Redireciona para /courses após inicializar a conta
+    });
+}
+</script>
+{% endblock %}

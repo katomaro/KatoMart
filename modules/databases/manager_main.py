@@ -173,7 +173,28 @@ class DatabaseManager:
                             (email, password, added_at, is_valid_int, last_validated_at, platform_id))
 
         conn.commit()
-        conn.close()
+    
+    def update_auth_token(self, account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+        cursor.execute("SELECT id FROM Auths WHERE account_id = ? AND platform_id = ?", (account_id, platform_id))
+        auth = cursor.fetchone()
+        if auth:
+            # Atualizar o token existente
+            cursor.execute("""
+                UPDATE Auths
+                SET auth_token = ?, auth_token_expires_at = ?, refresh_token = ?, refresh_token_expires_at = ?, other_data = ?
+                WHERE id = ?
+            """, (auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data, auth[0]))
+        else:
+            # Inserir um novo token
+            cursor.execute("""
+                INSERT INTO Auths (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data))
+
+        conn.commit()
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent

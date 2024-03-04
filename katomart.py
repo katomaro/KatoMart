@@ -156,7 +156,7 @@ def add_or_update_account():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
-        return jsonify({'success': True})
+        return jsonify({'success': False})
     platform_id = request.form['platform_id']
     email = request.form['email']
     password = request.form['password']
@@ -164,6 +164,24 @@ def add_or_update_account():
     is_valid = request.form.get('is_valid', False)
     last_validated_At = int(time.time()) if is_valid else None
     db_manager.add_or_update_account(platform_id, email, password, added_at, last_validated_At, is_valid)
+    return jsonify({'success': True})
+
+@app.route('/api/update_token', methods=['POST'])
+def update_token():
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return jsonify({'success': False})
+    account_id = request.form['account_id']
+    platform_id = request.form['platform_id']
+    auth_token = request.form['auth_token']
+    auth_token_expires_at = request.form['auth_token_expires_at']
+    refresh_token = request.form['refresh_token']
+    refresh_token_expires_at = request.form['refresh_token_expires_at']
+    other_data = request.form.get('other_data', '')  # Dados adicionais são relativos
+
+    db_manager.update_auth_token(account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
+    
     return jsonify({'success': True})
 
 @app.route('/api/get_auths')

@@ -61,7 +61,7 @@ class Account(ABC):
         Configura os atributos da conta com informações do banco de dados.
         """
         data = self._database_manager.execute_query("""
-            SELECT username, password, added_at, is_valid, last_validated_at WHERE id = ?""",
+            SELECT username, password, added_at, is_valid, last_validated_at FROM Accounts WHERE id = ?""",
             (self.account_id,), fetchone=True)
         self.username = data[0]
         self.password = data[1]

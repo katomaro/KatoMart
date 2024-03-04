@@ -1,20 +1,47 @@
 [
     {
-        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
-        "contributor_name": "EXAMPLO DE DISPLAY DE NOME DE QUEM DOOU, PERGUNTAR PARA A PESSOA COMO EXIBIR",
-        "type_of_contribution_received": "Donation",
-        "contribution_value": "1.00 , se o tipo for donation, converter para float, se for access, manter string",
-        "contribution_date": "2021-08-01",
-        "contribution_message": "EXAMPLO DE MENSAGEM, PODE SER NULL",
-        "contribution_reference_id": "ID DA TRANSAÇÃO COM ***** EM PARTES DELA"
+        "contributor_name": "SPONSOR PRIVADO",
+        "type_of_contribution_received": "donation",
+        "contribution_resource": "Github Sponsors",
+        "contribution_value": "47.00",
+        "contribution_date": "03/03/2024",
+        "contribution_message": "",
+        "contribution_reference_id": ""
     },
     {
-        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\"></strong>@Katomaro</a>",
-        "contributor_name": "EXAMPLO DE DISPLAY DE NOME DE QUEM DOOU, PERGUNTAR PARA A PESSOA COMO EXIBIR",
-        "type_of_contribution_received": "ACCESS",
-        "contribution_value": "NOME DA PLATAFORMA",
-        "contribution_date": "2021-08-01",
-        "contribution_message": "EXAMPLO DE MENSAGEM, PODE SER NULL",
-        "contribution_reference_id": "ID DO CONTRATO (gerado pelo desenvolvedor) ASSINADO COM O DESENVOLVEDOR PELO E-GOV COM ***** EM PARTES DELE"
+        "contributor_name": "<a href=\"https://github.com/Jagerbars\" target=\"_blank\">Jagerbars</a>",
+        "type_of_contribution_received": "donation",
+        "contribution_resource": "Github Sponsors",
+        "contribution_value": "47.00",
+        "contribution_date": "02/03/2024",
+        "contribution_message": "",
+        "contribution_reference_id": ""
+    },
+    {
+        "contributor_name": "Pablo Ruan",
+        "type_of_contribution_received": "donation",
+        "contribution_resource": "PIX (Nubank)",
+        "contribution_value": "50.00",
+        "contribution_date": "29/02/2024",
+        "contribution_message": "",
+        "contribution_reference_id": "E085617**********************Y1X"
+    },
+    {
+        "contributor_name": "Pablo Ruan",
+        "type_of_contribution_received": "donation",
+        "contribution_resource": "PIX (Nubank)",
+        "contribution_value": "100.00",
+        "contribution_date": "29/02/2024",
+        "contribution_message": "Contribuição ao mestre, recomendação de anime \"sosou no frieren\"",
+        "contribution_reference_id": "E085617**********************KFS"
+    },
+    {
+        "contributor_name": "Pah",
+        "type_of_contribution_received": "donation",
+        "contribution_resource": "PIX (Nubank)",
+        "contribution_value": "250.00",
+        "contribution_date": "19/01/2024",
+        "contribution_message": "(Indecisa)",
+        "contribution_reference_id": "E0000000020240119************140"
     }
 ]

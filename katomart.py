@@ -260,6 +260,22 @@ def courses():
     
     return render_template('courses.html', courses=selected_platform_instance.get_account_products())
 
+@app.route('/api/load_course_data', methods=['POST'])
+def load_course_data():
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return redirect(url_for('agreement'))
+    
+    data = request.get_json()
+    course_id = data.get('club')
+    
+    global selected_platform_instance
+    if selected_platform_instance is None:
+        return redirect(url_for('accounts'))
+    
+    return jsonify(selected_platform_instance.get_product_information(course_id))
+
 @app.route('/log')
 def log():
     db_manager = get_db()

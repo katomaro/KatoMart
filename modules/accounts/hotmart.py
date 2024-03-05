@@ -21,6 +21,7 @@ class Hotmart(Account):
         # Estas URLs estão para mudar!
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         self.PRODUCTS_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/check_token'
+        self.MEMBER_AREA_URL = 'https://api-club.cb.hotmart.com/rest/v3/navigation'
 
         self.load_account_information()
         self.load_tokens()
@@ -93,8 +94,16 @@ class Hotmart(Account):
         return products
 
 
-    def get_product_information(self, product_id):
+    def get_product_information(self, club_name: str):
         """
         Retorna informações de um produto específico associado à conta do usuário.
+        :club_name: nome da área de membros da htm.
+
+        :return: Dicionário com informações do produto.
         """
-        raise NotImplementedError("Método não implementado.")
+        self.session.headers['authorization'] = f'Bearer {self.auth_token}'
+        self.session.headers['club'] = club_name
+        response = self.session.get(self.MEMBER_AREA_URL)
+        if response.status_code != 200:
+            raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
+        return response.json()

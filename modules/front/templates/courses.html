@@ -55,7 +55,7 @@
                         </tbody>
                     </table>
                     <!-- Botão Carregar Mais Detalhes -->
-                    <button class="btn btn-primary mt-4" onclick="loadMoreDetails({{ product.id }})">Carregar Mais Detalhes</button>
+                    <button class="btn btn-primary mt-4 items-center" onclick="loadMoreDetails(`{{ product.subdomain }}`, `{{ product.id}}` )">Selecionar conteúdo para baixar ao invés de baixar tudo.</button>
                 </div>
             </div>
         </div>
@@ -74,10 +74,55 @@
 
 {% block scripts %}
 <script>
-function loadMoreDetails(productId) {
-    // Implementação da função para carregar mais detalhes
-    console.log("Carregar mais detalhes para o produto: " + productId);
-    // AJAX pro katomart para carregar mais detalhes do produto
+function loadMoreDetails(clubdomain, productId) {
+    $.ajax({
+        url: '/api/load_course_data',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ club: clubdomain }),
+        success: function(response) {
+            // var detailsTable = $('#collapse' + productId + ' table tbody');
+            response.modules.forEach(function(module) {
+                var detailSectionId = `detailSection${productId}-${module.id}`;
+                var detailButtonId = `detailButton${productId}-${module.id}`;
+                var detailSection = `
+                <div class="flex justify-between items-center">
+                <input type="text" class="module-details text-lg font-semibold text-center flex-grow" value="${module.name}${module.locked ? "Bloqueado" : ""} (${module.locked ? "Conteúdo Extra" : "Conteúdo Principal"})"/>
+                <input type="checkbox" class="load-more mr-2" data-module-id="${module.id}" data-module-code="${module.code}"> 
+                <label for="checkbox">Selecionar TUDO para download</label>
+                </div>
+                <div class="collapse" id="collapse${productId}-${module.id}">
+                <div class="mt-4">
+                    <table class="table-auto w-full">
+                        <!-- Cabeçalhos da Tabela -->
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2">Nome Original</th>
+                                <th class="px-4 py-2">Nome A Ser Utilizado</th>
+                                <th class="px-4 py-2">Aula Bloqueada</th>
+                                <th class="px-4 py-2">Baixar Aula?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${module.pages.map(page => `
+                            <tr>
+                                <td class="border px-4 py-2">${page.name}</td>
+                                <td class="border px-4 py-2"><input type="text" id="lesson-${page.hash}" value="${page.name}"/></td>
+                                <td class="border px-4 py-2">${page.locked ? "Sim" : "Não"}</td>
+                                <td class="border px-4 py-2"><input type="checkbox" data-lesson-id="lesson-${page.hash}" checked"</td>
+                            </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                $('#collapse' + productId).append(detailSection);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("An error occurred: " + status + ", " + error);
+        }
+    });
 }
 
 $(document).ready(function(){
@@ -85,6 +130,9 @@ $(document).ready(function(){
         const productId = $(this).data('product-id');
         $('#collapse'+productId).toggle(); // Simples toggle para exibir/esconder o colapso
     });
+    $('.load-more').click(function() {
+  $(this).next('.module-details').toggle(); // Supondo que '.module-details' seja a classe dos detalhes que você quer mostrar/ocultar
+});
 });
 </script>
 {% endblock %}

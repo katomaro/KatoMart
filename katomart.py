@@ -234,6 +234,18 @@ def select_account():
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})
 
+@app.route('/api/delete_account', methods=['POST'])
+def delete_account():
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return jsonify({'success': False})
+    data = request.get_json()  # Obter os dados enviados como JSON
+    account_id = data.get('account_id')
+    
+    if account_id:
+        db_manager.delete_account(account_id)
+
 
 @app.route('/courses')
 def courses():

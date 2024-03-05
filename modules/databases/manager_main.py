@@ -239,6 +239,14 @@ class DatabaseManager:
             accounts = [{"id": row[0], "username": row[1], "platform_id": row[2]} for row in cursor.fetchall()]
 
             return accounts
+    
+    def delete_account(self, account_id):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute("DELETE FROM Accounts WHERE id = ?", (account_id,))
+            conn.commit()
+
 
 if __name__ == "__main__":
     manager_path = Path(__file__).resolve().parent

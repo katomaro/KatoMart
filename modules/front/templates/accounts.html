@@ -169,12 +169,15 @@ function initializeAccount() {
 }
 
 function deleteAccount(accountId) {
-    // Chama o endpoint para deletar a conta
     $.ajax({
-        url: '/api/accounts/delete/' + accountId,
+        url: '/api/delete_account',
         type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+        account_id: accountId
+        }),
         success: function(response) {
-            // Recarrega a lista de contas ou remove a linha da tabela
+            $('#platformSelect').trigger('change');
         }
     });
 }

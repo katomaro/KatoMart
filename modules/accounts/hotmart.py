@@ -85,8 +85,8 @@ class Hotmart(Account):
                     'id': int(resource.get('resource', {}).get('productId')),
                     'subdomain': resource.get('resource', {}).get('subdomain'),
                     'status': resource.get('resource', {}).get('status'),
-                    'user_area_id': resource.get('resource', {}).get('userAreaId'),
-                    'roles': resource.get('resource', {}).get('roles'),
+                    'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
+                    'roles': resource.get('roles'),
                     'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com"
                 }
                 products.append(product_dict)

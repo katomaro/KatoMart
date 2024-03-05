@@ -75,9 +75,9 @@ CREATE TABLE IF NOT EXISTS Auths (
     account_id INTEGER NOT NULL REFERENCES Accounts(id) ON DELETE CASCADE,
     platform_id INTEGER NOT NULL REFERENCES Platforms(id) ON DELETE CASCADE,
     auth_token TEXT NOT NULL,
-    auth_token_expires_at INTEGER NOT NULL, -- EPOCH de expiração do token
-    refresh_token TEXT NOT NULL,
-    refresh_token_expires_at INTEGER NOT NULL, -- EPOCH de expiração do token de refresh
+    auth_token_expires_at INTEGER, -- EPOCH de expiração do token
+    refresh_token TEXT,
+    refresh_token_expires_at INTEGER, -- EPOCH de expiração do token de refresh
     other_data TEXT, -- Dados adicionais da sessão em formato JSON em string
     UNIQUE(platform_id, account_id)
 );

@@ -232,11 +232,31 @@ class DatabaseManager:
 
             # Assumindo que 'Accounts' tenha uma coluna 'platform_id' que relaciona com 'Platforms'
             query = '''
-            SELECT id, username, platform_id FROM Accounts
+            SELECT id, username, platform_id, password, is_valid FROM Accounts
             WHERE platform_id = ?
             '''
             cursor.execute(query, (platform_id,))
-            accounts = [{"id": row[0], "username": row[1], "platform_id": row[2]} for row in cursor.fetchall()]
+            accounts = [{"id": row[0], 
+                         "username": row[1], 
+                         "platform_id": row[2], 
+                         "password": row[3], 
+                         "is_valid": row[4], } for row in cursor.fetchall()]
+            
+            for account in accounts:
+                cursor.execute("SELECT auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data FROM Auths WHERE account_id = ?", (account['id'],))
+                auth = cursor.fetchone()
+                if auth:
+                    account['auth_token'] = auth[0]
+                    account['auth_token_expires_at'] = auth[1]
+                    account['refresh_token'] = auth[2]
+                    account['refresh_token_expires_at'] = auth[3]
+                    account['other_data'] = auth[4]
+                else:
+                    account['auth_token'] = None
+                    account['auth_token_expires_at'] = None
+                    account['refresh_token'] = None
+                    account['refresh_token_expires_at'] = None
+                    account['other_data'] = None
 
             return accounts
     

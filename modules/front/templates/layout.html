@@ -44,9 +44,17 @@
       <a id="accountsbtn" href="{{ url_for('accounts') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas
       </a>
-      <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
-      </a>
+      
+      {% if disable_download %}
+        <a id="coursesbtn" href="#" class="btn btn-primary btn-sm pointer-events-none cursor-not-allowed opacity-50" aria-disabled="true">
+          <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
+        </a>
+      {% else %}
+          <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
+          </a>
+      {% endif %}
+      
       <a id="logbtn" href="{{ url_for('log') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs
       </a>
@@ -83,6 +91,15 @@
     </footer>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const coursesBtn = document.getElementById('coursesbtn');
+    if (coursesBtn.classList.contains('disabled')) {
+      coursesBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        });
+      }
+    });
+
       let currentLocation = window.location.pathname.split("/").pop()
       if (currentLocation == null || currentLocation == "") {
         currentLocation = "home"

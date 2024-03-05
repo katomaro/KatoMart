@@ -43,7 +43,7 @@ selected_platform_instance = None
 def agreement():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
-    return render_template('agreement.html', consent=consent)
+    return render_template('agreement.html', consent=consent, disable_download_btn=bool(selected_platform_instance))
 
 @app.route('/api/agreement', methods=['POST'])
 def update_agreement():
@@ -59,7 +59,7 @@ def home():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return redirect(url_for('agreement'))
-    return render_template('home.html')
+    return render_template('home.html', disable_download_btn=bool(selected_platform_instance))
 
 @app.route('/settings')
 def settings():
@@ -80,7 +80,7 @@ def settings():
 
     selected_settings.update({"media_types": media_types, "drm_types": drm_types})
 
-    return render_template("settings.html", settings=selected_settings)
+    return render_template("settings.html", settings=selected_settings, disable_download_btn=bool(selected_platform_instance))
 
 @app.route('/api/settings', methods=['POST'])
 def update_settings():
@@ -140,7 +140,7 @@ def accounts():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return redirect(url_for('agreement'))
-    return render_template('accounts.html')
+    return render_template('accounts.html', disable_download_btn=bool(selected_platform_instance))
 
 @app.route('/api/platforms', methods=['GET'])
 def get_platforms():
@@ -254,7 +254,7 @@ def log():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return redirect(url_for('agreement'))
-    return render_template('log.html')
+    return render_template('log.html', disable_download_btn=bool(selected_platform_instance))
 
 @app.route('/support')
 def support():
@@ -262,7 +262,7 @@ def support():
     consent = int(db_manager.get_setting('user_consent'))
     if not consent:
         return redirect(url_for('agreement'))
-    return render_template('support.html')
+    return render_template('support.html', disable_download_btn=bool(selected_platform_instance))
 
 # Ponto de entrada principal para execução do servidor
 if __name__ == '__main__':

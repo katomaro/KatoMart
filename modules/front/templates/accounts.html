@@ -41,6 +41,7 @@
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Usuário</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Senha</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Token</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Expiração do Token</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Revalidar Token</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Deletar</th>
         </tr>
@@ -76,10 +77,11 @@ $(document).ready(function() {
                     $('#accountsTableBody').append(
                         `<tr>
                             <td class="px-6 py-4 whitespace-nowrap"><input type="radio" name="account" value="${account.id}"></td>
-                            <td class="px-6 py-4 whitespace-nowrap">${account.is_valid}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${account.is_valid ? "Sim" : "Não"}</td>
                             <td class="px-6 py-4 whitespace-nowrap">${account.username}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${account.password || 'N/A'}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${account.token || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap ">${account.password || 'N/A'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap limited-width"><input type="text" id=\"tokenDisplay\" class="limited-input" value=\"${account.auth_token || 'N/A'}\"/></td>
+                            <td class="px-6 py-4 whitespace-nowrap ">${convertUnixTimestampToDate(account.auth_token_expires_at)}</td>
                             <td class="px-6 py-4 whitespace-nowrap"><button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="validateToken('${platform}, ${account.token}')">Revalidar</button></td>
                             <td class="px-6 py-4 whitespace-nowrap"><button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="deleteAccount('${account.id}')">Delete</button></td>
                         </tr>`

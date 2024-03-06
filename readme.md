@@ -13,11 +13,46 @@ AOS USUÁRIOS: Fica o aviso, **fazer o uso deste programa pode violar o seu CONT
 
 Em resumo... **Este repositório não é oficial de nenhuma marca** e apenas o projeto de um estudante que quis baixar um curso que tem a licença, de consumo, pediu autorização para o autor do curso para fazer a ferramenta inicial e publicar, um monte de gente achou útil e assim seguiu fazendo para demais plataformas. E novamente, se você tem o direito de consumo, você pode *enfiar onde quiser e quantas vezes você quiser* que nenhuma plataforma pode fazer nada contra você, eles podem optar em não te prestar mais serviços posteriormente, a menos que você compartilhe o conteúdo (que como citado configuraria crime), nada vai acontecer com você.
 
-## Motivo?
+# ## Motivo?
 
 Atualmente existe uma moda de publicarem cursos no formato EAD, e está tudo bem. Porém, estas mesmas plataformas tentam bloquear o ato de download do conteúdo. Oras, se eu tenho o conteúdo vitalício e permanente, qual o dano que eu estou causando ao proprietário?  
 Além disso, se eu tenho o direito de consumo, eu não posso ser obrigado a consumir tal material por um meio específico, se o mesmo é acessível a partir de um navegador. **Os aplicativos aqui encontrados apenas replicam a lógica de acesso aos materiais e salvam para o disco local sem fazer o uso de exploits nem nada do tipo**. Pense bem, é inviável acessar mídias em 4k/8k a partir de dados móveis, e aplicativos móveis **coletam dados adicionais sobre você, que eles podem vender ou usar em campanhas de marketing para te fazer gastar**, é um descaso com a LGPD.  
 E eu como desenvolvedor te garanto, é extremamente fácil criar uma API REST e um tema da THEME FOREST e criar uma plataforma de cursos, custa menos de 300 reais fazer isso. Muitas sequer tem sede.
+
+## Como instalar e executar
+### STATUS DO DESENVOLVIMENTO: FINALIZANDO A BASE (DOWNLOADERS)
+Este guia não cobre usuários Linux, se você usa linux, você deve ter uma noção do que está fazendo.  
+Para que o programa funcione, será necessário instalar o interpretador do Python, e o FFMPEG, porém como os downloaders ainda não estão prontos, a instalação do FFMPEG será requisitada posteriormente. Vamos para a instalação do Python (tutorial em vídeo de tudo quando o projeto for finalizado, mas lembre-se do grupo de suporte lá em baixo).  
+
+Passo 1: Download do Python
+
+1. Acesse o site oficial do Python em [python.org](https://www.python.org/).
+2. Navegue até a seção **Downloads** e selecione **Windows**.
+3. Clique em **Download Python** seguido pela versão que você deseja instalar, que seja superior à 3.9. [Versão recomendada 3.12.2 64-bits](https://www.python.org/ftp/python/3.12.2/python-3.12.2-amd64.exe).  
+
+Passo 2: Instalação do Python
+
+1. Localize o arquivo de instalação que você baixou e dê um duplo clique nele.
+2. Marque a opção **"Add Python x.x to PATH"** na parte inferior da janela de instalação para adicionar Python ao PATH do sistema. Se você não fizer isso, você não conseguirá executar o programa, e a solução mais fácil é você **reinstalar** o Python.
+3. Clique em **Install Now** para começar a instalação.
+4. Após a conclusão da instalação, clique em **Close** para finalizar o assistente de instalação.  
+
+Para verificar se o Python foi instalado corretamente:
+
+1. Abra o Prompt de Comando (cmd).
+2. Digite `python --version` e pressione **Enter**. Se o Python estiver instalado corretamente, você verá a versão do Python exibida no terminal.  
+
+Agora que o Python está instalado, você pode baixar e executar projetos Python. Aqui está como fazer isso:
+
+1. Baixe o arquivo zip do repositório do projeto clicando no botão verde lá em cima e em [baixar zip, aqui está um atalho](https://github.com/katomaro/katomart/archive/refs/heads/master.zip).
+2. Extraia o arquivo zip em uma pasta de sua escolha, preferencialmente, em um caminho curto (como C:\Katomart).
+3. Abra o Prompt de Comando e navegue até a pasta extraída usando o comando `cd caminho\para\a\sua\pasta`.
+4. Execute o comando `pip install -r requirements.txt` para instalar as dependências do projeto.
+5. Finalmente, execute o projeto com `python katomart.py`.
+6. Siga as instruções da tela, que é ultimamente abrir o seu navegador e ir até o endereço: `http://localhost:6102/`. Após dar o aceite nos termos anti-pirataria (que não são enviados para nenhum local, apenas ficam em registro na sua máquina, pode verificar o código), você irá ver a interface do Katomart.
+![image](https://github.com/katomaro/katomart/assets/53769456/ccef58b7-6827-4aef-a4e4-7caabb8570cf)
+
+### Novamente, peço que verifique sempre a /home pelo aviso de tempos em tempos!
 
 ## Contribuindo
 ### Código

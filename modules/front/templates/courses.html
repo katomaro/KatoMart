@@ -5,14 +5,27 @@
 <h1 class="text-xl font-bold text-center mb-8">
   <i class="fa-solid fa-cart-arrow-down"></i> Cursos na Conta Inicializada
 </h1>
+
 <div class="grid grid-cols-1 gap-4 max-w-6xl mx-auto">
+  <div class="col-span-1">
+    <label class="input input-bordered flex items-center gap-2">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input
+        type="text"
+        class="grow bg-base-100"
+        placeholder="Pesquisar produto..."
+        id="searchProductsInput"
+      />
+    </label>
+  </div>
+
   {% for product in courses %}
-  <div class="card card-bordered py-0">
+  <div class="card card-bordered py-0 product-card">
     <!-- Cabeçalho do Produto com Nome Centralizado e Checkbox -->
     <div class="card-body">
       <h2 class="card-title">
         <span class="text-center w-full">
-          {{ product.subdomain }}
+          <span class="product-name">{{ product.subdomain }}</span>
           <div class="badge badge-primary">{{ product.status }}</div>
         </span>
         <div class="tooltip tooltip-info" data-tip="Selecionar para Download">
@@ -254,6 +267,19 @@
       collapseElement.classList.toggle("hidden") // Alternar visibilidade
     })
   })
+
+  document
+    .getElementById("searchProductsInput")
+    .addEventListener("input", function (event) {
+      var searchTerm = event.target.value.toLowerCase()
+
+      var productCards = document.querySelectorAll(".product-card")
+      productCards.forEach((card) => {
+        var productName = card.querySelector(".product-name").textContent.toLowerCase()
+
+        card.classList.toggle("hidden", !productName.includes(searchTerm))
+      })
+    })
 </script>
 
 {% endblock %}

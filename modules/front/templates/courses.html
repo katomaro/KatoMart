@@ -126,6 +126,21 @@
     return ((new Date().getTime() - epoch * 1000) / (24 * 60 * 60 * 1000)).toFixed(0)
   }
 
+  function searchPages(event, moduleId) {
+    var searchTerm = event.target.value.toLowerCase()
+    var rows = document.querySelectorAll(`tr[data-module-id="${moduleId}"]`)
+    rows.forEach((row) => {
+      var text = Array.from(row.querySelectorAll("td"), (td) => td.textContent)
+        .join(" ")
+        .toLowerCase()
+      if (!row.innerHTML.toLowerCase().includes(searchTerm)) {
+        row.classList.add("hidden")
+      } else {
+        row.classList.remove("hidden")
+      }
+    })
+  }
+
   function loadMoreDetails(clubdomain, productId) {
     fetch("/api/load_course_data", {
       method: "POST",
@@ -144,14 +159,14 @@
 
           detailSection.innerHTML = `
           <div class="flex items-center justify-between m-1">
-            <span class="text-lg font-medium">
+            <div class="text-lg font-medium">
               ${module.name}
               ${
                 module.locked
-                  ? '<div class="badge badge-error">Bloqueado</div>'
-                  : '<div class="badge badge-success">Disponível</div>'
+                  ? '<span class="badge badge-error">Bloqueado</span>'
+                  : '<span class="badge badge-success">Disponível</span>'
               }
-            </span>
+            </div>
 
             <label class="cursor-pointer label">
               <input
@@ -166,6 +181,12 @@
             </label>
           </div>
 
+          <input
+            class="input input-bordered input-sm w-full"
+            placeholder="Pesquisar"
+            oninput="searchPages(event, '${module.id}')"
+          />
+
           <div class="overflow-y-auto max-h-96">
             <table class="table table-zebra table-compact text-center w-full">
               <thead>
@@ -177,11 +198,10 @@
                 </tr>
               </thead>
               <tbody>
-                ${console.log(module.pages[0])}
                 ${module.pages
                   .map(
                     (page) => `
-                      <tr>
+                      <tr data-module-id="${module.id}">
                         <td>${page.name}</td>
                         <td>
                           <input

@@ -126,6 +126,10 @@
     return ((new Date().getTime() - epoch * 1000) / (24 * 60 * 60 * 1000)).toFixed(0)
   }
 
+  function normalizeInput(inputElement) {
+    inputElement.value = inputElement.value.replace(/[^a-zA-Z0-9-_ ]/g, "")
+  }
+
   function searchPages(event, moduleId) {
     var searchTerm = event.target.value.toLowerCase()
     var rows = document.querySelectorAll(`tr[data-module-id="${moduleId}"]`)
@@ -208,24 +212,26 @@
                             type="text"
                             class="input input-bordered input-sm w-full"
                             value="${page.name}"
-                            />
-                            </td>
-                            <td>
-                              ${
-                                page.locked
-                                  ? `Libera em ${getRemainingDays(page.liberationStart)}`
-                                  : "Não"
-                              }
-                            </td>
-                            <td>
-                              <input
-                              type="checkbox"
-                              class="checkbox checkbox-sm"
-                              data-module-id="${module.id}"
-                              ${page.locked ? "disabled" : "checked"} />
-                          </td>
-                      </tr>
-                      `
+                            oninput="normalizeInput(this)"
+                          />
+                        </td>
+                        <td>
+                          ${
+                            page.locked
+                              ? `Libera em ${getRemainingDays(page.liberationStart)}`
+                              : "Não"
+                          }
+                        </td>
+                        <td>
+                          <input
+                            type="checkbox"
+                            class="checkbox checkbox-sm"
+                            data-module-id="${module.id}"
+                            ${page.locked ? "disabled" : "checked"}
+                          />
+                      </td>
+                    </tr>
+                    `
                   )
                   .join("")}
               </tbody>

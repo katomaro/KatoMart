@@ -122,6 +122,10 @@
     })
   }
 
+  function getRemainingDays(epoch) {
+    return ((new Date().getTime() - epoch * 1000) / (24 * 60 * 60 * 1000)).toFixed(0)
+  }
+
   function loadMoreDetails(clubdomain, productId) {
     fetch("/api/load_course_data", {
       method: "POST",
@@ -173,6 +177,7 @@
                 </tr>
               </thead>
               <tbody>
+                ${console.log(module.pages[0])}
                 ${module.pages
                   .map(
                     (page) => `
@@ -185,7 +190,13 @@
                             value="${page.name}"
                             />
                             </td>
-                            <td>${page.locked ? "Sim" : "Não"}</td>
+                            <td>
+                              ${
+                                page.locked
+                                  ? `Libera em ${getRemainingDays(page.liberationStart)}`
+                                  : "Não"
+                              }
+                            </td>
                             <td>
                               <input
                               type="checkbox"

@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-center mb-8">
+<h1 class="text-2xl font-bold text-center mb-8">
     <i class="fa-solid fa-users"></i> Gerenciar Contas das Plataformas
 </h1>
 <div class="flex flex-col items-center min-h-screen">
-    <form id="accountForm" class="max-w-md bg-base-100 shadow-xl rounded-lg p-4 border-2 border-primary">
+    <form id="accountForm" class="max-w-lg w-full bg-base-100 shadow-xl rounded-lg p-4 border-2 border-primary">
         <div class="form-group mb-4">
             <label for="platformSelect" class="label">
                 <span class="label-text font-semibold">Plataforma:</span>
@@ -28,12 +28,12 @@
                 </label>
                 <input type="password" id="password" class="input input-bordered w-full" required>
             </div>
-            <button type="submit" class="btn btn-primary w-full">Salvar Conta</button>
+            <button class="btn btn-primary w-full">Salvar Conta</button>
         </div>
     </form>
 
 
-<table id="accountsTable" class="mb-8 bg-primary text-white" style="display: none;">
+<table id="accountsTable" class="my-8 bg-primary text-white" style="display: none;">
     <thead>
         <tr>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-base-100 font-semibold uppercase">Selecionar</th>
@@ -134,7 +134,7 @@ function saveAccount() {
     const platformId = document.getElementById("platformSelect").value;
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const token = document.getElementById("token").value;
+    // const token = document.getElementById("token").value;
     
     fetch('/api/accounts', {
         method: 'POST',

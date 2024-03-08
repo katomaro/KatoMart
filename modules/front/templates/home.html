@@ -21,17 +21,6 @@
     Segue breve descrição de cada funcionalidade.
   </p>
 
-  <div class="grid grid-cols-3 gap-2 my-2 space-y-2">
-    <div class="card bg-base-200 shadow-xl py-0" v-for="card in cards">
-      <div class="card-body py-3 px-4">
-        <div class="card-title font-medium text-xs flex justify-center">
-          <i :class="card.icon" aria-hidden="true"></i>
-          {% raw %}{{ card.title }}{% endraw %}
-        </div>
-        <p v-html="card.description"></p>
-      </div>
-    </div>
-  </div>
   <p class="text-center my-3 text-primary">
     <strong class="font-bold">
       Lembre-se que você é responsável pelo que faz pelo material gerado pelo software,
@@ -77,59 +66,5 @@
       },
     })
   })
-</script>
-
-<script type="module">
-  import { createApp } from "vue"
-
-  const app = createApp({
-    setup() {
-      const cards = [
-        {
-          title: "Configurações",
-          icon: "fa-solid fa-sliders",
-          description: `Quando estiver pronto para começar, revise as Configurações indo até
-          <a href="{{ url_for('settings') }}" class="text-accent">
-            <i class="fa-solid fa-sliders" aria-hidden="true"></i>
-            Configurações
-          </a>`,
-        },
-        {
-          title: "Gerenciar Contas",
-          icon: "fa-solid fa-users",
-          description: `Em
-          <a href="{{ url_for('accounts') }}" class="text-accent">
-            <i class="fa-solid fa-users" aria-hidden="true"></i>
-            Gerenciar Contas
-          </a>
-          você pode gerenciar suas contas (logins) que irá interagir com a aplicação`,
-        },
-        {
-          title: "Gerenciar Cursos",
-          icon: "fa-solid fa-cloud-arrow-down",
-          description: `Aqui você consegue visualizar cursos das plataformas disponíveis na qual você
-          tem acesso pelas suas contas e iniciar download dos mesmos.`,
-        },
-        {
-          title: "LOGs",
-          icon: "fa-solid fa-layer-group",
-          description: `Caso você encontre um erro, gere um log de utilização pela aba <a href="{{ url_for('log') }}" class="text-accent">
-            <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-            LOGs
-          </a> e siga as instruções na tela para a submissão do mesmo para os
-          <strong class="font-semibold">
-            desenvolvedores listados na página de suporte
-          </strong>`,
-        },
-        {
-          title: "Suporte",
-          icon: "fa-solid fa-paper-plane",
-          description: `Aba responsável por contar desenvolvedores que contribuiram para o projeto e que podem oferecer suporte em caso de erros.`,
-        },
-      ]
-
-      return { cards }
-    },
-  }).mount("#content")
 </script>
 {% endblock %}

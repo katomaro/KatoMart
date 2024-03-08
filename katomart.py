@@ -1,9 +1,10 @@
-from pathlib import Path
 import time
-from flask import Flask, request, redirect, render_template, url_for, jsonify, g
-from modules.databases.manager_main import DatabaseManager
+from pathlib import Path
+
+from flask import Flask, g, jsonify, redirect, render_template, request, url_for
 
 from modules.accounts.hotmart import Hotmart
+from modules.databases.manager_main import DatabaseManager
 
 platform_classes = {
     1: Hotmart,
@@ -175,6 +176,8 @@ def add_or_update_account():
     
     # Usar request.json para acessar os dados enviados em formato JSON
     data = request.json
+    if not data:
+        return jsonify({'success': False})
     platform_id = data['platform_id']
     username = data['username']
     password = data['password']
@@ -220,6 +223,8 @@ def update_token():
 @app.route('/api/select_account', methods=['POST'])
 def select_account():
     global selected_platform_instance
+    if not request.json:
+        return jsonify({"error": "No JSON data provided."}), 400
     account_id = int(request.json.get('account_id'))
     platform_id = int(request.json.get('platform_id'))
 
@@ -245,6 +250,8 @@ def delete_account():
     
     if account_id:
         db_manager.delete_account(account_id)
+    
+    return jsonify({'success': True})
 
 
 @app.route('/courses')

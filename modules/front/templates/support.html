@@ -298,21 +298,85 @@
 <section>
     <h1 class="text-3xl font-bold text-center mb-8">
         <i class="fas fa-sack-dollar"></i> Caixinha do Katomart: 
-        <span class="text-red-500">R$ -1900,00</span>
+        <span id="saldo-final">R$ -1900,00</span>
     </h1>
+    <p class="text-center"> Este valor é utilizado para 
+        custear o desenvolvimento da aplicação como todo, e também manter seu repositório acessível
+        ao público geral. Os lançamentos são feitos de forma manual no repositório do Katomart,
+        e são atualizados sempre que você acessar esta página (pode acontecer um atraso para a atualização).
+    </p>
 </section>
 
 <section>
-    <h1 class="text-3xl font-bold text-center mb-8">
-        <i class="fas fa-money-bill-transfer"></i> Transações Financeiras
+    <h1 class="text-3xl font-bold text-center mb-8 mt-8">
+        <i class="fas fa-money-bill-transfer"></i> Fluxo / Saída da Caixinha
     </h1>
-    <div class="container max-w-6xl mx-auto bg-base-100 shadow-xl rounded-lg p-6 border-2 border-primary">
-        <p>
-            <strong class="text-pink-500">ESTA SEÇÃO AINDA ESTÁ EM DESENVOLVIMENTO</strong>
-            os cálculos de caixa serão implementados aqui posteriormente conforme os comprovantes
-            dos últimos 4 anos forem localizados. Eles não contabilizam as horas profissionais
-            dos desenvolvedores.
-        </p>
-    </div>
+    
+    <h3 class="text-2xl font-bold mb-8">Sponsors do projeto</h3>
+    <p class="mt-4 mb-4">Agradeça as pessoas listadas abaixo, pois ela ssão responsáveis por pelos menos 40% do projeto!
+        <strong>Elas também recebem suporte 1:1 e terão acesso à algumas coisas extras no futuro por sua boa vontade</strong>
+        (Coisas como toda a documentação que eu faço para mim mesmo, e que não é publicada, e acesso a versões de testes 
+        antes de serem lançadas, etc.)
+    </p>
+    <table class="table w-full" id="tabela-sponsors">
+        <tr>
+            <th>Doador</th>
+            <th>Forma de Contribuição</th>
+            <th>Valor</th>
+            <th>Mensagem/Propaganda</th>
+            <th>Data da Contribuição</th>
+            <th>Referência da Transação</th>
+        </tr>
+        <!-- Os dados serão inseridos aqui pelo JavaScript -->
+    </table>
+    
+    <h3 class="text-2xl font-bold mb-8 mt-8">Gastos com o projeto</h3>
+    <p class="mt-4 mb-4">Estes gastos podem ser tanto por motivos JURÍDICOS, ou, acesso à plataformas 
+        para que elas possam ser implementadas no projeto.
+    </p>
+    <table class="table w-full" id="tabela-expenses">
+        <tr>
+            <th>Desenvolvedor Responsável</th>
+            <th>Tipo de gasto</th>
+            <th>Valor Gasto</th>
+            <th>Motivo</th>
+            <th>Data do Gasto</th>
+            <th>Referência da Transação</th>
+        </tr>
+        <!-- Os dados serão inseridos aqui pelo JavaScript -->
+    </table>
 </section>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+async function carregarDados() {
+    const [sponsors, expenses] = await Promise.all([
+        fetch('https://raw.githubusercontent.com/katomaro/katomart/master/CONTRIBUTIONS.json').then(res => res.json()),
+        fetch('https://raw.githubusercontent.com/katomaro/katomart/master/EXPENSES.json').then(res => res.json()),
+    ]);
+
+    let totalPositivo = 0;
+    let totalNegativo = 0;
+
+    sponsors.forEach(entrada => {
+        if (entrada.type_of_contribution_received == 'donation') {
+            let valor = parseFloat(entrada.contribution_value)
+            totalPositivo += valor;
+            document.getElementById('tabela-sponsors').innerHTML += `<tr><td>${entrada.contributor_name}</td><td>${entrada.contribution_resource}</td><td>${entrada.contribution_value}</td><td>${entrada.contribution_message}</td><td>${entrada.contribution_date}</td><td>${entrada.contribution_reference_id}</td></tr>`;
+            }
+    });
+
+    expenses.forEach(entrada => {
+        totalNegativo += entrada.expent_amount;
+        document.getElementById('tabela-expenses').innerHTML += `<tr><td>${entrada.developer}</td><td>${entrada.expense_type}</td><td>${entrada.expent_amount}</td><td>${entrada.expense_reason}</td><td>${entrada.expense_date}</td><td>${entrada.contribution_reference_id}</td></tr>`;
+    });
+
+    const saldoFinal = totalPositivo - totalNegativo;
+    document.getElementById('saldo-final').innerText = `${saldoFinal}`;
+}
+
+document.addEventListener('DOMContentLoaded', carregarDados);
+</script>
 {% endblock %}

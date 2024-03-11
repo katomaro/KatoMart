@@ -1,6 +1,14 @@
 [
     {
         "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\">@Katomaro</strong></a>",
+        "expense_type": "ACESSO",
+        "expent_amount": 100.00,
+        "expense_reason": "Raspberry Pi4 <strong>Não lançado o valor total</strong>, por ser utilizado para desenvolvimento de outros projetos paralelos, mas neste contexto ele me permite acessar plataformas que tem acesso restrito à ambiente \"seguro\" de forma nativa para que eu veja todos os dados que estão ocultos do usuário, podendo assim implementar livremente as coisas sem ter dor de cabeça (tal como feito no passado com o APP Sparkle da Hotmart).",
+        "expense_date": "09/10/2023",
+        "contribution_reference_id": "**************************************"
+    },
+    {
+        "developer": "<a href=\"https://www.github.com/katomaro\"><strong class=\"text-pink-500\">@Katomaro</strong></a>",
         "expense_type": "JURÍDICO",
         "expent_amount": 2850.00,
         "expense_reason": "Geração de Atas Notariais, provas validáveis digitais, advogados, etc. Tudo contra uma pessoa em específico que além de cometer diversos crimes contra mim, também tentou me acusar de praticar pirataria. Inclui gastos para re-avaliação de TEA, também o motivo de eu não ter publicado o software ainda.<strong class=\"text-red-500\">Quando esse processo terminar, eu irei abater o custo das indenizações e farei um donate à caixinha de uma % dela, querendo ou não, somos uma comunidade.</strong>",

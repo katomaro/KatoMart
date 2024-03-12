@@ -318,14 +318,14 @@
         (Coisas como toda a documentação que eu faço para mim mesmo, e que não é publicada, e acesso a versões de testes 
         antes de serem lançadas, etc.)
     </p>
-    <table class="table w-full" id="tabela-sponsors">
-        <tr>
-            <th>Doador</th>
-            <th>Forma de Contribuição</th>
-            <th>Valor</th>
-            <th>Mensagem/Propaganda</th>
-            <th>Data da Contribuição</th>
-            <th>Referência da Transação</th>
+    <table class="table table-zebra table-xs w-full text-center h-96 overflow-auto" id="tabela-sponsors">
+        <tr class="border-2 border-primary">
+            <th class="border-x-2 border-primary">Doador</th>
+            <th class="border-x-2 border-primary">Forma de Contribuição</th>
+            <th class="w-24 border-x-2 border-primary">Valor</th>
+            <th class="border-x-2 border-primary">Mensagem/Propaganda</th>
+            <th class="border-x-2 border-primary">Data da Contribuição</th>
+            <th class="border-x-2 border-primary">Referência da Transação</th>
         </tr>
         <!-- Os dados serão inseridos aqui pelo JavaScript -->
     </table>
@@ -334,14 +334,15 @@
     <p class="mt-4 mb-4">Estes gastos podem ser tanto por motivos JURÍDICOS, ou, acesso à plataformas 
         para que elas possam ser implementadas no projeto.
     </p>
-    <table class="table w-full" id="tabela-expenses">
-        <tr>
-            <th>Desenvolvedor Responsável</th>
-            <th>Tipo de gasto</th>
-            <th>Valor Gasto</th>
-            <th>Motivo</th>
-            <th>Data do Gasto</th>
-            <th>Referência da Transação</th>
+    
+    <table class="table table-zebra table-xs w-full text-center h-96 overflow-auto" id="tabela-expenses">
+        <tr class="border-y-2 border-primary">
+            <th class="border-x-2 border-primary">Desenvolvedor Responsável</th>
+            <th class="border-x-2 border-primary">Tipo de gasto</th>
+            <th class="w-24 border-x-2 border-primary">Valor Gasto</th>
+            <th class="border-x-2 border-primary">Motivo</th>
+            <th class="border-x-2 border-primary">Data do Gasto</th>
+            <th class="border-x-2 border-primary">Referência da Transação</th>
         </tr>
         <!-- Os dados serão inseridos aqui pelo JavaScript -->
     </table>
@@ -364,13 +365,27 @@ async function carregarDados() {
         if (entrada.type_of_contribution_received == 'donation') {
             let valor = parseFloat(entrada.contribution_value)
             totalPositivo += valor;
-            document.getElementById('tabela-sponsors').innerHTML += `<tr><td>${entrada.contributor_name}</td><td>${entrada.contribution_resource}</td><td>${entrada.contribution_value}</td><td>${entrada.contribution_message}</td><td>${entrada.contribution_date}</td><td>${entrada.contribution_reference_id}</td></tr>`;
+            document.getElementById('tabela-sponsors').innerHTML += `<tr>
+                <td class="border-x-2 border-b-2 border-accent">${entrada.contributor_name}</td>
+                <td class="border-x-2 border-b-2 border-accent">${entrada.contribution_resource}</td>
+                <td class="text-green-500 border-x-2 border-b-2 border-accent">R$ ${entrada.contribution_value}</td>
+                <td class="border-x-2 border-b-2 border-accent">${entrada.contribution_message || 'N/A'}</td>
+                <td class="border-x-2 border-b-2 border-accent">${entrada.contribution_date}</td>
+                <td class="border-x-2 border-b-2 border-accent">${entrada.contribution_reference_id}</td>
+            </tr>`;
             }
     });
 
     expenses.forEach(entrada => {
         totalNegativo += entrada.expent_amount;
-        document.getElementById('tabela-expenses').innerHTML += `<tr><td>${entrada.developer}</td><td>${entrada.expense_type}</td><td>${entrada.expent_amount}</td><td>${entrada.expense_reason}</td><td>${entrada.expense_date}</td><td>${entrada.contribution_reference_id}</td></tr>`;
+        document.getElementById('tabela-expenses').innerHTML += `<tr>
+            <td class="border-x-2 border-b-2 border-accent">${entrada.developer}</td>
+            <td class="border-x-2 border-b-2 border-accent">${entrada.expense_type}</td>
+            <td class="text-red-500 border-x-2 border-b-2 border-accent">R$ ${entrada.expent_amount}</td>
+            <td class="border-x-2 border-b-2 border-accent">${entrada.expense_reason}</td>
+            <td class="border-x-2 border-b-2 border-accent">${entrada.expense_date}</td>
+            <td class="border-x-2 border-b-2 border-accent">${entrada.contribution_reference_id}</td>
+        </tr>`;
     });
 
     const saldoFinal = totalPositivo - totalNegativo;

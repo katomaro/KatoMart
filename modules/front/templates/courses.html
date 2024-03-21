@@ -1,285 +1,311 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
+
+<!-- Course card -->
+{% from "components/courses.html" import render_course_card %}
 
 <!-- Content -->
-{% block content %} {% if courses %}
-<h1 class="text-xl font-bold text-center mb-8">
+{% block content %}
+<h1 class="text-xl font-bold text-center mb-8">Gerenciamento de Cursos na Conta</h1>
+
+{% if is_library %}
+
+<p class="text-center">Alguma coisa relacionado a pesquisas aqui (em desenvolvimento)</p>
+
+{% elif courses %}
+<h1 class="text-lg font-bold text-center mb-1">
   <i class="fa-solid fa-cart-arrow-down"></i> Cursos na Conta Inicializada
 </h1>
 
-<div class="grid grid-cols-1 gap-4 max-w-6xl mx-auto">
-  <div class="col-span-1">
-    <label class="input input-bordered flex items-center gap-2">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input
-        type="text"
-        class="grow bg-base-100"
-        placeholder="Pesquisar produto..."
-        id="searchProductsInput"
-      />
-    </label>
+<div class="grid grid-cols-1 gap-4 mx-4">
+  <div class="flex items-center justify-center">
+    <i class="fas fa-magnifying-glass mr-2"></i>
+    <input
+      class="input input-bordered input-sm !outline-none w-3/5"
+      placeholder="Pesquisar Cursos..."
+      id="searchCoursesInput"
+    />
   </div>
 
-  {% for product in courses %}
-  <div class="card card-bordered py-0 product-card">
-    <!-- Cabeçalho do Produto com Nome Centralizado e Checkbox -->
-    <div class="card-body">
-      <h2 class="card-title">
-        <span class="text-center w-full">
-          <span class="product-name">{{ product.subdomain }}</span>
-          <div class="badge badge-primary">{{ product.status }}</div>
-        </span>
-        <div class="tooltip tooltip-info" data-tip="Selecionar para Download">
-          <input
-            type="checkbox"
-            class="checkbox checkbox-primary"
-            data-product-id="{{ product.id }}"
-          />
-        </div>
-      </h2>
-
-      <!-- Conteúdo Colapsável com Detalhes do Produto -->
-      <div class="collapse collapse-plus border rounded-box border-base-300 bg-base-200">
-        <input type="checkbox" />
-        <div class="collapse-title text-sm font-medium">Detalhes do Produto</div>
-        <div class="collapse-content">
-          <!-- Tabela com metadatas -->
-          <table class="table w-full">
-            <thead>
-              <tr>
-                <th>Campo</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>ID do produto</td>
-                <td>{{ product.id }}</td>
-              </tr>
-              <tr>
-                <td>Subdomínio do produto (área de membros)</td>
-                <td>{{ product.subdomain }}</td>
-              </tr>
-              <tr>
-                <td>Status da Compra/Assinatura</td>
-                <td>{{ product.status }}</td>
-              </tr>
-              <tr>
-                <td>ID da Área de Usuário</td>
-                <td>{{ product.user_area_id }}</td>
-              </tr>
-              <tr>
-                <td>Seus cargos dentro do produto</td>
-                <td>{{ product.roles }}</td>
-              </tr>
-              <tr>
-                <td>Domínio ASSUMIDO do Produto</td>
-                <td>{{ product.domain }}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Botão Carregar Mais Detalhes -->
-          <div class="flex justify-end">
-            <button
-              class="btn btn-sm btn-secondary mt-2"
-              onclick="loadMoreDetails(`{{ product.subdomain }}`, `{{ product.id }}`)"
-              id="loadMoreDetailsBtn{{ product.id }}"
-            >
-              <i class="fas fa-hand-pointer"></i>
-              Selecionar conteúdo para baixar
-            </button>
-          </div>
-
-          <!-- Div com Mais detalhes -->
-          <div
-            class="my-2 border-accent border rounded-box p-0.5"
-            id="collapse{{ product.id }}"
-          ></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% for course in courses %}
+  <!-- Course card -->
+  {{ render_course_card(course) }}
+  <!-- End of Course card -->
   {% endfor %}
-  <div class="flex justify-center mt-4">
-    <button class="btn btn-primary mt-4" disabled>Iniciar Downloads</button>
-  </div>
 </div>
-
-{% else %}
-<h1 class="text-3xl font-bold text-center mb-8">
-  <i class="fa-solid fa-shield-cat"></i> Nenhum curso na conta inicializada (ou precisa
-  atualizar o softwate)
-</h1>
 {% endif %}
 
-<!--  -->
-{% endblock %}
+<!-- End of Content -->
+{% endblock content %}
 
 <!-- Scripts -->
 {% block scripts %}
 <script>
-  function disableLoadMoreBtn(productId) {
-    var loadMoreDetailsBtn = document.querySelector(`#loadMoreDetailsBtn${productId}`)
-    // loadMoreDetailsBtn.disabled = true // Desabilita o botão após o uso
-    loadMoreDetailsBtn.classList.add("hidden")
-  }
+  const enableCourseNameEditBtns = document.querySelectorAll(
+    ".btn-enable-edit-course-name"
+  )
+  const searchCoursesInput = document.getElementById("searchCoursesInput")
 
-  function togglePages(moduleId) {
-    var checkboxes = document.querySelectorAll(`input[data-module-id="${moduleId}"]`)
+  const courseContentLoaderBtns = document.querySelectorAll(".btn-course-content-loader")
 
-    var check = checkboxes[0].checked
+  const modalControllers = document.querySelectorAll(".modal-controller[data-course-id]")
 
-    checkboxes.forEach((checkbox) => {
-      if (checkbox === checkboxes[0]) return
-      checkbox.checked = check
-    })
-  }
+  // esse objeto aqui é quem vai salvar o krl todo
+  var coursesToDownload = []
 
-  function getRemainingDays(epoch) {
-    return ((new Date().getTime() - epoch * 1000) / (24 * 60 * 60 * 1000)).toFixed(0)
-  }
-
-  function normalizeInput(inputElement) {
-    inputElement.value = inputElement.value.replace(/[^a-zA-Z0-9-_ ]/g, "")
-  }
-
-  function searchPages(event, moduleId) {
-    var searchTerm = event.target.value.toLowerCase()
-    var rows = document.querySelectorAll(`tr[data-module-id="${moduleId}"]`)
-    rows.forEach((row) => {
-      var text = Array.from(row.querySelectorAll("td"), (td) => td.textContent)
-        .join(" ")
-        .toLowerCase()
-      if (!row.innerHTML.toLowerCase().includes(searchTerm)) {
-        row.classList.add("hidden")
-      } else {
-        row.classList.remove("hidden")
-      }
-    })
-  }
-
-  function loadMoreDetails(clubdomain, productId) {
-    fetch("/api/load_course_data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ club: clubdomain }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        disableLoadMoreBtn(productId)
-
-        data.modules.forEach((module) => {
-          var detailSection = document.createElement("div")
-          detailSection.className = "p-2 rounded-lg shadow mb-2 bg-base-300"
-
-          detailSection.innerHTML = `
-          <div class="flex items-center justify-between m-1">
-            <div class="text-lg font-medium">
-              ${module.name}
-              ${
-                module.locked
-                  ? '<span class="badge badge-error">Bloqueado</span>'
-                  : '<span class="badge badge-success">Disponível</span>'
-              }
-            </div>
-
-            <label class="cursor-pointer label">
-              <input
-                type="checkbox"
-                class="checkbox checkbox-primary checkbox-sm"
-                data-module-id="${module.id}"
-                onclick="togglePages('${module.id}')"
-                ${module.locked ? "disabled" : ""}
-                ${module.pages.every((page) => page.locked) ? "" : "checked"}
-                >
-              <span class="label-text ml-2">Selecionar para download</span>
-            </label>
-          </div>
-
-          <input
-            class="input input-bordered input-sm w-full"
-            placeholder="Pesquisar"
-            oninput="searchPages(event, '${module.id}')"
-          />
-
-          <div class="overflow-y-auto max-h-96">
-            <table class="table table-zebra table-compact text-center w-full">
-              <thead>
-                <tr>
-                  <th>Nome Original</th>
-                  <th>Nome a ser Utilizado</th>
-                  <th>Aula Bloqueada</th>
-                  <th>Baixar Aula?</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${module.pages
-                  .map(
-                    (page) => `
-                      <tr data-module-id="${module.id}">
-                        <td>${page.name}</td>
-                        <td>
-                          <input
-                            type="text"
-                            class="input input-bordered input-sm w-full"
-                            value="${page.name}"
-                            oninput="normalizeInput(this)"
-                          />
-                        </td>
-                        <td>
-                          ${
-                            page.locked
-                              ? `Libera em ${getRemainingDays(page.liberationStart)}`
-                              : "Não"
-                          }
-                        </td>
-                        <td>
-                          <input
-                            type="checkbox"
-                            class="checkbox checkbox-sm"
-                            data-module-id="${module.id}"
-                            ${page.locked ? "disabled" : "checked"}
-                          />
-                      </td>
-                    </tr>
-                    `
-                  )
-                  .join("")}
-              </tbody>
-            </table>
-          </div>
-        `
-
-          document.querySelector(`#collapse${productId}`).appendChild(detailSection)
-        })
-      })
-      .catch((error) => {
-        console.error("An error occurred: ", error)
-      })
-  }
-
-  document.querySelectorAll(".load-more").forEach((item) => {
-    item.addEventListener("change", function () {
-      var productId = this.dataset.productId
-      var collapseElement = document.querySelector(`#collapse${productId}`)
-      collapseElement.classList.toggle("hidden") // Alternar visibilidade
+  const courses = document.querySelectorAll(".course-card")
+  courses.forEach((course) => {
+    coursesToDownload.push({
+      id: course.dataset.courseId,
+      name: course.querySelector(".course-name").innerText,
+      subdomain: course.dataset.coursesubdomain,
+      children: [],
     })
   })
 
-  document
-    .getElementById("searchProductsInput")
-    .addEventListener("input", function (event) {
-      var searchTerm = event.target.value.toLowerCase()
+  const normalizeName = (name) => {
+    return name.replace(/[#@$!%^&*+\-={};':"\\|,.<>\/?]+/g, "")
+  }
 
-      var productCards = document.querySelectorAll(".product-card")
-      productCards.forEach((card) => {
-        var productName = card.querySelector(".product-name").textContent.toLowerCase()
-
-        card.classList.toggle("hidden", !productName.includes(searchTerm))
-      })
+  // Filtro pelo Nome do Curso
+  searchCoursesInput.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase()
+    const courseCards = document.querySelectorAll(".course-card")
+    courseCards.forEach((card) => {
+      const courseName = card.querySelector(".course-name").innerText.toLowerCase()
+      card.classList.toggle("hidden", !courseName.includes(searchTerm))
     })
-</script>
+  })
 
-{% endblock %}
+  // Habilitar Edição do Nome do Curso
+  const enableCourseNameEdit = (courseId) => {
+    const query = `.course-name[data-course-id="${courseId}"]`
+    // pega tudo, pq eu imagino isso daqui como um controlador de "estado" da variável "course_name"
+    const courseNameTags = document.querySelectorAll(query)
+    const courseNameCardTitle = courseNameTags[0]
+    const courseName = courseNameCardTitle.innerText
+
+    const btnQuery = `.btn-enable-edit-course-name[data-course-id="${courseId}"]`
+    const btn = document.querySelector(btnQuery)
+    btn.classList.toggle("btn-disabled")
+
+    const courseNameInput = document.createElement("input")
+    courseNameInput.className = "input input-bordered input-sm w-full"
+    courseNameInput.value = courseName
+    courseNameInput.oninput = (event) =>
+      (event.target.value = normalizeName(event.target.value))
+
+    courseNameInput.onkeydown = (event) => {
+      // Volta ao estado normal (span)
+      if (event.key === "Enter") {
+        event.preventDefault()
+        courseNameTags.forEach((tag) => {
+          tag.innerText = courseNameInput.value
+        })
+        event.currentTarget.replaceWith(courseNameCardTitle)
+        btn.classList.toggle("btn-disabled")
+
+        // atualiza lá no objeto geralzão
+        coursesToDownload.map((course) => {
+          if (course.id === courseId) {
+            course.name = courseNameInput.value
+          }
+          return course
+        })
+      }
+    }
+
+    courseNameCardTitle.replaceWith(courseNameInput)
+  }
+
+  // Adiciona o evento de clique para habilitar a edição do nome do curso
+  enableCourseNameEditBtns.forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      const courseId = event.target.dataset.courseId
+      enableCourseNameEdit(courseId)
+    })
+  })
+
+  // Adiciona evento de clique para abrir o modal
+  modalControllers.forEach((controller) => {
+    controller.addEventListener("click", (event) => {
+      const courseId = event.target.dataset.courseId
+      const modalTrigger = document.querySelector(
+        `.modal-toggle[data-course-id="${courseId}"]`
+      )
+      modalTrigger.checked = !modalTrigger.checked
+    })
+  })
+
+  const fetchMoreDetails = async (subdomain, itemId) => {
+    console.log(subdomain, itemId)
+    try {
+      const res = await fetch("/api/load_course_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ club: subdomain, id: itemId }),
+      })
+      const data = await res.json()
+      return data
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const searchPages = (event, moduleId) => {
+    const searchTerm = event.target.value.toLowerCase()
+    const lessonCards = document.querySelectorAll(
+      `.lesson-card[data-lesson-module-id="${moduleId}"]`
+    )
+    lessonCards.forEach((card) => {
+      const lessonName = card.querySelector(".lesson-title").innerText.toLowerCase()
+      card.classList.toggle("hidden", !lessonName.includes(searchTerm))
+    })
+  }
+
+  const renderLessons = (parentObj, lessons, storage) => {
+    var content = []
+    lessons.forEach((lesson, index) => {
+      storage.push({
+        id: lesson.id,
+        name: lesson.name,
+        subdomain: lesson.subdomain,
+        children: [],
+      })
+      const lessonDiv = document.createElement("div")
+      lessonDiv.className = "card w-full bg-base-100 shadow-xl lesson-card"
+
+      const lessonBody = document.createElement("div")
+      lessonBody.className = "card-body my-0.5 py-0.5"
+
+      const lessonTitle = document.createElement("h2")
+      lessonTitle.className = "card-title lesson-title text-md"
+      lessonTitle.innerText = lesson.name
+      lessonTitle.setAttribute("data-lesson-module-id", parentObj.id)
+
+      lessonBody.appendChild(lessonTitle)
+
+      const lessonTitleChanger = document.createElement("input")
+      lessonTitleChanger.className = "input input-bordered input-sm w-full"
+      lessonTitleChanger.value = lesson.name
+      lessonTitleChanger.oninput = (event) => {
+        event.target.value = normalizeName(event.target.value)
+        storage[index].name = event.target.value
+      }
+
+      lessonBody.appendChild(lessonTitleChanger)
+
+      const lessonActions = document.createElement("div")
+      lessonActions.className = "card-actions justify-end"
+
+      const lessonLoadMoreBtn = document.createElement("button")
+      lessonLoadMoreBtn.className = "btn btn-primary btn-sm"
+      lessonLoadMoreBtn.innerText = "Carregar mais"
+
+      lessonActions.appendChild(lessonLoadMoreBtn)
+      lessonBody.appendChild(lessonActions)
+      lessonDiv.appendChild(lessonBody)
+
+      content.push(lessonDiv)
+    })
+
+    return content
+  }
+
+  const renderModuleCard = (module, index, storage) => {
+    const moduleCard = document.createElement("div")
+    moduleCard.className = "card w-full bg-base-200 rounded-box shadow-xl"
+
+    const moduleCardBody = document.createElement("div")
+    moduleCardBody.className = "card-body"
+
+    const moduleCardTitle = document.createElement("h2")
+    moduleCardTitle.className = "card-title"
+    moduleCardTitle.innerText = `Módulo ${index + 1}: ${module.name}`
+
+    moduleCardBody.appendChild(moduleCardTitle)
+
+    const moduleTitleChanger = document.createElement("input")
+    moduleTitleChanger.type = "text"
+    moduleTitleChanger.className = "input input-bordered input-sm w-full"
+    moduleTitleChanger.value = module.name
+    moduleTitleChanger.oninput = (event) => {
+      event.target.value = normalizeName(event.target.value)
+      storage.name = event.target.value
+    }
+
+    moduleCardBody.appendChild(moduleTitleChanger)
+
+    const moduleLessonsCollapse = document.createElement("details")
+    moduleLessonsCollapse.className = "collapse collapse-plus"
+
+    const lessons = module.pages // isso será lessons depois.
+
+    const lessonsCollapse = document.createElement("summary")
+    lessonsCollapse.className = "collapse-title font-medium text-center text-primary my-0"
+    lessonsCollapse.innerText = `Conteúdos - ${lessons.length}`
+
+    moduleLessonsCollapse.appendChild(lessonsCollapse)
+
+    const lessonsCollapseContent = document.createElement("div")
+    lessonsCollapseContent.className = "collapse-content flex flex-col gap-2 mx-0 px-0"
+    lessonsCollapseContent.innerHTML = `
+    <input
+      type="text"
+      class="input input-bordered input-sm w-full"
+      placeholder="Pesquisar conteúdo..."
+      oninput="searchPages(event, '${module.id}')"
+    />
+    `
+    const lessonsContent = renderLessons(module, lessons, storage["children"])
+    lessonsContent.forEach((lesson) => {
+      lessonsCollapseContent.appendChild(lesson)
+    })
+
+    moduleLessonsCollapse.appendChild(lessonsCollapseContent)
+
+    moduleCardBody.appendChild(moduleLessonsCollapse)
+
+    moduleCard.appendChild(moduleCardBody)
+
+    return moduleCard
+  }
+
+  const loadChildren = async (subdomain, itemId, parent, storage) => {
+    const data = await fetchMoreDetails(subdomain, itemId)
+    // data possui modules, cada module possui pages ablueblue
+
+    data.modules.forEach((module, index) => {
+      storage.push({
+        id: module.id,
+        name: module.name,
+        subdomain: subdomain,
+        children: [],
+      })
+      const moduleCard = renderModuleCard(module, index, storage[index])
+      parent.appendChild(moduleCard)
+    })
+  }
+
+  // Adiciona evento de clique para carregar o conteúdo do curso em questão
+  courseContentLoaderBtns.forEach((btn) => {
+    btn.addEventListener("click", async (event) => {
+      const courseId = event.target.dataset.courseId
+      const courseSubdomain = event.target.dataset.courseSubdomain
+      event.target.disabled = true
+
+      const courseContent = document.querySelector(
+        `.course-content[data-course-id="${courseId}"]`
+      )
+      var childrenList = coursesToDownload.find((course) => course.id === courseId)[
+        "children"
+      ]
+
+      await loadChildren(courseSubdomain, courseId, courseContent, childrenList)
+
+      event.target.remove()
+    })
+  })
+</script>
+{% endblock scripts %}

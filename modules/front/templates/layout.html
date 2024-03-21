@@ -24,10 +24,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/daisyui-4.7.1.css') }}"
     />
-    <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/gato.css') }}"
-  />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gato.css') }}" />
     <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/fa-c53a3e6f23.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -36,7 +33,11 @@
   </head>
   <body class="text-sm">
     <nav class="navbar py-2 bg-base-100 shadow-lg rounded-b-lg flex justify-around">
-      <a id="agreementbtn" href="{{ url_for('agreement') }}" class="btn btn-primary btn-sm">
+      <a
+        id="agreementbtn"
+        href="{{ url_for('agreement') }}"
+        class="btn btn-primary btn-sm"
+      >
         <i class="fa-solid fa-circle-exclamation"></i> Termos de Uso
       </a>
       <a id="homebtn" href="{{ url_for('home') }}" class="btn btn-primary btn-sm">
@@ -48,17 +49,22 @@
       <a id="accountsbtn" href="{{ url_for('accounts') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-users" aria-hidden="true"></i> Gerenciar Contas
       </a>
-      
+
       {% if disable_download %}
-        <a id="coursesbtn" href="#" class="btn btn-primary btn-sm pointer-events-none cursor-not-allowed opacity-50" aria-disabled="true">
-          <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
-        </a>
+      <a
+        id="coursesbtn"
+        href="#"
+        class="btn btn-primary btn-sm pointer-events-none cursor-not-allowed opacity-50"
+        aria-disabled="true"
+      >
+        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
+      </a>
       {% else %}
-          <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
-          </a>
+      <a id="coursesbtn" href="{{ url_for('courses') }}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Gerenciar Cursos
+      </a>
       {% endif %}
-      
+
       <a id="logbtn" href="{{ url_for('log') }}" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-layer-group" aria-hidden="true"></i> LOGs
       </a>
@@ -66,9 +72,7 @@
         <i class="fa-solid fa-paper-plane"></i> Suporte
       </a>
     </nav>
-    <main id="content" class="container mx-auto p-4 mb-24">
-      {% block content %}{% endblock %}
-    </main>
+    <main id="content" class="mx-auto mb-24">{% block content %}{% endblock %}</main>
 
     <footer
       class="fixed bottom-0 w-full p-2 bg-neutral text-neutral-content shadow-lg h-1/12"
@@ -95,14 +99,14 @@
     </footer>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const coursesBtn = document.getElementById('coursesbtn');
-    if (coursesBtn.classList.contains('disabled')) {
-      coursesBtn.addEventListener('click', function(event) {
-        event.preventDefault();
-        });
-      }
-    });
+      document.addEventListener("DOMContentLoaded", function () {
+        const coursesBtn = document.getElementById("coursesbtn")
+        if (coursesBtn.classList.contains("disabled")) {
+          coursesBtn.addEventListener("click", function (event) {
+            event.preventDefault()
+          })
+        }
+      })
 
       let currentLocation = window.location.pathname.split("/").pop()
       if (currentLocation == null || currentLocation == "") {
@@ -111,14 +115,6 @@
       let navbtn = document.getElementById(`${currentLocation}btn`)
       navbtn.classList.remove("btn-primary")
       navbtn.classList.add("btn-accent")
-    </script>
-
-    <script type="importmap">
-      {
-        "imports": {
-          "vue": "{{ url_for("static", filename="js/vue.esm-browser.js") }}"
-        }
-      }
     </script>
 
     {% block scripts %}{% endblock %}

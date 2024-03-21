@@ -1,0 +1,142 @@
+{% macro render_course_card(course) %} {% set course_name = course.subdomain %}
+
+<div
+  class="card card-bordered border-accent course-card"
+  data-course-id="{{ course.id }}"
+  data-course-subdomain="{{ course.subdomain }}"
+>
+  <div class="card-body py-2">
+    <!-- Título do Produto e Editável -->
+    <div class="card-title flex gap-2 justify-around">
+      <div class="flex gap-2 w-full items-center justify-center">
+        <div class="tooltip" data-tip="Nome Original: {{ course_name }}">
+          <span class="text-center course-name" data-course-id="{{ course.id }}">
+            {{ course_name }}
+          </span>
+        </div>
+
+        <div class="tooltip">
+          <button
+            class="btn btn-xs btn-secondary btn-circle btn-enable-edit-course-name"
+            data-course-id="{{ course.id }}"
+          >
+            <i
+              class="fas fa-pen-to-square btn-enable-edit-course-name"
+              data-course-id="{{ course.id }}"
+            ></i>
+          </button>
+        </div>
+
+        <div class="badge">{{ course.status }}</div>
+      </div>
+    </div>
+
+    <!-- Conteúdo Colapsável com Detalhes do Produto -->
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" />
+      <div class="collapse-title text-sm font-medium">Detalhes do Curso</div>
+      <div class="collapse-content">
+        <!-- Tabela com metadatas -->
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ID do produto</td>
+              <td>{{ course.id }}</td>
+            </tr>
+            <tr>
+              <td>Subdomínio do produto (área de membros)</td>
+              <td>{{ course.subdomain }}</td>
+            </tr>
+            <tr>
+              <td>Status da Compra/Assinatura</td>
+              <td>{{ course.status }}</td>
+            </tr>
+            <tr>
+              <td>ID da Área de Usuário</td>
+              <td>{{ course.user_area_id }}</td>
+            </tr>
+            <tr>
+              <td>Seus cargos dentro do produto</td>
+              <td>{{ ", ".join(course.roles) }}</td>
+            </tr>
+            <tr>
+              <td>Domínio ASSUMIDO do Produto</td>
+              <td>{{ course.domain }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal com Conteúdo dos Cursos -->
+    <input type="checkbox" class="modal-toggle" data-course-id="{{ course.id }}" />
+    <div class="modal" role="dialog">
+      <div class="modal-box w-11/12 max-w-full">
+        <button
+          class="btn btn-circle btn-error btn-sm modal-controller fixed right-2 top-2"
+          data-course-id="{{ course.id }}"
+        >
+          <i
+            class="fa-regular fa-circle-xmark h-4 w-4 modal-controller"
+            data-course-id="{{ course.id }}"
+          ></i>
+        </button>
+
+        <h3 class="font-bold text-xl text-center">
+          Conteúdo do curso
+          <span class="course-name text-accent" data-course-id="{{ course.id }}">
+            {{ course_name }}
+          </span>
+        </h3>
+
+        <div
+          class="flex flex-col justify-center items-center my-4 h-5/6 course-content overflow-y-auto gap-3"
+          data-course-id="{{ course.id }}"
+        >
+          <button
+            class="btn btn-primary btn-course-content-loader"
+            data-course-id="{{ course.id }}"
+            data-course-subdomain="{{ course.subdomain }}"
+          >
+            <i
+              class="fas fa-download h-4 w-4 btn-course-content-loader"
+              data-course-id="{{ course.id }}"
+              data-course-subdomain="{{ course.subdomain }}"
+            ></i>
+            Carregar Conteúdo do Curso
+          </button>
+        </div>
+
+        <div class="modal-action">
+          <button class="btn btn-secondary" data-course-id="{{ course.id }}">
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações sobre o Produto -->
+    <div class="card-actions justify-end items-center">
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text mr-2">Marcar Curso para Download</span>
+          <input type="checkbox" checked="checked" class="checkbox" />
+        </label>
+      </div>
+      <button class="btn btn-primary modal-controller" data-course-id="{{ course.id }}">
+        <i
+          class="fa-regular fa-eye h-6 w-6 modal-controller"
+          data-course-id="{{ course.id }}"
+        ></i>
+        Visualizar Conteúdo
+      </button>
+    </div>
+  </div>
+</div>
+{% endmacro %}

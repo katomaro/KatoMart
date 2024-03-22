@@ -1,4 +1,6 @@
-{% macro render_course_card(course) %} {% set course_name = course.subdomain %}
+{% macro render_course_card(course) %}
+<!-- Course Name -->
+{% set course_name = course.subdomain %}
 
 <div
   class="card card-bordered border-accent course-card"
@@ -126,7 +128,7 @@
       <div class="form-control">
         <label class="label cursor-pointer">
           <span class="label-text mr-2">Marcar Curso para Download</span>
-          <input type="checkbox" checked="checked" class="checkbox" />
+          <input type="checkbox" checked="checked" class="checkbox checkbox-primary checkbox-download-course" data-course-id="{{ course.id }}" />
         </label>
       </div>
       <button class="btn btn-primary modal-controller" data-course-id="{{ course.id }}">

@@ -57,13 +57,53 @@
     coursesToDownload.push({
       id: course.dataset.courseId,
       name: course.querySelector(".course-name").innerText,
-      subdomain: course.dataset.coursesubdomain,
+      subdomain: course.dataset.courseSubdomain,
+      toDownload: true,
       children: [],
     })
   })
 
+  const findPath = (forest, targetId, targetSubdomain, path = []) => {
+    for (const tree of forest) {
+      if (tree.id === targetId && tree.subdomain === targetSubdomain) {
+        return [...path, { id: tree.id, subdomain: tree.subdomain }]
+      }
+
+      if (tree.children && tree.children.length > 0) {
+        const foundPath = findPath(tree.children, targetId, targetSubdomain, [
+          ...path,
+          { id: tree.id, subdomain: tree.subdomain },
+        ])
+        if (foundPath) return foundPath
+      }
+    }
+    return null
+  }
+
   const normalizeName = (name) => {
     return name.replace(/[#@$!%^&*+\-={};':"\\|,.<>\/?]+/g, "")
+  }
+
+  const labeledCheckbox = (text) => {
+    const div = document.createElement("div")
+    div.className = "form-control"
+
+    const label = document.createElement("label")
+    label.className = "label cursor-pointer"
+    div.appendChild(label)
+
+    const span = document.createElement("span")
+    span.className = "label-text"
+    span.innerText = text
+    label.appendChild(span)
+
+    const checkbox = document.createElement("input")
+    checkbox.type = "checkbox"
+    checkbox.className = "checkbox checkbox-primary checkbox-sm"
+    checkbox.checked = true
+    label.appendChild(checkbox)
+
+    return div
   }
 
   // Filtro pelo Nome do Curso
@@ -136,15 +176,14 @@
     })
   })
 
-  const fetchMoreDetails = async (subdomain, itemId) => {
-    console.log(subdomain, itemId)
+  const fetchMoreDetails = async (subdomain, itemId, path) => {
     try {
       const res = await fetch("/api/load_course_data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ club: subdomain, id: itemId }),
+        body: JSON.stringify({ club: subdomain, id: itemId, path }),
       })
       const data = await res.json()
       return data
@@ -171,6 +210,7 @@
         id: lesson.id,
         name: lesson.name,
         subdomain: lesson.subdomain,
+        toDownload: true,
         children: [],
       })
       const lessonDiv = document.createElement("div")
@@ -199,9 +239,27 @@
       const lessonActions = document.createElement("div")
       lessonActions.className = "card-actions justify-end"
 
+      const checkboxToDownload = labeledCheckbox("Marcar para Download")
+      checkboxToDownload.querySelector("input").onchange = (event) => {
+        storage[index].toDownload = event.target.checked
+      }
+      lessonActions.appendChild(checkboxToDownload)
+
       const lessonLoadMoreBtn = document.createElement("button")
       lessonLoadMoreBtn.className = "btn btn-primary btn-sm"
       lessonLoadMoreBtn.innerText = "Carregar mais"
+
+      lessonLoadMoreBtn.onclick = async (event) => {
+        event.target.disabled = true
+        await loadChildren(
+          lesson.subdomain,
+          lesson.id,
+          lessonBody,
+          storage[index].children,
+          findPath(coursesToDownload, parentObj.id, parentObj.subdomain)
+        )
+        event.target.remove()
+      }
 
       lessonActions.appendChild(lessonLoadMoreBtn)
       lessonBody.appendChild(lessonActions)
@@ -236,6 +294,12 @@
     }
 
     moduleCardBody.appendChild(moduleTitleChanger)
+
+    const checkboxToDownload = labeledCheckbox("Marcar para Download")
+    checkboxToDownload.querySelector("input").onchange = (event) => {
+      storage.toDownload = event.target.checked
+    }
+    moduleCardBody.appendChild(checkboxToDownload)
 
     const moduleLessonsCollapse = document.createElement("details")
     moduleLessonsCollapse.className = "collapse collapse-plus"
@@ -272,8 +336,8 @@
     return moduleCard
   }
 
-  const loadChildren = async (subdomain, itemId, parent, storage) => {
-    const data = await fetchMoreDetails(subdomain, itemId)
+  const loadChildren = async (subdomain, itemId, parent, storage, path = []) => {
+    const data = await fetchMoreDetails(subdomain, itemId, path)
     // data possui modules, cada module possui pages ablueblue
 
     data.modules.forEach((module, index) => {
@@ -281,6 +345,7 @@
         id: module.id,
         name: module.name,
         subdomain: subdomain,
+        toDownload: true,
         children: [],
       })
       const moduleCard = renderModuleCard(module, index, storage[index])
@@ -306,6 +371,17 @@
 
       event.target.remove()
     })
+  })
+
+  // Adiciona evento de marcar curso para download ou não.
+  coursesToDownload.forEach((course) => {
+    const checkbox = document.querySelector(
+      `.checkbox-download-course[data-course-id="${course.id}"]`
+    )
+
+    checkbox.onchange = (event) => {
+      course.toDownload = event.target.checked
+    }
   })
 </script>
 {% endblock scripts %}

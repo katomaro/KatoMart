@@ -54,9 +54,9 @@ def update_agreement():
         db_manager.update_setting('user_consent', int(bool((request.form.get('agreement')))))
     return redirect(url_for('home'))
 
-@app.route('/<path:_>')
+@app.route('/<path:anything>')
 @app.route('/')
-def index(_):
+def index(anything=None):
     # db_manager = get_db()
     # consent = int(db_manager.get_setting('user_consent'))
     # if not consent:

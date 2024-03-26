@@ -1,7 +1,7 @@
 import time
 from pathlib import Path
 
-from flask import Flask, g, jsonify, redirect, render_template, request, url_for
+from flask import Flask, g, jsonify, redirect, render_template, request, url_for, Blueprint
 
 from modules.accounts.hotmart import Hotmart
 from modules.databases.manager_main import DatabaseManager
@@ -39,30 +39,31 @@ def close_db(error):
 selected_platform_instance = None
 
 # Rotas do aplicativo
-        
-@app.route('/agreement')
+api_bp = Blueprint('api', __name__, url_prefix='/api')
+
+@api_bp.route('/agreement')
 def agreement():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
     return render_template('agreement.html', consent=consent, disable_download_btn=bool(selected_platform_instance))
 
-@app.route('/api/agreement', methods=['POST'])
+@api_bp.route('/agreement', methods=['POST'])
 def update_agreement():
     db_manager = get_db()
     if request.form.get('agreement'):
         db_manager.update_setting('user_consent', int(bool((request.form.get('agreement')))))
     return redirect(url_for('home'))
 
+@app.route('/<path:_>')
 @app.route('/')
-@app.route('/home')
-def home():
-    db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
-    if not consent:
-        return redirect(url_for('agreement'))
-    return render_template('home.html', disable_download_btn=bool(selected_platform_instance))
+def index(_):
+    # db_manager = get_db()
+    # consent = int(db_manager.get_setting('user_consent'))
+    # if not consent:
+    #     return redirect(url_for('agreement'))
+    return render_template("index.html")
 
-@app.route('/settings')
+@api_bp.route('/settings')
 def settings():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -83,7 +84,7 @@ def settings():
 
     return render_template("settings.html", settings=selected_settings, disable_download_btn=bool(selected_platform_instance))
 
-@app.route('/api/settings', methods=['POST'])
+@api_bp.route('/settings', methods=['POST'])
 def update_settings():
     db_manager = get_db()
 
@@ -135,7 +136,7 @@ def update_settings():
 
     return redirect(url_for("settings"))
 
-@app.route('/accounts')
+@api_bp.route('/accounts')
 def accounts():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -143,7 +144,7 @@ def accounts():
         return redirect(url_for('agreement'))
     return render_template('accounts.html', disable_download_btn=bool(selected_platform_instance))
 
-@app.route('/api/platforms', methods=['GET'])
+@api_bp.route('/platforms', methods=['GET'])
 def get_platforms():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -152,7 +153,7 @@ def get_platforms():
     platforms = db_manager.fetch_platforms()
     return jsonify(platforms)
 
-@app.route('/api/get_accounts')
+@api_bp.route('/get_accounts')
 def get_accounts():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -167,7 +168,7 @@ def get_accounts():
     all_accounts = db_manager.get_accounts_by_platform(platform_id)
     return jsonify(all_accounts)
 
-@app.route('/api/accounts', methods=['POST'])
+@api_bp.route('/accounts', methods=['POST'])
 def add_or_update_account():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -188,7 +189,7 @@ def add_or_update_account():
     db_manager.add_or_update_account(platform_id, username, password, added_at, last_validated_At, is_valid)
     return jsonify({'success': True})
 
-@app.route('/api/get_session_token', methods=['GET'])
+@api_bp.route('/get_session_token', methods=['GET'])
 def get_session_token():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -202,7 +203,7 @@ def get_session_token():
     else:
         return jsonify({'success': False})
 
-@app.route('/api/update_token', methods=['POST'])
+@api_bp.route('/update_token', methods=['POST'])
 def update_token():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -220,7 +221,7 @@ def update_token():
     
     return jsonify({'success': True})
 
-@app.route('/api/select_account', methods=['POST'])
+@api_bp.route('/select_account', methods=['POST'])
 def select_account():
     global selected_platform_instance
     if not request.json:
@@ -239,7 +240,7 @@ def select_account():
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})
 
-@app.route('/api/delete_account', methods=['POST'])
+@api_bp.route('/delete_account', methods=['POST'])
 def delete_account():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -254,7 +255,7 @@ def delete_account():
     return jsonify({'success': True})
 
 
-@app.route('/courses')
+@api_bp.route('/courses')
 def courses():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -267,7 +268,7 @@ def courses():
     
     return render_template('courses.html', courses=selected_platform_instance.get_account_products())
 
-@app.route('/api/load_course_data', methods=['POST'])
+@api_bp.route('/load_course_data', methods=['POST'])
 def load_course_data():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -283,7 +284,7 @@ def load_course_data():
     
     return jsonify(selected_platform_instance.get_product_information(course_id))
 
-@app.route('/log')
+@api_bp.route('/log')
 def log():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -291,7 +292,7 @@ def log():
         return redirect(url_for('agreement'))
     return render_template('log.html', disable_download_btn=bool(selected_platform_instance))
 
-@app.route('/support')
+@api_bp.route('/support')
 def support():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))

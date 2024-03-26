@@ -1,12 +1,18 @@
+import Footer from "../components/footer.js"
 import NavBar from "../components/navbar.js"
 
 export default {
   components: {
-    NavBar
+    NavBar,
+    Footer
   },
   template: `
   <NavBar />
 
-  <RouterView />
+  <div className="mb-24">
+    <RouterView />
+  </div>
+
+  <Footer />
   `
 }

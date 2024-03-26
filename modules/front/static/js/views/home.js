@@ -1,14 +1,17 @@
-
-
+import notices from "../components/home/notices.js"
+import presentation from "../components/home/presentation.js"
 
 export default {
+  components: {
+    presentation,
+    notices
+  },
 
 
   template: `
-  <div>
-    <h1 class="text-3xl font-bold underline">
-    Home
-    </h1>
+  <div className="container mx-auto">
+    <presentation />
+    <notices />
   </div>
   `
 }

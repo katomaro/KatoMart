@@ -7,7 +7,7 @@ export default {
       {
         name: "Termos de Uso",
         icon: "fa-solid fa-circle-exclamation",
-        link: "/terms"
+        link: "/agreement"
       },
       {
         name: "Katomart",

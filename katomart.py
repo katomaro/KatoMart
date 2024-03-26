@@ -20,86 +20,95 @@ platform_classes = {
 }
 
 
-app = Flask(__name__,
-            template_folder='modules/front/templates',
-            static_folder='modules/front/static')
+app = Flask(
+    __name__, template_folder="modules/front/templates", static_folder="modules/front/static"
+)
 
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 execution_path = Path(__file__).parent
-db_folder_path = execution_path / 'modules' / 'databases'
-database_path = execution_path / 'main.sqlite3'
+db_folder_path = execution_path / "modules" / "databases"
+database_path = execution_path / "main.sqlite3"
+
 
 def get_db():
     """
     Obtém uma instância do gerenciador de banco de dados, seguindo o padrão application factory.
     """
-    if 'db' not in g:
+    if "db" not in g:
         g.db = DatabaseManager(db_folder_path=db_folder_path, db_path=database_path)
     return g.db
+
 
 @app.teardown_appcontext
 def close_db(error):
     """
     Fecha a conexão com o banco de dados ao finalizar o contexto da aplicação.
     """
-    db = g.pop('db', None)
+    db = g.pop("db", None)
     if db is not None:
         del db
+
 
 selected_platform_instance = None
 
 # Rotas do aplicativo
-api_bp = Blueprint('api', __name__, url_prefix='/api')
+api_bp = Blueprint("api", __name__, url_prefix="/api")
 
-@api_bp.route('/agreement')
+
+@api_bp.route("/agreement")
 def agreement():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
-    return render_template('agreement.html', consent=consent, disable_download_btn=bool(selected_platform_instance))
+    consent = int(db_manager.get_setting("user_consent")) == 1
+    return jsonify({"consent": consent})
 
-@api_bp.route('/agreement', methods=['POST'])
+
+@api_bp.route("/agreement", methods=["POST"])
 def update_agreement():
     db_manager = get_db()
-    if request.form.get('agreement'):
-        db_manager.update_setting('user_consent', int(bool((request.form.get('agreement')))))
-    return redirect(url_for('home'))
+    if request.form.get("agreement"):
+        db_manager.update_setting("user_consent", int(request.form["agreement"] == "on"))
+    return redirect(url_for("index"))
 
-@app.route('/<path:anything>')
-@app.route('/')
+
+@app.route("/<path:anything>")
+@app.route("/")
 def index(anything=None):
-    db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
-    if not consent:
-        return redirect(url_for('agreement'))
+    # db_manager = get_db()
+    # consent = int(db_manager.get_setting("user_consent"))
+    # if not consent:
+    #     return redirect(url_for("agreement"))
     return render_template("index.html")
 
-@api_bp.get('/settings')
+
+@api_bp.get("/settings")
 def settings():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
+        return redirect(url_for("agreement"))
     selected_settings = db_manager.get_all_settings()
 
     media_types = db_manager.get_all_media_delivery_sources()
 
     drm_types = db_manager.get_all_drm_types()
 
-    selected_settings.update({'media_types': media_types, 'drm_types': drm_types})
-    selected_settings['use_custom_ffmpeg'] = bool(selected_settings['use_custom_ffmpeg'])
-
+    selected_settings.update({"media_types": media_types, "drm_types": drm_types})
+    selected_settings["use_custom_ffmpeg"] = bool(selected_settings["use_custom_ffmpeg"])
 
     selected_settings.update({"media_types": media_types, "drm_types": drm_types})
 
-    return jsonify({"settings": selected_settings, "disable_download_btn": bool(selected_platform_instance)})
+    return jsonify(
+        {"settings": selected_settings, "disable_download_btn": bool(selected_platform_instance)}
+    )
 
-@api_bp.post('/settings')
+
+@api_bp.post("/settings")
 def update_settings():
     db_manager = get_db()
 
     form = request.json
-    
+
     if not form:
         return jsonify({"success": False, "message": "Dados inválidos... Chame suporte."}), 400
 
@@ -139,31 +148,34 @@ def update_settings():
 
     return jsonify({"success": True, "message": "Configurações Atualizadas!"})
 
-@api_bp.route('/accounts')
+
+@api_bp.route("/accounts")
 def accounts():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
-    return render_template('accounts.html', disable_download_btn=bool(selected_platform_instance))
+        return redirect(url_for("agreement"))
+    return render_template("accounts.html", disable_download_btn=bool(selected_platform_instance))
 
-@api_bp.route('/platforms', methods=['GET'])
+
+@api_bp.route("/platforms", methods=["GET"])
 def get_platforms():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
         return jsonify([])
     platforms = db_manager.fetch_platforms()
     return jsonify(platforms)
 
-@api_bp.route('/get_accounts')
+
+@api_bp.route("/get_accounts")
 def get_accounts():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
         return jsonify([])
 
-    platform_id = request.args.get('platform_id', default=None, type=int)
+    platform_id = request.args.get("platform_id", default=None, type=int)
     if platform_id is None:
         return jsonify([])  # Ou retorne um erro, dependendo da sua lógica de aplicação
 
@@ -171,66 +183,86 @@ def get_accounts():
     all_accounts = db_manager.get_accounts_by_platform(platform_id)
     return jsonify(all_accounts)
 
-@api_bp.route('/accounts', methods=['POST'])
+
+@api_bp.route("/accounts", methods=["POST"])
 def add_or_update_account():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return jsonify({'success': False})
-    
+        return jsonify({"success": False})
+
     # Usar request.json para acessar os dados enviados em formato JSON
     data = request.json
     if not data:
-        return jsonify({'success': False})
-    platform_id = data['platform_id']
-    username = data['username']
-    password = data['password']
+        return jsonify({"success": False})
+    platform_id = data["platform_id"]
+    username = data["username"]
+    password = data["password"]
     added_at = int(time.time())
-    is_valid = data.get('is_valid', False)
+    is_valid = data.get("is_valid", False)
     last_validated_At = int(time.time()) if is_valid else None
 
-    db_manager.add_or_update_account(platform_id, username, password, added_at, last_validated_At, is_valid)
-    return jsonify({'success': True})
+    db_manager.add_or_update_account(
+        platform_id, username, password, added_at, last_validated_At, is_valid
+    )
+    return jsonify({"success": True})
 
-@api_bp.route('/get_session_token', methods=['GET'])
+
+@api_bp.route("/get_session_token", methods=["GET"])
 def get_session_token():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return jsonify({'success': False})
-    platform_id = request.args.get('platform_id')
-    username = request.args.get('username')
+        return jsonify({"success": False})
+    platform_id = request.args.get("platform_id")
+    username = request.args.get("username")
     token_info = db_manager.get_session_token_by_email(platform_id, username)
     if token_info:
-        return jsonify({'success': True, 'token': token_info['auth_token'], 'expires_at': token_info['auth_token_expires_at']})
+        return jsonify(
+            {
+                "success": True,
+                "token": token_info["auth_token"],
+                "expires_at": token_info["auth_token_expires_at"],
+            }
+        )
     else:
-        return jsonify({'success': False})
+        return jsonify({"success": False})
 
-@api_bp.route('/update_token', methods=['POST'])
+
+@api_bp.route("/update_token", methods=["POST"])
 def update_token():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return jsonify({'success': False})
-    account_id = request.form['account_id']
-    platform_id = request.form['platform_id']
-    auth_token = request.form['auth_token']
-    auth_token_expires_at = request.form['auth_token_expires_at']
-    refresh_token = request.form['refresh_token']
-    refresh_token_expires_at = request.form['refresh_token_expires_at']
-    other_data = request.form.get('other_data', '')  # Dados adicionais são relativos
+        return jsonify({"success": False})
+    account_id = request.form["account_id"]
+    platform_id = request.form["platform_id"]
+    auth_token = request.form["auth_token"]
+    auth_token_expires_at = request.form["auth_token_expires_at"]
+    refresh_token = request.form["refresh_token"]
+    refresh_token_expires_at = request.form["refresh_token_expires_at"]
+    other_data = request.form.get("other_data", "")  # Dados adicionais são relativos
 
-    db_manager.update_auth_token(account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
-    
-    return jsonify({'success': True})
+    db_manager.update_auth_token(
+        account_id,
+        platform_id,
+        auth_token,
+        auth_token_expires_at,
+        refresh_token,
+        refresh_token_expires_at,
+        other_data,
+    )
 
-@api_bp.route('/select_account', methods=['POST'])
+    return jsonify({"success": True})
+
+
+@api_bp.route("/select_account", methods=["POST"])
 def select_account():
     global selected_platform_instance
     if not request.json:
         return jsonify({"error": "No JSON data provided."}), 400
-    account_id = int(request.json.get('account_id'))
-    platform_id = int(request.json.get('platform_id'))
+    account_id = int(request.json.get("account_id"))
+    platform_id = int(request.json.get("platform_id"))
 
     if not account_id or not platform_id:
         return jsonify({"error": "Account ID and Platform ID are required."}), 400
@@ -239,77 +271,88 @@ def select_account():
     if not platform_class:
         return jsonify({"error": "Invalid Platform ID."}), 400
 
-    selected_platform_instance = platform_class(account_id, DatabaseManager(db_folder_path=db_folder_path, db_path=database_path))
+    selected_platform_instance = platform_class(
+        account_id, DatabaseManager(db_folder_path=db_folder_path, db_path=database_path)
+    )
 
     return jsonify({"message": f"Platform instance for account {account_id} selected."})
 
-@api_bp.route('/delete_account', methods=['POST'])
+
+@api_bp.route("/delete_account", methods=["POST"])
 def delete_account():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return jsonify({'success': False})
+        return jsonify({"success": False})
     data = request.get_json()  # Obter os dados enviados como JSON
-    account_id = data.get('account_id')
-    
+    account_id = data.get("account_id")
+
     if account_id:
         db_manager.delete_account(account_id)
-    
-    return jsonify({'success': True})
+
+    return jsonify({"success": True})
 
 
-@api_bp.route('/courses')
+@api_bp.route("/courses")
 def courses():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
-    
+        return redirect(url_for("agreement"))
+
     global selected_platform_instance
     if selected_platform_instance is None:
-        return redirect(url_for('accounts'))
-    
-    return render_template('courses.html', courses=selected_platform_instance.get_account_products())
+        return redirect(url_for("accounts"))
 
-@api_bp.route('/load_course_data', methods=['POST'])
+    return render_template(
+        "courses.html", courses=selected_platform_instance.get_account_products()
+    )
+
+
+@api_bp.route("/load_course_data", methods=["POST"])
 def load_course_data():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
-    
+        return redirect(url_for("agreement"))
+
     data = request.get_json()
-    course_id = data.get('club')
-    
+    course_id = data.get("club")
+
     global selected_platform_instance
     if selected_platform_instance is None:
-        return redirect(url_for('accounts'))
-    
+        return redirect(url_for("accounts"))
+
     return jsonify(selected_platform_instance.get_product_information(course_id))
 
-@api_bp.route('/log')
+
+@api_bp.route("/log")
 def log():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
-    return render_template('log.html', disable_download_btn=bool(selected_platform_instance))
+        return redirect(url_for("agreement"))
+    return render_template("log.html", disable_download_btn=bool(selected_platform_instance))
 
-@api_bp.route('/support')
+
+@api_bp.route("/support")
 def support():
     db_manager = get_db()
-    consent = int(db_manager.get_setting('user_consent'))
+    consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for('agreement'))
-    return render_template('support.html', disable_download_btn=bool(selected_platform_instance))
+        return redirect(url_for("agreement"))
+    return render_template("support.html", disable_download_btn=bool(selected_platform_instance))
+
 
 # Ponto de entrada principal para execução do servidor
-if __name__ == '__main__':
+if __name__ == "__main__":
     PORT = 6102
-    print('[INIT] Por favor, ignore todos os textos abaixo/acima, vá até o seu '
-          f'navegador e acesse o endereço http://localhost:{PORT}\n'
-          'Estes textos são apenas de debug. Não feche esse terminal enquanto '
-          'estiver utilizando o Katomart em sua interface web (porém você pode '
-          'fechar o navegador e voltar até o site para gerenciar o Katomart quando quiser')
+    print(
+        "[INIT] Por favor, ignore todos os textos abaixo/acima, vá até o seu "
+        f"navegador e acesse o endereço http://localhost:{PORT}\n"
+        "Estes textos são apenas de debug. Não feche esse terminal enquanto "
+        "estiver utilizando o Katomart em sua interface web (porém você pode "
+        "fechar o navegador e voltar até o site para gerenciar o Katomart quando quiser"
+    )
     app.register_blueprint(api_bp)
     app.run(debug=True, port=PORT)

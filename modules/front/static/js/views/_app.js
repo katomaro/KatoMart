@@ -9,8 +9,10 @@ export default {
   template: `
   <NavBar />
 
-  <div className="mb-24">
-    <RouterView />
+  <div class="mb-24">
+    <Suspense>
+      <RouterView />
+    </Suspense>
   </div>
 
   <Footer />

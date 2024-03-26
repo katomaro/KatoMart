@@ -7,6 +7,10 @@ export default {
     size: {
       type: String,
       default: "md",
+    },
+    outline: {
+      type: Boolean,
+      default: false,
     }
   },
 
@@ -23,7 +27,7 @@ export default {
         lg: "btn-lg",
       }
 
-      return `btn ${variantClasses[this.variant]} ${sizeClasses[this.size]}`
+      return `btn ${variantClasses[this.variant]} ${sizeClasses[this.size]} ${this.outline ? "btn-outline" : ""}`
     }
   },
 

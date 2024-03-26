@@ -1,7 +1,17 @@
+import Form from "../components/config/form.js"
+
+
 export default {
+  components: {
+    Form
+  },
+  setup() {
+
+  },
   template: `
-  <div className="h-92 w-screen flex justify-center items-center text-2xl">
-    Configurações
+  <div class="container mx-auto">
+    <h1 class="text-center text-2xl my-2">Configurações</h1>
+    <Form />
   </div>
   `
 }

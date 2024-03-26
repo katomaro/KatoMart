@@ -9,7 +9,7 @@ export default {
 
 
   template: `
-  <div className="container mx-auto">
+  <div class="container mx-auto">
     <presentation />
     <notices />
   </div>

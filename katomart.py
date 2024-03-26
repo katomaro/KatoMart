@@ -1,7 +1,16 @@
 import time
 from pathlib import Path
 
-from flask import Flask, g, jsonify, redirect, render_template, request, url_for, Blueprint
+from flask import (
+    Blueprint,
+    Flask,
+    g,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 
 from modules.accounts.hotmart import Hotmart
 from modules.databases.manager_main import DatabaseManager
@@ -11,14 +20,16 @@ platform_classes = {
 }
 
 
-app = Flask(__name__, 
+app = Flask(__name__,
             template_folder='modules/front/templates',
             static_folder='modules/front/static')
+
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 execution_path = Path(__file__).parent
 db_folder_path = execution_path / 'modules' / 'databases'
 database_path = execution_path / 'main.sqlite3'
+
 def get_db():
     """
     Obtém uma instância do gerenciador de banco de dados, seguindo o padrão application factory.
@@ -57,13 +68,13 @@ def update_agreement():
 @app.route('/<path:anything>')
 @app.route('/')
 def index(anything=None):
-    # db_manager = get_db()
-    # consent = int(db_manager.get_setting('user_consent'))
-    # if not consent:
-    #     return redirect(url_for('agreement'))
+    db_manager = get_db()
+    consent = int(db_manager.get_setting('user_consent'))
+    if not consent:
+        return redirect(url_for('agreement'))
     return render_template("index.html")
 
-@api_bp.route('/settings')
+@api_bp.get('/settings')
 def settings():
     db_manager = get_db()
     consent = int(db_manager.get_setting('user_consent'))
@@ -78,63 +89,55 @@ def settings():
     selected_settings.update({'media_types': media_types, 'drm_types': drm_types})
     selected_settings['use_custom_ffmpeg'] = bool(selected_settings['use_custom_ffmpeg'])
 
-    drm_types = [(x[0], x[1], bool(x[2])) for x in drm_types]
 
     selected_settings.update({"media_types": media_types, "drm_types": drm_types})
 
-    return render_template("settings.html", settings=selected_settings, disable_download_btn=bool(selected_platform_instance))
+    return jsonify({"settings": selected_settings, "disable_download_btn": bool(selected_platform_instance)})
 
-@api_bp.route('/settings', methods=['POST'])
+@api_bp.post('/settings')
 def update_settings():
     db_manager = get_db()
 
-    field_settings = [
-        "download_path",
-        "default_user_agent",
-    ]
+    form = request.json
+    
+    if not form:
+        return jsonify({"success": False, "message": "Dados inválidos... Chame suporte."}), 400
 
-    # acredito que isso daqui venha depois...
-    field_boolean_settings = [
-        # "download_from_players",
-        # "download_drm_content",
-        # "download_drm_types"
-    ]
-
-    if request.form.get("use_custom_ffmpeg") == "on":
-        db_manager.update_setting("use_custom_ffmpeg", 1)
+    if form.get("use_custom_ffmpeg") is not None:
+        db_manager.update_setting("use_custom_ffmpeg", form["use_custom_ffmpeg"])
         db_manager.update_setting(
-            "custom_ffmpeg_input",
-            request.form.get("custom_ffmpeg_input") or "SYSTEM",
+            "custom_ffmpeg_path",
+            form.get("custom_ffmpeg_path") or "SYSTEM",
         )
     else:
         db_manager.update_setting("use_custom_ffmpeg", 0)
 
-    for field in field_settings:
-        value = request.form.get(field, None)
-        if value == "on":
-            value = True
+    for field in ["download_path", "default_user_agent"]:
+        value = form.get(field, None)
         if value is not None:
             db_manager.update_setting(field, value)
 
-    for field in field_boolean_settings:
-        value = request.form.get(field, None) == "on"
+    for field in []:
+        value = form.get(field, None)
         db_manager.update_setting(field, value)
 
-    media_types = db_manager.get_all_media_delivery_sources()
-    for name, _, download in media_types:
-        value = request.form.get(name)
-        value = 1 if value == "on" else 0
-        if value != download:
+    # media_types = db_manager.get_all_media_delivery_sources()
+    for media_type in form.get("media_types", []):
+        value = media_type.get("download")
+        value = 1 if value else 0
+        name = media_type.get("name", None)
+        if name is not None:
             db_manager.update_media_delivery_source_download(name, value)
-            
-    drm_types = db_manager.get_all_drm_types()
-    for name, _, download in drm_types:
-        value = request.form.get(name)
-        value = 1 if value == "on" else 0
-        if value != download:
+
+    # drm_types = db_manager.get_all_drm_types()
+    for drm_type in form.get("drm_types", []):
+        value = drm_type.get("download")
+        value = 1 if value else 0
+        name = drm_type.get("name", None)
+        if name is not None:
             db_manager.update_drm_type_download(name, value)
 
-    return redirect(url_for("settings"))
+    return jsonify({"success": True, "message": "Configurações Atualizadas!"})
 
 @api_bp.route('/accounts')
 def accounts():
@@ -308,4 +311,5 @@ if __name__ == '__main__':
           'Estes textos são apenas de debug. Não feche esse terminal enquanto '
           'estiver utilizando o Katomart em sua interface web (porém você pode '
           'fechar o navegador e voltar até o site para gerenciar o Katomart quando quiser')
+    app.register_blueprint(api_bp)
     app.run(debug=True, port=PORT)

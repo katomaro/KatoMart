@@ -150,8 +150,8 @@ export default {
             <td class="px-5 py-5 border-b border-gray-200 whitespace-nowrap">
               {{ account.password || 'N/A' }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 whitespace-nowrap truncate">
-              {{ account.auth_token || 'N/A' }}
+            <td class="px-5 py-5 border-b border-gray-200 whitespace-nowrap">
+              <input type="text" class="input input-bordered w-full mx-5 px-0.5" :value="account.auth_token">
             </td>
             <td class="px-5 py-5 border-b border-gray-200 whitespace-nowrap">
               {{ account.auth_token_expires_at && convertUnixTimestampToDate(account.auth_token_expires_at) || 'N/A' }}

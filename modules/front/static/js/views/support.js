@@ -1,7 +1,18 @@
+import Devs from "../components/support/devs.js"
+import Info from "../components/support/info.js"
+import MoneyLog from "../components/support/money-log.js"
+
 export default {
+  components: {
+    MoneyLog,
+    Info,
+    Devs,
+  },
   template: `
-  <div class="h-92 w-screen flex justify-center items-center text-2xl">
-    Suporte
+  <Info />
+  <Devs />
+  <div className="container mx-auto">
+    <MoneyLog />
   </div>
   `
 }

@@ -1,12 +1,13 @@
 import sqlite3
 from pathlib import Path
 
+
 class DatabaseManager:
     """
     Gerencia a conexão com o banco de dados e operações relacionadas.
     """
     
-    def __init__(self, db_folder_path: Path = '', db_path: Path = ''):
+    def __init__(self, db_folder_path: Path = Path(''), db_path: Path = Path('')):
         """
         Inicializa a instância do gerenciador do banco de dados.
 
@@ -104,7 +105,8 @@ class DatabaseManager:
         :return: Lista com todas as fontes de entrega de mídia.
         """
         query = "SELECT name, description, download FROM MediaDeliverySources"
-        return self.execute_query(query)
+        result = self.execute_query(query)
+        return [{"name": row[0], "description": row[1], "download": bool(row[2])} for row in result]
 
     def update_media_delivery_source_download(self, name, download):
         """
@@ -125,7 +127,8 @@ class DatabaseManager:
         :return: Lista com todos os tipos de DRM.
         """
         query = "SELECT name, description, download FROM DRMTypes"
-        return self.execute_query(query)
+        result = self.execute_query(query)
+        return [{"name": row[0], "description": row[1], "download": bool(row[2])} for row in result]
 
     def update_drm_type_download(self, name, download):
         """

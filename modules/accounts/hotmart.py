@@ -53,19 +53,18 @@ class Hotmart(Account):
 
             if response.status_code != 200:
                 raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
-            else:
-                response = response.json()
-                print(response)
-                self.auth_token = response['access_token']
-                self.auth_token_expires_at = self.get_current_time() + response['expires_in']
-                self.refresh_token = response['refresh_token']
-                self.refresh_token_expires_at = self.get_current_time() + response['expires_in']
-                self.other_data = self.dump_json_data(response)
-                self._database_manager.execute_query("""
-                    INSERT OR REPLACE INTO Auths (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                    (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
-                )
+
+            response = response.json()
+            self.auth_token = response['access_token']
+            self.auth_token_expires_at = self.get_current_time() + response['expires_in']
+            self.refresh_token = response['refresh_token']
+            self.refresh_token_expires_at = self.get_current_time() + response['expires_in']
+            self.other_data = self.dump_json_data(response)
+            self._database_manager.execute_query("""
+                INSERT OR REPLACE INTO Auths (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
+                VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
+            )
 
 
     def get_account_products(self):

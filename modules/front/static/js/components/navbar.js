@@ -1,5 +1,5 @@
 const { useRouter } = VueRouter
-const { ref } = Vue
+const { ref, watch } = Vue
 
 export default {
   setup() {
@@ -40,18 +40,20 @@ export default {
         link: "/support"
       }
     ]
-    const currentRoutePath = ref("")
+    const router = useRouter()
+    const currentRoutePath = ref(router.currentRoute.value.path)
+    watch(() => router.currentRoute.value.path, (newPath) => {
+      currentRoutePath.value = newPath
+    })
+
     return { pages, currentRoutePath }
-  },
-  mounted() {
-    this.currentRoutePath = useRouter().currentRoute.value.path
   },
   template: `
   <nav class="navbar py-2 bg-base-100 shadow-lg rounded-b-lg flex justify-around">
     <RouterLink
       v-for="page in pages"
       :key="page.name"
-      :class="currentRoutePath.includes(page.link) ? 'btn btn-accent' : 'btn btn-primary'"
+      :class="currentRoutePath === page.link ? 'btn btn-accent' : 'btn btn-primary'"
       :to="page.link"
     >
       <i :class="page.icon"></i> {{ page.name }}

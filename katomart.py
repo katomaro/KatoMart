@@ -298,15 +298,13 @@ def courses():
     db_manager = get_db()
     consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for("agreement"))
+        return redirect(url_for("index"))
 
     global selected_platform_instance
     if selected_platform_instance is None:
-        return redirect(url_for("accounts"))
+        return jsonify({"error": "Nenhuma Conta Selecionada."}), 400
 
-    return render_template(
-        "courses.html", courses=selected_platform_instance.get_account_products()
-    )
+    return jsonify(courses=selected_platform_instance.get_account_products())
 
 
 @api_bp.route("/load_course_data", methods=["POST"])
@@ -314,14 +312,14 @@ def load_course_data():
     db_manager = get_db()
     consent = int(db_manager.get_setting("user_consent"))
     if not consent:
-        return redirect(url_for("agreement"))
+        return redirect(url_for("index"))
 
     data = request.get_json()
     course_id = data.get("club")
 
     global selected_platform_instance
     if selected_platform_instance is None:
-        return redirect(url_for("accounts"))
+        return redirect(url_for("index", anything="accounts"))
 
     return jsonify(selected_platform_instance.get_product_information(course_id))
 
@@ -333,15 +331,6 @@ def log():
     if not consent:
         return redirect(url_for("agreement"))
     return render_template("log.html", disable_download_btn=bool(selected_platform_instance))
-
-
-@api_bp.route("/support")
-def support():
-    db_manager = get_db()
-    consent = int(db_manager.get_setting("user_consent"))
-    if not consent:
-        return redirect(url_for("agreement"))
-    return render_template("support.html", disable_download_btn=bool(selected_platform_instance))
 
 
 # Ponto de entrada principal para execução do servidor

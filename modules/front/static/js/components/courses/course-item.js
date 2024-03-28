@@ -1,6 +1,8 @@
 const { ref, toRefs } = Vue
+import CourseContentModal from "./course-content-modal.js"
 
 export default {
+  components: { CourseContentModal },
   props: {
     course: Object,
   },
@@ -45,24 +47,25 @@ export default {
         @keydown.enter="editCourseName"
       />
       <div class="card-actions justify-end items-center gap-2">
-        Selecionar par Download
+        Selecionar para Download
         <input type="checkbox" class="checkbox checkbox-primary" v-model="course.selected" />
-        <button class="btn btn-primary btn-sm" @click="isModalOpen = !isModalOpen" :disabled="!course.selected || isModalOpen">Selecionar Conteúdo</button>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="isModalOpen = !isModalOpen"
+          :disabled="!course.selected || isModalOpen"
+        >
+          <i class="fa-solid fa-hand" />
+          Selecionar Conteúdo
+        </button>
       </div>
     </div>
   </div>
 
-  <input type="checkbox" class="modal-toggle" v-model="isModalOpen" />
-  <div className="modal" role="dialog">
-    <div className="modal-box w-full max-w-7xl">
-      <h3 class="font-bold text-lg">Conteúdo do Curso {{ course.subdomain }}</h3>
-
-      <p>Conteúdo do curso será carregado aqui bla bla bla</p>
-
-      <div className="modal-action justify-end">
-        <button class="btn" @click="isModalOpen = !isModalOpen">Fechar</button>
-      </div>
-    </div>
-  </div>
+  <CourseContentModal
+    :course="course"
+    :isModalOpen="isModalOpen"
+    @close-modal-request="isModalOpen = false"
+    @set-course-modules="course.modules = $event"
+  />
   `
 }

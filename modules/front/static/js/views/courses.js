@@ -58,7 +58,8 @@ export default {
       <button
         v-if="courses.some(x => x.selected)"
         class="btn btn-accent"
-        @click="console.log('baixar ainnn')">
+        @click="console.log(courses)">
+          <i class="fa-solid fa-download"></i>
           Baixar Selecionados ({{ courses.filter(x => x.selected).length }})
       </button>
     </div>

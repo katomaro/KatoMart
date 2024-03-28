@@ -1,6 +1,6 @@
 const { ref, onMounted, watch } = Vue
 import { convertUnixTimestampToDate } from "../utils.js"
-
+const { useRouter } = VueRouter
 
 export default {
   async setup() {
@@ -72,6 +72,7 @@ export default {
       }
     }
 
+    const router = useRouter()
     const initializeAccount = async (account) => {
       await fetch(`/api/select_account`, {
         method: 'POST',
@@ -82,6 +83,7 @@ export default {
       })
 
       fetchAccounts(form.value.platform_id)
+      router.push('/courses')
     }
 
 

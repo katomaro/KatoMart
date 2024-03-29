@@ -319,18 +319,25 @@ def load_course_data():
 
     global selected_platform_instance
     if selected_platform_instance is None:
-        return redirect(url_for("index", anything="accounts"))
+        return redirect(url_for("index"))
 
     return jsonify(selected_platform_instance.get_product_information(course_id))
 
 
-@api_bp.route("/log")
-def log():
-    db_manager = get_db()
-    consent = int(db_manager.get_setting("user_consent"))
-    if not consent:
-        return redirect(url_for("agreement"))
-    return render_template("log.html", disable_download_btn=bool(selected_platform_instance))
+@api_bp.route("/start_download", methods=["POST"])
+def start_download():
+    global selected_platform_instance
+    if selected_platform_instance is None:
+        return redirect(url_for("index"))
+
+    data = request.get_json()
+    if data.get("courses") is None:
+        return jsonify({"message": "Nenhum curso foi selecionado."}), 400
+
+    courses = data["courses"]
+    # print(courses)
+
+    return jsonify(message="Ainn")
 
 
 # Ponto de entrada principal para execução do servidor

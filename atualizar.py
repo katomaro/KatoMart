@@ -4,7 +4,7 @@ from zipfile import ZipFile
 import requests
 
 def should_keep(file):
-    return file in ["atualizar.py", "Cursos", "jsons", "main.sqlite3"]
+    return file in ["atualizar.py", "Cursos", "jsons", "main.sqlite3", ".git"]
 
 def clean_directory():
     for item in os.listdir():

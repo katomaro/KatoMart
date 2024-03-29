@@ -19,24 +19,35 @@ def download_zip(url, filename):
     with open(filename, 'wb') as file:
         file.write(response.content)
 
-# Função para extrair o conteúdo do ZIP
+
 def extract_zip(filename):
     with ZipFile(filename, 'r') as zip_ref:
         zip_ref.extractall()
 
-# Função principal
+def move_contents_from_folder(source_folder):
+    for item in os.listdir(source_folder):
+        full_item_path = os.path.join(source_folder, item)
+        target_path = os.path.join(".", item)
+        if os.path.isfile(target_path):
+            os.remove(target_path)
+        elif os.path.isdir(target_path):
+            shutil.rmtree(target_path)
+        shutil.move(full_item_path, ".")
+    os.rmdir(source_folder)
+
 def main():
     print("Atualização do sistema Katomart. IMPORTANTE: Se você estiver executando após o dia XX/XX/XXXX, delete o arquivo 'main.sqlite3' manualmente para que ele seja recriado corretamente. Você precisará reconfigurar o sistema ao fazer isso. Não delete a pasta jsons nem a pasta cursos para atualizar.")
     user_consent = input("Deseja atualizar o sistema? (s/n)\n").strip().lower()
     if user_consent != "s":
         print("A atualização foi cancelada pelo usuário.")
         return
-    clean_directory()  # Limpa o diretório
+    clean_directory()
     zip_url = "https://github.com/katomaro/katomart/archive/refs/heads/master.zip"
     zip_filename = "master.zip"
-    download_zip(zip_url, zip_filename)  # Baixa o ZIP
-    extract_zip(zip_filename)  # Extrai o conteúdo
-    os.remove(zip_filename)  # Remove o arquivo ZIP
+    download_zip(zip_url, zip_filename)
+    extract_zip(zip_filename)
+    os.remove(zip_filename)
+    move_contents_from_folder("katomart-master")
     print("A atualização foi concluída com sucesso!")
 
 if __name__ == "__main__":

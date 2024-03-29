@@ -14,7 +14,7 @@ AOS USUÁRIOS: Fica o aviso, **fazer o uso deste programa pode violar o seu CONT
 Em resumo... **Este repositório não é oficial de nenhuma marca** e apenas o projeto de um estudante que quis baixar um curso que tem a licença, de consumo, pediu autorização para o autor do curso para fazer a ferramenta inicial e publicar, um monte de gente achou útil e assim seguiu fazendo para demais plataformas. E novamente, se você tem o direito de consumo, você pode *enfiar onde quiser e quantas vezes você quiser* que nenhuma plataforma pode fazer nada contra você, eles podem optar em não te prestar mais serviços posteriormente, a menos que você compartilhe o conteúdo (que como citado configuraria crime), nada vai acontecer com você.
 
 # SEMPRE QUE EXECUTAR O APLICATIVO LEIA O AVISO NA PÁGINA PRINCIPAL (/home)
-Você pode o ler de uma forma crua diretamente [acessando este arquivo do repositório (AVISO.HTML)](https://github.com/katomaro/katomart/blob/master/AVISO.HTML)
+Você pode o ler de uma forma crua diretamente [acessando este arquivo do repositório (AVISO.HTML)](https://github.com/katomaro/katomart/blob/master/AVISO.html)
 
 # ## Motivo?
 

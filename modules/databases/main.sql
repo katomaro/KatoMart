@@ -29,6 +29,13 @@ CREATE TABLE IF NOT EXISTS DRMTypes (
     download INTEGER DEFAULT 0 CHECK(download IN (0, 1))
 );
 
+CREATE TABLE IF NOT EXISTS MediaTypes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE, -- Nome do tipo de mídia (ex.: 'Video', 'Audio', 'Texto')
+    description TEXT, -- Descrição opcional do tipo de mídia
+    download INTEGER DEFAULT 0 CHECK(download IN (0, 1))
+);
+
 CREATE TABLE IF NOT EXISTS Platforms (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL,

@@ -141,6 +141,28 @@ class DatabaseManager:
             cursor = conn.cursor()
             cursor.execute(query, (download, name))
             conn.commit()
+    
+    def get_all_media_types(self):
+        """
+        Retorna todos os tipos de DRM do banco de dados.
+
+        :return: Lista com todos os tipos de DRM.
+        """
+        query = "SELECT name, description, download FROM MediaTypes"
+        result = self.execute_query(query)
+        return [{"name": row[0], "description": row[1], "download": bool(row[2])} for row in result]
+
+    def update_media_type_download(self, name, download):
+        """
+        Atualiza o campo `download` de um tipo de mídia.
+
+        `download` indica se bot deve baixar este tipo de mídia ou não.
+        """
+        query = "UPDATE MediaTypes SET download = ? WHERE name = ?"
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, (download, name))
+            conn.commit()
 
     def update_setting(self, key, value):
         """

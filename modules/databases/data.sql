@@ -9,6 +9,9 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('download_drm_types', ''),
 ('user_os', ''),
 ('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
+('widevine_cdm_path', ''),
+('scan_html_for_videos', '0'),
+('scan_html_for_videos_types', ''),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM');
 
@@ -33,6 +36,19 @@ INSERT OR IGNORE INTO DRMTypes (name, description) VALUES
 ('MIXED', 'Conteúdo com mais de um tipo de proteção, como por exemplo, conteúdo com DRM REAL e SOCIAL ao mesmo tempo.'),
 ('NONE', 'Conteúdo sem proteção alguma.');
 
+INSERT OR IGNORE INTO MediaTypes (name, description) VALUES 
+('Video', 'Conteúdo de vídeo'),
+('Audio', 'Conteúdo de áudio'),
+('Texto', 'Conteúdo de texto'),
+('Imagem', 'Conteúdo de imagem'),
+('Apresentação', 'Conteúdo de apresentação (Powerpoint/slides)'),
+('Planilha', 'Conteúdo de planilha (Excel, Sheets, csv)'),
+('PDF', 'Conteúdo de PDF (livros, apostilas, etc.'),
+('Documento', 'Conteúdo de documento(Docx, ODT, HTML, etc.)'),
+('Aplicativo', 'Conteúdo de aplicativo (APK, EXE, etc.)'),
+('Código', 'Conteúdo de código (Normalmente arquivos "src.zip", específico para cursos de programação)'),
+('E-book', 'Conteúdo de e-book (PDF, EPUB, etc.)'),
+('Outro', 'Conteúdo de outro tipo não previsto na lista (pfv abra issue se encontrar)');
 
 -- Plataformas previstas a ter suporte em primeiro momento
 INSERT OR IGNORE INTO Platforms (name, description, landing_page, content_delivery_type) VALUES 

@@ -9,6 +9,7 @@ import DefaultUserAgentInput from "./defaultUserAgentInput.js"
 import DownloadPathInput from "./downloadPathInput.js"
 import DRMTypesCheckbox from "./drmTypesCheckbox.js"
 import MediaDeliveryTypeCheckbox from "./mediaDeliveryTypeCheckbox.js"
+import mediaTypeCheckbox from "./mediaTypeCheckbox.js"
 
 
 const { ref, onMounted } = Vue
@@ -22,6 +23,7 @@ export default {
     UseCustomFFMPEGCheckbox,
     CustomFFMPEGPathInput,
     'download-widevine-checkbox': downloadWidevineCheckbox,
+    'media-type-checkbox': mediaTypeCheckbox,
     CDMPathInput,
     DownloadPathInput,
     MediaDeliveryTypeCheckbox,
@@ -100,6 +102,21 @@ export default {
         />
       </div>
     </Collapsible>
+
+    <Collapsible
+    title='<i class="fa-solid fa-download"></i>
+    <span class="font-semibold text-base">Tipo de conteúdo a ser Baixado</span>'
+  >
+    <div className="grid grid-cols-3 gap-2">
+      <media-type-checkbox
+        v-for="{name, description, download} in Object.values(settings.media_types)"
+        :name="name"
+        :description="description"
+        :value="download"
+        :onChange="() => settings.media_types.find(x => x.name === name).download = !settings.media_types.find(x => x.name === name).download"
+      />
+    </div>
+  </Collapsible>
 
     <Collapsible
       title='<i class="fas fa-lock"></i>

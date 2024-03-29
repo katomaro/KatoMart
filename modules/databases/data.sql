@@ -33,8 +33,7 @@ INSERT OR IGNORE INTO DRMTypes (name, description) VALUES
 ('REAL', 'DRM real, como Widevine, PlayReady, FairPlay, etc. Pode até ser baixado dependendo da boa vontade dos mantenedore$. Não é coisa que usuários leigos conseguiram fazer por precisar lidar com chaves e requisições. Download desativado por padrão'),
 ('ONLINE PASS', 'DRM que requer conexão com a internet para funcionar. Será baixado mas tal proteção não será removida em nenhum cenário.'),
 ('OFFLINE PASS', 'DRM do tipo arquivo com senha. Será baixado normalmente, mas a senha não será removida. O usuário terá que inserir a senha manualmente para acessar o conteúdo baixado.'),
-('MIXED', 'Conteúdo com mais de um tipo de proteção, como por exemplo, conteúdo com DRM REAL e SOCIAL ao mesmo tempo.'),
-('NONE', 'Conteúdo sem proteção alguma.');
+('MIXED', 'Conteúdo com mais de um tipo de proteção, como por exemplo, conteúdo com DRM REAL e SOCIAL ao mesmo tempo.');
 
 INSERT OR IGNORE INTO MediaTypes (name, description) VALUES 
 ('Video', 'Conteúdo de vídeo'),

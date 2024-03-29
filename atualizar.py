@@ -26,7 +26,7 @@ def extract_zip(filename):
 
 def move_contents_from_folder(source_folder):
     for item in os.listdir(source_folder):
-        if item in should_keep(item):
+        if should_keep(item):
             continue
         full_item_path = os.path.join(source_folder, item)
         target_path = os.path.join(".", item)

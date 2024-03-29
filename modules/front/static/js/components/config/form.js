@@ -8,7 +8,7 @@ import CDMPathInput from "./CDMPathInput.js"
 import DefaultUserAgentInput from "./defaultUserAgentInput.js"
 import DownloadPathInput from "./downloadPathInput.js"
 import DRMTypesCheckbox from "./drmTypesCheckbox.js"
-import MediaTypeCheckbox from "./mediaTypeCheckbox.js"
+import MediaDeliveryTypeCheckbox from "./mediaDeliveryTypeCheckbox.js"
 
 
 const { ref, onMounted } = Vue
@@ -24,7 +24,7 @@ export default {
     'download-widevine-checkbox': downloadWidevineCheckbox,
     CDMPathInput,
     DownloadPathInput,
-    MediaTypeCheckbox,
+    MediaDeliveryTypeCheckbox,
     DefaultUserAgentInput,
   },
   setup() {
@@ -88,15 +88,15 @@ export default {
 
     <Collapsible
       title='<i class="fa-solid fa-download"></i>
-      <span class="font-semibold text-base">Tipo de Conteúdo a ser baixado</span>'
+      <span class="font-semibold text-base">Fonte de conteúdo a ser aceita</span>'
     >
       <div className="grid grid-cols-3 gap-2">
-        <MediaTypeCheckbox
-          v-for="{name, description, download} in Object.values(settings.media_types)"
+        <MediaDeliveryTypeCheckbox
+          v-for="{name, description, download} in Object.values(settings.media_delivery_types)"
           :name="name"
           :description="description"
           :value="download"
-          :onChange="() => settings.media_types.find(x => x.name === name).download = !settings.media_types.find(x => x.name === name).download"
+          :onChange="() => settings.media_delivery_types.find(x => x.name === name).download = !settings.media_delivery_types.find(x => x.name === name).download"
         />
       </div>
     </Collapsible>

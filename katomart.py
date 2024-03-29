@@ -88,14 +88,19 @@ def settings():
         return redirect(url_for("agreement"))
     selected_settings = db_manager.get_all_settings()
 
-    media_types = db_manager.get_all_media_delivery_sources()
+    media_delivery_types = db_manager.get_all_media_delivery_sources()
 
     drm_types = db_manager.get_all_drm_types()
 
-    selected_settings.update({"media_types": media_types, "drm_types": drm_types})
-    selected_settings["use_custom_ffmpeg"] = bool(selected_settings["use_custom_ffmpeg"])
+    media_types = db_manager.get_all_media_types()
 
-    selected_settings.update({"media_types": media_types, "drm_types": drm_types})
+    # Pq isso tá duplicado yuu?
+    selected_settings.update({"media_delivery_types": media_delivery_types, "media_types": media_types, "drm_types": drm_types})
+    selected_settings["use_custom_ffmpeg"] = bool(selected_settings["use_custom_ffmpeg"])
+    selected_settings["download_widevine"] = bool(selected_settings["download_widevine"])
+    
+
+    selected_settings.update({"media_delivery_types": media_delivery_types, "media_types": media_types, "drm_types": drm_types})
 
     return jsonify(
         {"settings": selected_settings, "disable_download_btn": bool(selected_platform_instance)}

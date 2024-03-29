@@ -71,9 +71,8 @@ def update_agreement():
     return redirect(url_for("index"))
 
 
-@app.route("/<path:anything>")
 @app.route("/")
-def index(anything=None):
+def index():
     # db_manager = get_db()
     # consent = int(db_manager.get_setting("user_consent"))
     # if not consent:

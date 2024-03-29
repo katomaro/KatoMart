@@ -9,6 +9,7 @@ export default {
   setup() {
     const courses = ref([])
     const search = ref('')
+    const isLoading = ref(true)
     const filteredCourses = ref([])
     const router = useRouter()
 
@@ -22,20 +23,39 @@ export default {
     })
 
     const loadCourses = async () => {
+      isLoading.value = true
       const response = await fetch('/api/courses')
-      if (!response.ok) router.push('/accounts')
+      if (!response.ok) return router.push('/accounts')
 
       const data = await response.json()
       courses.value = data.courses.map(course => ({ ...course, selected: false }))
       filterCourses()
+      isLoading.value = false
     }
 
     onMounted(loadCourses)
+
+    const startDownload = async () => {
+      devWarning.value = true
+      await fetch("/api/start_download", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courses: courses.value })
+      })
+    }
+
+    const devWarning = ref(false)
 
     return {
       courses,
       search,
       filteredCourses,
+      startDownload,
+      devWarning,
+      router,
+      isLoading
     }
   },
   template: `
@@ -46,7 +66,7 @@ export default {
         placeholder="Pesquise pelo Curso"
         v-model="search"
       />
-      <div class="alert alert-warning w-1/2" role="alert" v-if="filteredCourses.length === 0">
+      <div class="alert alert-warning w-1/2" role="alert" v-if="filteredCourses.length === 0 && !isLoading">
         Sem resultados para o termo '{{ search }}'
       </div>
     </div>
@@ -54,11 +74,25 @@ export default {
       <CourseItem v-for="course in filteredCourses" :key="course.subdomain" :course="course" />
     </div>
 
+    <input type="checkbox" class="modal-toggle" v-model="devWarning" />
+    <div class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Atenção</h3>
+        <p class="py-4 text-warning">
+          Opa, o programa ainda está em desenvolvimento, isto significa que a
+          opção de download <strong class="text-error font-bold text-lg">NÃO</strong> está disponível ainda.
+        </p>
+        <div class="modal-action">
+          <button class="btn btn-secondary" @click="router.push('/')">Ir para a Home</button>
+        </div>
+      </div>
+    </div>
+
     <div class="flex justify-center mt-4">
       <button
         v-if="courses.some(x => x.selected)"
         class="btn btn-accent"
-        @click="console.log(courses)">
+        @click="startDownload()">
           <i class="fa-solid fa-download"></i>
           Baixar Selecionados ({{ courses.filter(x => x.selected).length }})
       </button>

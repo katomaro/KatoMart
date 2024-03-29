@@ -104,7 +104,7 @@ export default {
     <Collapsible
       title='<i class="fas fa-lock"></i>
       <span class="font-semibold text-base">
-        DRM a ser baixado Tipo de Conteúdo a ser baixado
+        Tipo de DRM a ser baixado
       </span>'
     >
       <div className="grid grid-cols-3 gap-2">

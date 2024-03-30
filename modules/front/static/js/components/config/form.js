@@ -64,8 +64,9 @@ export default {
     return { settings, isLoading, handleSubmit, message }
   },
   template: `
-  <div v-if="isLoading">
-    <p>Carregando...</p>
+  <div v-if="isLoading" class="flex justify-center items-center gap-2 my-4">
+    <i class="fa-solid fa-spinner animate-spin"></i>
+    <p class="text-xl">Carregando...</p>
   </div>
 
   <form v-else class="grid grid-cols-1 gap-4 mb-32" @submit.prevent="handleSubmit">
@@ -104,19 +105,19 @@ export default {
     </Collapsible>
 
     <Collapsible
-    title='<i class="fa-solid fa-download"></i>
-    <span class="font-semibold text-base">Tipo de conteúdo a ser Baixado</span>'
-  >
-    <div className="grid grid-cols-3 gap-2">
-      <media-type-checkbox
-        v-for="{name, description, download} in Object.values(settings.media_types)"
-        :name="name"
-        :description="description"
-        :value="download"
-        :onChange="() => settings.media_types.find(x => x.name === name).download = !settings.media_types.find(x => x.name === name).download"
-      />
-    </div>
-  </Collapsible>
+      title='<i class="fa-solid fa-download"></i>
+      <span class="font-semibold text-base">Tipo de conteúdo a ser Baixado</span>'
+    >
+      <div className="grid grid-cols-3 gap-2">
+        <media-type-checkbox
+          v-for="{name, description, download} in Object.values(settings.media_types)"
+          :name="name"
+          :description="description"
+          :value="download"
+          :onChange="() => settings.media_types.find(x => x.name === name).download = !settings.media_types.find(x => x.name === name).download"
+        />
+      </div>
+    </Collapsible>
 
     <Collapsible
       title='<i class="fas fa-lock"></i>

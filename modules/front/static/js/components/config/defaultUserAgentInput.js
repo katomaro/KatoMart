@@ -8,7 +8,7 @@ export default {
     modelValue: String
   },
   template: `
-  <div>
+  <div class="bg-base-200 rounded-lg">
     <label class="label" for="default_user_agent">
       <span class="label-text mb-2">
         <Tooltip tip="Não alterar se não souber o que estiver fazendo">
@@ -25,7 +25,7 @@ export default {
       name="default_user_agent"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
-      class="input input-bordered input-xs w-full"
+      class="input input-bordered input-xs w-full bg-base-200"
     />
   </div>
   `

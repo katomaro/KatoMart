@@ -77,6 +77,19 @@ def index(_=None):
     return render_template("index.html")
 
 
+@api_bp.post("/save_user_state")
+def save_user_state():
+    data = request.json
+    if not data:
+        return "error", 400
+    db_manager = get_db()
+    last_executed_at = int(time.time())
+    db_manager.update_setting("last_executed_at", last_executed_at)
+    db_manager.update_setting("user_os", data.get("user_os", ""))
+
+    return "ok"
+
+
 @api_bp.get("/settings")
 def settings():
     db_manager = get_db()

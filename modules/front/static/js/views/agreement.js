@@ -25,8 +25,10 @@ export default {
       Termo de Aceitação e Responsabilidade do Usuário para o Uso do Software Katomart
     </h1>
 
-    <div v-if="message" class="alert alert-error shadow-lg mb-6 w-1/2">
-      {{ message }}
+    <div className="flex justify-center">
+      <div v-if="message" class="alert alert-error shadow-lg mb-6 w-1/2">
+        {{ message }}
+      </div>
     </div>
 
     <div

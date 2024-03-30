@@ -4,15 +4,11 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('last_executed_at', '0'),
 ('user_consent', '0'),
 ('download_path', './Cursos/'),
-('download_from_players', ''),
-('download_drm_content', '0'),
-('download_drm_types', ''),
 ('user_os', ''),
 ('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
 ('download_widevine', '0'),
 ('widevine_cdm_path', ''),
 ('scan_html_for_videos', '0'),
-('scan_html_for_videos_types', ''),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM');
 

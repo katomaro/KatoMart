@@ -94,13 +94,16 @@ def settings():
 
     media_types = db_manager.get_all_media_types()
 
-    # Pq isso tá duplicado yuu?
-    selected_settings.update({"media_delivery_types": media_delivery_types, "media_types": media_types, "drm_types": drm_types})
     selected_settings["use_custom_ffmpeg"] = bool(selected_settings["use_custom_ffmpeg"])
     selected_settings["download_widevine"] = bool(selected_settings["download_widevine"])
-    
 
-    selected_settings.update({"media_delivery_types": media_delivery_types, "media_types": media_types, "drm_types": drm_types})
+    selected_settings.update(
+        {
+            "media_delivery_types": media_delivery_types,
+            "media_types": media_types,
+            "drm_types": drm_types,
+        }
+    )
 
     return jsonify(
         {"settings": selected_settings, "disable_download_btn": bool(selected_platform_instance)}
@@ -116,39 +119,34 @@ def update_settings():
     if not form:
         return jsonify({"success": False, "message": "Dados inválidos... Chame suporte."}), 400
 
-    if form.get("use_custom_ffmpeg") is not None:
-        db_manager.update_setting("use_custom_ffmpeg", form["use_custom_ffmpeg"])
-        db_manager.update_setting(
-            "custom_ffmpeg_path",
-            form.get("custom_ffmpeg_path") or "SYSTEM",
-        )
-    else:
-        db_manager.update_setting("use_custom_ffmpeg", 0)
+    db_manager.update_setting("use_custom_ffmpeg", int(form.get("use_custom_ffmpeg")))
+    db_manager.update_setting("custom_ffmpeg_path", form.get("custom_ffmpeg_path", "SYSTEM"))
+
+    db_manager.update_setting("download_widevine", int(form.get("download_widevine", False)))
+    db_manager.update_setting("widevine_cdm_path", form.get("widevine_cdm_path", ""))
 
     for field in ["download_path", "default_user_agent"]:
         value = form.get(field, None)
         if value is not None:
             db_manager.update_setting(field, value)
 
-    for field in []:
-        value = form.get(field, None)
-        db_manager.update_setting(field, value)
-
-    # media_types = db_manager.get_all_media_delivery_sources()
     for media_type in form.get("media_types", []):
-        value = media_type.get("download")
-        value = 1 if value else 0
+        value = int(media_type.get("download", False))
         name = media_type.get("name", None)
         if name is not None:
-            db_manager.update_media_delivery_source_download(name, value)
+            db_manager.update_media_type_download(name, value)
 
-    # drm_types = db_manager.get_all_drm_types()
     for drm_type in form.get("drm_types", []):
-        value = drm_type.get("download")
-        value = 1 if value else 0
+        value = int(drm_type.get("download", False))
         name = drm_type.get("name", None)
         if name is not None:
             db_manager.update_drm_type_download(name, value)
+
+    for media_delivery_type in form.get("media_delivery_types", []):
+        value = int(media_delivery_type.get("download", False))
+        name = media_delivery_type.get("name", None)
+        if name is not None:
+            db_manager.update_media_delivery_source_download(name, value)
 
     return jsonify({"success": True, "message": "Configurações Atualizadas!"})
 

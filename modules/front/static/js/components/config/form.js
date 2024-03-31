@@ -1,15 +1,16 @@
 import Button from "../button.js"
 import Collapsible from "../collapsible.js"
 import Tooltip from "../tooltip.js"
-import UseCustomFFMPEGCheckbox from "./useCustomFFMPEGCheckbox.js"
-import CustomFFMPEGPathInput from "./customFFMPEGPathInput.js"
-import downloadWidevineCheckbox from "./downloadWidevineCheckbox.js"
 import CDMPathInput from "./CDMPathInput.js"
+import CustomFFMPEGPathInput from "./customFFMPEGPathInput.js"
 import DefaultUserAgentInput from "./defaultUserAgentInput.js"
 import DownloadPathInput from "./downloadPathInput.js"
+import DownloadThreads from "./downloadThreads.js"
+import downloadWidevineCheckbox from "./downloadWidevineCheckbox.js"
 import DRMTypesCheckbox from "./drmTypesCheckbox.js"
 import MediaDeliveryTypeCheckbox from "./mediaDeliveryTypeCheckbox.js"
 import mediaTypeCheckbox from "./mediaTypeCheckbox.js"
+import UseCustomFFMPEGCheckbox from "./useCustomFFMPEGCheckbox.js"
 
 
 const { ref, onMounted } = Vue
@@ -28,6 +29,7 @@ export default {
     DownloadPathInput,
     MediaDeliveryTypeCheckbox,
     DefaultUserAgentInput,
+    DownloadThreads,
   },
   setup() {
     const settings = ref({})
@@ -80,6 +82,8 @@ export default {
     <DownloadPathInput v-model="settings.download_path" />
 
     <DefaultUserAgentInput v-model="settings.default_user_agent" />
+
+    <DownloadThreads v-model="settings.download_threads" />
 
     <download-widevine-checkbox v-model="settings.download_widevine" />
 

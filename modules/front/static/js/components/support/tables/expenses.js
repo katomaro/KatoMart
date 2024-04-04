@@ -30,7 +30,7 @@ export default {
         <td v-html="expense.developer"></td>
         <td>{{ expense.expense_type }}</td>
         <td>{{ toBRL(expense.expent_amount) }}</td>
-        <td>{{ expense.expense_reason }}</td>
+        <td v-html="expense.expense_reason"></td>
         <td>{{ expense.expense_date }}</td>
         <td>{{ expense.contribution_reference_id }}</td>
       </tr>

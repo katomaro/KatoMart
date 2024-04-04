@@ -28,10 +28,10 @@ export default {
 
     <tbody>
       <tr v-for="sponsor in sponsors">
-        <td v-html="'<p>' + sponsor.contributor_name + '</p>'"></td>
+        <td v-html="sponsor.contributor_name"></td>
         <td>{{ sponsor.contribution_resource }}</td>
         <td>{{ toBRL(parseFloat(sponsor.contribution_value)) }}</td>
-        <td>{{ sponsor.contribution_message }}</td>
+        <td v-html="sponsor.contribution_message"></td>
         <td>{{ sponsor.contribution_date }}</td>
         <td>{{ sponsor.contribution_reference_id }}</td>
       </tr>

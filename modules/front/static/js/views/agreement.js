@@ -3,7 +3,7 @@ import { alert } from "../stores.js"
 
 export default {
   async setup() {
-    const alreadyAgreed = ref(false)
+    const alreadyAgreed = ref(true)
     const message = ref(alert.message)
 
     watch(alert, (value) => {
@@ -16,8 +16,9 @@ export default {
       alreadyAgreed.value = data.consent
     })
 
+    const buttonEnabled = ref(false)
 
-    return { alreadyAgreed, message }
+    return { alreadyAgreed, message, buttonEnabled }
   },
   template: `
   <section class="py-10">
@@ -112,10 +113,11 @@ export default {
               class="checkbox checkbox-primary"
               :checked="alreadyAgreed"
               :disabled="alreadyAgreed"
+              @change="(e) => buttonEnabled = e.target.checked"
             />
           </label>
         </div>
-        <button class="btn btn-primary mt-4" :disabled="alreadyAgreed">
+        <button class="btn btn-primary mt-4" v-if="!alreadyAgreed" :disabled="!buttonEnabled">
           <i class="fa-solid fa-check"></i>
           <span>Aceitar</span>
         </button>

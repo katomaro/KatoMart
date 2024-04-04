@@ -8,9 +8,10 @@ export default {
     </div>
     <div class="font-bold text-xl mb-2 text-center mt-4"><strong class="text-pink-500">Victor Hugo Carvalho
       dos Reis Santos(@Katomaro)</strong></div>
+    <h3 class="font-bold text-l mb-2 text-red-500" style="text-align: center;">Proprietário do Projeto</h3>
     <p class="text-gray-400 text-base text-center">
       Responsabilidade no Projeto: <span class="text-gray-200">Idealizador e 
-      responsável principal pelo projeto, que teve início em julho de 2021
+      responsável pelo projeto, que teve início em julho de 2021
       como um projeto bobinho que operava apenas para a Hotmart como uma aplicação CLI que 
       era baseada em Selenium. As plataformas adicionais, cada uma tinha um script 
       próprio. De certa forma, responsável por popularizar webscraping de cursos 

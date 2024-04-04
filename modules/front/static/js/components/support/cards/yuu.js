@@ -6,9 +6,10 @@ export default {
     </div>
     <div class="text-center mt-4">
       <h2 class="font-bold text-xl mb-2 text-pink-500">Felipe Adeildo</h2>
+      <h3 class="font-bold text-l mb-2 text-red-500">Desenvolvedor Front-End Fixo</h3>
       <p class="text-gray-400 text-sm">Responsabilidade no Projeto:</p>
       <p class="text-gray-200 text-sm italic">
-        Aluno do <a href="https://github.com/katomaro" class="text-pink-500 hover:underline hover:text-pink-700">@katomaro</a> em webscraping. Responsável pela estilização da interface gráfica da aplicação, garantindo uma experiência de usuário agradável e intuitiva. Também atua corrigindo bugs pontuais e prestando suporte à comunidade.
+        <span class="text-pink-500">(Em Teste) Responsável integral e autoridade máxima pelo Front-End</span>, visando garantir a melhor experiência do usuário. Também atua corrigindo bugs pontuais e prestando suporte à comunidade.
       </p>
       <p class="text-gray-200 text-sm italic">
         Felipe é um estudante de programação e matemática, possui algumas

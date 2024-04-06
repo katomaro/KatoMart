@@ -1,7 +1,16 @@
+import downloads from "../components/logs/downloads.js"
+import logs from "../components/logs/logs.js"
+
 export default {
+  components: {
+    'Downloads': downloads,
+    'Logs': logs
+  },
   template: `
-  <div class="h-92 w-screen flex justify-center items-center text-2xl">
-    LOGs
+  <div class="flex flex-row justify-center mt-2 mb-24">
+    <Downloads />
+    <div class="divider divider-horizontal"></div>
+    <Logs />
   </div>
   `
 }

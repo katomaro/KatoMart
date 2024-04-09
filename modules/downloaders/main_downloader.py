@@ -162,11 +162,11 @@ class Downloader:
         """
         Baixa um vídeo ou playlist de vídeos do YouTube usando yt-dlp.
         """
-        ytdlp = yt_dlp.YoutubeDL()
-        if referer:
-            ytdlp.params['http_headers'] = {'Referer': referer}
-        ydl_opts = {'retries': 8,
+        ytdlp_opts = {'retries': 8,
                 'fragment_retries': 6,
-                'quiet': False,
+                'quiet': True,
                 "outtmpl": save_path}
-        ytdlp.download([url])
+        with yt_dlp.YoutubeDL(ytdlp_opts) as ytdlp:
+            if referer:
+                ytdlp.params['http_headers'] = {'Referer': referer}
+            ytdlp.download([url])

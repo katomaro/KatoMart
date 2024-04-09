@@ -105,3 +105,9 @@ class Account(ABC):
         """
         Método abstrato para obter informações de um produto específico.
         """
+
+    @abstractmethod
+    def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
+        """
+        Método abstrato para formatar um produto ao padrão Módulo/Aula/Arquivos
+        """

@@ -1,8 +1,13 @@
 import { DOWNLOAD_STATUS_COLOR_MAP } from "../../constants.js"
+import Children from "./children.js"
 
 export default {
+  name: "CourseCard",
   props: {
     course: Object
+  },
+  components: {
+    Children,
   },
   data() {
     return {
@@ -27,7 +32,7 @@ export default {
         <p class="text-base">{{ course.progress * 100 }}%</p>
       </div>
 
-      <div class="text-xl text-center">Módulos vão aparecer aqui</div>
+      <Children v-if="course.children.length > 0" :children="course.children" />
     </div>
   </div>
   `

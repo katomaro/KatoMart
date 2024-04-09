@@ -31,6 +31,8 @@ class Account(ABC):
         self._database_manager = database_manager
         self.session = self._restart_requests_session()
 
+        self.downloadable_products = []
+
     def _restart_requests_session(self) -> requests.Session:
         """
         Inicia uma sessão limpa da biblioteca requests.

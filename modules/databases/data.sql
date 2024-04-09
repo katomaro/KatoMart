@@ -11,8 +11,7 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('scan_html_for_videos', '0'),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM'),
-('download_threads', '2'),
-('buffer_to_memory', '0');
+('download_threads', '2');
 
 
 INSERT OR IGNORE INTO MediaDeliverySources (name, description) VALUES 

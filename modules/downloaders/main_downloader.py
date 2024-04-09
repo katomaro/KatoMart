@@ -15,6 +15,7 @@ from modules.databases.manager_main import DatabaseManager
 
 # TODO: Refatorar todos os requests para usar a sessão da conta
 # TODO: Alterar os prints para um database.log ou um logger
+# TODO: Alterar todas as strings para Pathlib.Path para garantir uma manipulação de arquivos segura e universal
 
 def download_segment(segment_url:str = '', max_retries:int=5, delay_between_retries:int=3):
     """

@@ -170,3 +170,9 @@ class Downloader:
             if referer:
                 ytdlp.params['http_headers'] = {'Referer': referer}
             ytdlp.download([url])
+    
+    def download_widevine_media(self, url:str, save_path:str):
+        """
+        Baixa um vídeo protegido por Widevine.
+        """
+        print('Desejo a todas inimigas vida longa')

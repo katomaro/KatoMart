@@ -66,6 +66,7 @@ class Downloader:
         """
         Itera sobre os conteúdos de uma conta.
         """
+        # TODO: Iterar pelo self.account.downloadable_products
         pass
     
     def download_content(self, url_download:str, download_path:str, file_name:str):

@@ -1,5 +1,6 @@
 import sqlite3
 from pathlib import Path
+import time
 
 
 class DatabaseManager:
@@ -290,6 +291,15 @@ class DatabaseManager:
             cursor = conn.cursor()
 
             cursor.execute("DELETE FROM Accounts WHERE id = ?", (account_id,))
+            conn.commit()
+
+    def log_event(self, log_type:str='WARN', sensitive_data:int=1, log_data: str='', log_created_at: int=0):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            if log_created_at == 0:
+                log_created_at = int(time.time())
+
+            cursor.execute("INSERT INTO Events (type, data) VALUES (?, ?)", (log_type, sensitive_data, log_data, log_created_at))
             conn.commit()
 
 

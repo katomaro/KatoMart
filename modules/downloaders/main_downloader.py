@@ -12,6 +12,10 @@ from modules.accounts.abstract import Account
 from modules.databases.manager_main import DatabaseManager
 
 
+
+# TODO: Refatorar todos os requests para usar a sessão da conta
+# TODO: Alterar os prints para um database.log ou um logger
+
 def download_segment(segment_url:str = '', max_retries:int=5, delay_between_retries:int=3):
     """
     Tenta baixar um segmento com um determinado número de retentativas.

@@ -26,7 +26,6 @@ class Hotmart(Account):
         self.load_account_information()
         self.load_tokens()
         self.login()
-        
 
     def get_platform_id(self):
         """
@@ -66,7 +65,6 @@ class Hotmart(Account):
                 (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
             )
 
-
     def get_account_products(self):
         """
         Retorna os produtos associados à conta do usuário na Hotmart.
@@ -92,6 +90,35 @@ class Hotmart(Account):
                 products.append(product_dict)
         return products
 
+    def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
+        """
+        Formata os produtos associados à conta do usuário na Hotmart.
+        """
+        if product_info:
+            product_id = product_info['id']
+        if product_id:
+            product_info = self.get_product_information(product_id)
+        return {
+            'product_id': product_info['id'],
+            'subdomain': product_info['subdomain'],
+            'status': product_info['status'],
+            'user_area_id': product_info['user_area_id'],
+            'roles': product_info['roles'],
+            'domain': product_info['domain']
+        }
+    
+    def format_product_information(self, product_info: dict):
+        """
+        Formata as informações de um produto específico associado à conta do usuário.
+        """
+        return {
+            'product_id': product_info['id'],
+            'subdomain': product_info['subdomain'],
+            'status': product_info['status'],
+            'user_area_id': product_info['user_area_id'],
+            'roles': product_info['roles'],
+            'domain': product_info['domain']
+        }
 
     def get_product_information(self, club_name: str):
         """

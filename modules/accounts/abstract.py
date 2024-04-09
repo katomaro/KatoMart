@@ -89,7 +89,7 @@ class Account(ABC):
         """
         Retorna o ID da plataforma de cursos.
         """
-    
+
     @abstractmethod
     def login(self):
         """
@@ -103,13 +103,19 @@ class Account(ABC):
         """
 
     @abstractmethod
-    def get_product_information(self, product_id):
-        """
-        Método abstrato para obter informações de um produto específico.
-        """
-
-    @abstractmethod
     def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
         """
         Método abstrato para formatar um produto ao padrão Módulo/Aula/Arquivos
+        """
+
+    @abstractmethod
+    def format_product_information(self, product_info: dict):
+        """
+        Método abstrato para formatar as informações de um produto específico.
+        """
+
+    @abstractmethod
+    def get_product_information(self, product_id):
+        """
+        Método abstrato para obter informações de um produto específico.
         """

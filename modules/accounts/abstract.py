@@ -113,3 +113,15 @@ class Account(ABC):
         """
         Método abstrato para formatar um produto ao padrão Módulo/Aula/Arquivos
         """
+
+    @abstractmethod
+    def get_correct_hls_url(self, url: str):
+        """
+        Método abstrato para obter a URL correta de um vídeo.
+        """
+
+    @abstractmethod
+    def get_video_information(self, video_id: str):
+        """
+        Método abstrato para obter informações de um vídeo.
+        """

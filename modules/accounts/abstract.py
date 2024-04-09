@@ -97,6 +97,12 @@ class Account(ABC):
         """
 
     @abstractmethod
+    def refresh_token(self):
+        """
+        Método abstrato para renovar o token de acesso.
+        """
+
+    @abstractmethod
     def get_account_products(self):
         """
         Método abstrato para obter os produtos associados à conta.

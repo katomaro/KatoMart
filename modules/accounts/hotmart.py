@@ -65,6 +65,12 @@ class Hotmart(Account):
                 (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
             )
 
+    def refresh_token(self):
+        """
+        Renova o token de acesso da conta.
+        """
+        pass
+
     def get_account_products(self):
         """
         Retorna os produtos associados à conta do usuário na Hotmart.

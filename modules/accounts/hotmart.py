@@ -31,7 +31,7 @@ class Hotmart(Account):
         """
         Retorna o ID da plataforma de cursos.
         """
-        platform_id = self._database_manager.execute_query(
+        platform_id = self.database_manager.execute_query(
             'SELECT id FROM platforms WHERE name = ? LIMIT 1', 
             ('Hotmart',), 
             fetchone=True
@@ -59,13 +59,13 @@ class Hotmart(Account):
             self.refresh_token = response['refresh_token']
             self.refresh_token_expires_at = self.get_current_time() + response['expires_in']
             self.other_data = self.dump_json_data(response)
-            self._database_manager.execute_query("""
+            self.database_manager.execute_query("""
                 INSERT OR REPLACE INTO Auths (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
                 VALUES (?, ?, ?, ?, ?, ?, ?)""",
                 (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
             )
 
-    def refresh_token(self):
+    def refresh_auth_token(self):
         """
         Renova o token de acesso da conta.
         """

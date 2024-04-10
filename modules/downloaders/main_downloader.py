@@ -1,6 +1,7 @@
 import json
 import os
 import pathlib
+import re
 import shutil
 import time
 
@@ -14,6 +15,15 @@ from cryptography.hazmat.backends import default_backend
 from modules.accounts.abstract import Account
 
 
+
+def remover_caracteres_problematicos(name:str) -> str:
+    """
+    Remove os caracteres conhecidos como problemáticos em nomes de arquivos.
+    """
+    # Windows: <>:"/\|?*
+    sanitized = re.sub(r'[<>:"/\\|?*]+', '', name)
+    sanitized = sanitized.strip()
+    return sanitized
 
 # TODO: Refatorar todos os requests para usar a sessão da conta
 # TODO: Alterar os prints para um database.log ou um logger

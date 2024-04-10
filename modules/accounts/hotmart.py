@@ -121,9 +121,15 @@ class Hotmart(Account):
         for i, module in enumerate(product_info['modules'], start=1):
             module['moduleOrder'] = i
         
-            module['pages'].sort(key=lambda x: x['pageOrder'])
-            for j, page in enumerate(module['pages'], start=1):
-                page['pageOrder'] = j
+            sorted_pages = sorted(module['pages'], key=lambda x: x['pageOrder'])
+            lessons = []
+            for j, page in enumerate(sorted_pages, start=1):
+                page['lessonOrder'] = j
+                page['id'] = page.pop('hash')
+                lessons.append(page)
+            
+            module['lessons'] = lessons
+            del module['pages']
         
         return product_info
 

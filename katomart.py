@@ -379,7 +379,7 @@ def api_logs():
     start_date = request.args.get('startDate')
     end_date = request.args.get('endDate')
 
-    logs = db_manager.execute_query("SELECT * FROM logs WHERE log_created_at >= ? AND log_created_at <= ? SORT BY id DESC LIMIT 1000;", (start_date, end_date))
+    logs = db_manager.execute_query("SELECT * FROM logs WHERE log_created_at >= ? AND log_created_at <= ? ORDER BY id DESC LIMIT 1000;", (start_date, end_date))
 
     return jsonify(logs)
 

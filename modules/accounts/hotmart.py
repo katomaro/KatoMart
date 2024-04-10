@@ -26,13 +26,12 @@ class Hotmart(Account):
         self.load_account_information()
         self.load_tokens()
         self.login()
-        
 
     def get_platform_id(self):
         """
         Retorna o ID da plataforma de cursos.
         """
-        platform_id = self._database_manager.execute_query(
+        platform_id = self.database_manager.execute_query(
             'SELECT id FROM platforms WHERE name = ? LIMIT 1', 
             ('Hotmart',), 
             fetchone=True
@@ -60,12 +59,17 @@ class Hotmart(Account):
             self.refresh_token = response['refresh_token']
             self.refresh_token_expires_at = self.get_current_time() + response['expires_in']
             self.other_data = self.dump_json_data(response)
-            self._database_manager.execute_query("""
+            self.database_manager.execute_query("""
                 INSERT OR REPLACE INTO Auths (account_id, platform_id, auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data)
                 VALUES (?, ?, ?, ?, ?, ?, ?)""",
                 (self.account_id, self.platform_id, self.auth_token, self.auth_token_expires_at, self.refresh_token, self.refresh_token_expires_at, self.other_data)
             )
 
+    def refresh_auth_token(self):
+        """
+        Renova o token de acesso da conta.
+        """
+        pass
 
     def get_account_products(self):
         """
@@ -92,8 +96,44 @@ class Hotmart(Account):
                 products.append(product_dict)
         return products
 
+    def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
+        """
+        Formata os produtos associados à conta do usuário na Hotmart.
+        """
+        if product_info:
+            product_id = product_info['id']
+        if product_id:
+            product_info = self.get_product_information(product_id)
+        return {
+            'product_id': product_info['id'],
+            'subdomain': product_info['subdomain'],
+            'status': product_info['status'],
+            'user_area_id': product_info['user_area_id'],
+            'roles': product_info['roles'],
+            'domain': product_info['domain']
+        }
+    
+    def format_product_information(self, product_info: dict):
+        """
+        Formata as informações de um produto específico associado à conta do usuário.
+        """
+        product_info['modules'].sort(key=lambda x: x['moduleOrder'])
+        for i, module in enumerate(product_info['modules'], start=1):
+            module['moduleOrder'] = i
+        
+            sorted_pages = sorted(module['pages'], key=lambda x: x['pageOrder'])
+            lessons = []
+            for j, page in enumerate(sorted_pages, start=1):
+                page['lessonOrder'] = j
+                page['id'] = page.pop('hash')
+                lessons.append(page)
+            
+            module['lessons'] = lessons
+            del module['pages']
+        
+        return product_info
 
-    def get_product_information(self, club_name: str):
+    def get_product_information(self, product_id: str):
         """
         Retorna informações de um produto específico associado à conta do usuário.
         :club_name: nome da área de membros da htm.
@@ -101,8 +141,22 @@ class Hotmart(Account):
         :return: Dicionário com informações do produto.
         """
         self.session.headers['authorization'] = f'Bearer {self.auth_token}'
-        self.session.headers['club'] = club_name
+        self.session.headers['club'] = product_id
         response = self.session.get(self.MEMBER_AREA_URL)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         return response.json()
+
+    # TODO: Reorganizar este método quando o yuu re-organizar o front.
+    def download_content(self, product_info: dict = None):
+        """
+        Baixa o conteúdo de um produto específico associado à conta do usuário.
+        """
+        club_name = product_info['domain'].split('//')[1].split('.')[0]
+        product_info = self.get_product_information(club_name)
+        course_info = {
+            'name': club_name,
+            'modules': product_info.get('modules')
+        }
+        produto = self.format_product_information(course_info)
+        self.downloadable_products.append(produto)

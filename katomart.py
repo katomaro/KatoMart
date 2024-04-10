@@ -14,14 +14,18 @@ from flask import (
 
 from modules.accounts.hotmart import Hotmart
 from modules.databases.manager_main import DatabaseManager
+from modules.downloaders.main_downloader import Downloader
+
 
 platform_classes = {
     1: Hotmart,
 }
 
+Downloader_instance = None
 
 app = Flask(
-    __name__, template_folder="modules/front/templates", static_folder="modules/front/static"
+    __name__, template_folder="modules/front/templates", 
+    static_folder="modules/front/static"
 )
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -339,17 +343,50 @@ def load_course_data():
 @api_bp.route("/start_download", methods=["POST"])
 def start_download():
     global selected_platform_instance
+    global Downloader_instance
+
     if selected_platform_instance is None:
-        return redirect(url_for("index"))
+        return jsonify({'message':"Nenhuma conta Inicializada. Selecione uma conta para iniciar o download. (bug?)"})
+    
+    if Downloader_instance is not None:
+        return jsonify({"message": "Já existe um download em andamento. Acompanhe pela página de logs."})
 
     data = request.get_json()
     if data.get("courses") is None:
         return jsonify({"message": "Nenhum curso foi selecionado."}), 400
 
-    courses = data["courses"]
-    # print(courses)
+    selected_courses = data["courses"]
+    for course in selected_courses:
+        if course.get("selected", False):
+            # TODO: Tornar o post GLOBAL
+            # {'domain': 'https://comodesenharchibis.club.hotmart.com', 'id': INT, 'roles': ['STUDENT'], 'status': 'ACTIVE', 'subdomain': 'comodesenharchibis', 'user_area_id': INT, 'selected': True}
+            # Pode-se remover o atributo 'roles', e o subdomain. Necessário ver a melhor forma de padronizar i que as plataformas podem dar.
+            # Vendo que cada conta tem um método responsável para adicionar o curso selecionado à sua lista de download,
+            # O ideal seria compilar as informações relevantes para um dicionario 'extra' retornando apenas selected e esse dicionário
+            # e deixar que o método de cada classe cuide do dicionário com suas peculiaridades.
+            selected_platform_instance.download_content(course)
+    
+    if selected_platform_instance.downloadable_products is not None:
+        Downloader_instance = Downloader(selected_platform_instance)
+        return jsonify({"message": "Download iniciando, acompanhe pela página Logs."})
+    
+    return jsonify({"message": "Como você veio parar aqui? Não há cursos selecionados para download!"})
 
-    return jsonify(message="Ainn")
+# Raiva ódio e rancor
+@api_bp.route('/logs', methods=['GET'])
+def api_logs():
+    db_manager = get_db()
+    start_date = request.args.get('startDate')
+    end_date = request.args.get('endDate')
+
+    logs = db_manager.execute_query("SELECT * logs WHERE log_created_at >= ? AND log_created_at <= ? SORT BY id DESC LIMIT 1000;", (start_date, end_date))
+
+    return jsonify(logs)
+
+@api_bp.route('/courses_progress', methods=['GET'])
+def api_courses_progress():
+    global Downloader_instance
+    return jsonify({'message': 'Este método precisa ser implementado'})
 
 
 # Ponto de entrada principal para execução do servidor
@@ -363,4 +400,4 @@ if __name__ == "__main__":
         "fechar o navegador e voltar até o site para gerenciar o Katomart quando quiser"
     )
     app.register_blueprint(api_bp)
-    app.run(debug=True, port=PORT)
+    app.run(port=PORT)

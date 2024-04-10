@@ -12,3 +12,5 @@ soupsieve==2.5
 urllib3==2.1.0
 websockets==12.0
 yt-dlp>=2023.11.16
+cryptography==42.0.5
+protobuf==5.26.1

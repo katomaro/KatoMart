@@ -127,7 +127,7 @@ class Account(ABC):
         """
     
     @abstractmethod
-    def download_content(self, product_id: int | str | None = None, product_info: dict = None):
+    def download_content(self, product_info: dict = None):
         """
         Método abstrato para baixar o conteúdo de um produto.
         cada plataforma pode requerer um pré-processamento diferente.

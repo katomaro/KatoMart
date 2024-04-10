@@ -140,7 +140,7 @@ class Hotmart(Account):
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         return response.json()
 
-    def download_content(self, product_id: int | str | None = None, product_info: dict = None):
+    def download_content(self, product_info: dict = None):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """

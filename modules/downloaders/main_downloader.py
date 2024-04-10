@@ -83,14 +83,14 @@ class Downloader:
         # Aqui a gente assume que o método da conta organizou todo o conteúdo, então não precisamos ir buscar informaçções
         # Pode vir ser necessário no futuro, então... TODO: Implementar um chamada para buscar informações precisas
         for content in self.account.downloadable_products:
-            download_path = pathlib.Path(self.account.database_manager.get_setting('download_path')) / content['name']
+            download_path = pathlib.Path(self.account.database_manager.get_setting('download_path')) / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
             print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
             for module in content['modules']:
-                module_path = download_path / module['name']
+                module_path = download_path / remover_caracteres_problematicos(module['name'])
                 for lesson in module['lessons']:
-                    lesson_path = module_path / lesson['name']
+                    lesson_path = module_path / remover_caracteres_problematicos(lesson['name'])
                     if not lesson_path.exists():
                         lesson_path.mkdir(parents=True)
 

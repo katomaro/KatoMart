@@ -28,7 +28,7 @@ class Account(ABC):
         self.refresh_token = ''
         self.refresh_token_expires_at = 0
         self.other_data = ''
-        self._database_manager = database_manager
+        self.database_manager = database_manager
         self.session = self._restart_requests_session()
 
         self.downloadable_products = []
@@ -40,7 +40,7 @@ class Account(ABC):
         :return: Sessão da biblioteca requests com o User-Agent configurado.
         """
         session = requests.Session()
-        settings = self._database_manager.get_all_settings()
+        settings = self.database_manager.get_all_settings()
         session.headers['User-Agent'] = settings.get('default_user_agent',
                         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0')
         return session
@@ -61,7 +61,7 @@ class Account(ABC):
         """
         Configura os atributos da conta com informações do banco de dados.
         """
-        data = self._database_manager.execute_query("""
+        data = self.database_manager.execute_query("""
             SELECT username, password, added_at, is_valid, last_validated_at FROM Accounts WHERE id = ?""",
             (self.account_id,), fetchone=True)
         self.username = data[0]
@@ -73,7 +73,7 @@ class Account(ABC):
         """
         Carrega os tokens de autenticação da conta.
         """
-        data = self._database_manager.execute_query("""
+        data = self.database_manager.execute_query("""
             SELECT auth_token, auth_token_expires_at, refresh_token, refresh_token_expires_at, other_data
             FROM Auths WHERE account_id = ? AND platform_id = ?""",
             (self.account_id, self.get_platform_id()), fetchone=True)
@@ -97,7 +97,7 @@ class Account(ABC):
         """
 
     @abstractmethod
-    def refresh_token(self):
+    def refresh_auth_token(self):
         """
         Método abstrato para renovar o token de acesso.
         """

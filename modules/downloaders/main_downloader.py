@@ -54,9 +54,8 @@ def decrypt_segment(content, key, iv):
 
 
 class Downloader:
-    def __init__(self, account: Account=None, database_manager: DatabaseManager=None) -> None:
+    def __init__(self, account: Account=None) -> None:
         self.account = account
-        self.database_manager = database_manager
 
         self.url_download = None
         self.download_path = None

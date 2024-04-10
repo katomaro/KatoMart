@@ -343,6 +343,7 @@ def load_course_data():
 @api_bp.route("/start_download", methods=["POST"])
 def start_download():
     global selected_platform_instance
+    global Downloader_instance
     if selected_platform_instance is None:
         return redirect(url_for("index"))
 
@@ -365,8 +366,7 @@ def start_download():
         Downloader_instance = Downloader(selected_platform_instance)
         return jsonify({"message": "Download iniciando, acompanhe pela página Logs."})
     
-
-    return jsonify(message="Ainn")
+    return jsonify({"message": "Como você veio parar aqui? Não há cursos selecionados para download!"})
 
 
 # Ponto de entrada principal para execução do servidor

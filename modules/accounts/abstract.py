@@ -125,3 +125,10 @@ class Account(ABC):
         """
         Método abstrato para obter informações de um produto específico.
         """
+    
+    @abstractmethod
+    def download_content(self, product_id: int | str | None = None, product_info: dict = None):
+        """
+        Método abstrato para baixar o conteúdo de um produto.
+        cada plataforma pode requerer um pré-processamento diferente.
+        """

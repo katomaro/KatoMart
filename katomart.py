@@ -350,8 +350,10 @@ def start_download():
     if data.get("courses") is None:
         return jsonify({"message": "Nenhum curso foi selecionado."}), 400
 
-    courses = data["courses"]
-    # print(courses)
+    selected_courses = data["courses"]
+    for course in selected_courses:
+        if course.get("selected", False):
+            selected_platform_instance.download_content(course)
 
     return jsonify(message="Ainn")
 

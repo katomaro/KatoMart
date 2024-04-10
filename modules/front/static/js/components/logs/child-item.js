@@ -9,28 +9,41 @@ export default {
       DOWNLOAD_STATUS_COLOR_MAP
     }
   },
+  computed: {
+    isFile() {
+      return this.child.type !== undefined
+    },
+    status() {
+      const progress = this.child.progress
+      if (progress === 0) {
+        return "Não Iniciado"
+      } else if (progress === 1) {
+        return "Completo"
+      } else {
+        return "Baixando"
+      }
+    },
+  },
   template: `
   <h2 class="flex justify-between">
     <span class="text-lg">{{ child.name }}</span>
     <div class="flex gap-1 items-center">
       <span
-        v-if="child.downloadedThings"
-        v-for="thing in child.downloadedThings"
+        v-if="isFile"
         class="badge badge-info text-xs px-0.5">
-          {{ thing }}
+          {{ child.type }}
       </span>
-      <div :class="'badge badge-' + DOWNLOAD_STATUS_COLOR_MAP[child.status]">
-        {{ child.status }}
+      <div
+        class="radial-progress text-primary text-sm"
+        :style="{ '--value': child.progress * 100, '--size': '3rem' }"
+        role="progressbar"
+      >
+        {{ child.progress * 100 }}%
+      </div>
+      <div :class="'badge badge-' + DOWNLOAD_STATUS_COLOR_MAP[status]">
+        {{ status }}
       </div>
     </div>
   </h2>
-  <div class="flex items-center gap-2">
-    <progress
-      class="progress progress-accent w-full"
-      :value="child.progress * 100"
-      max="100"
-    />
-    <p class="text-base">{{ child.progress * 100 }}%</p>
-  </div>
   `
 }

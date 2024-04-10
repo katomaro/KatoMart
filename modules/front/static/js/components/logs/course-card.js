@@ -32,7 +32,7 @@ export default {
         <p class="text-base">{{ course.progress * 100 }}%</p>
       </div>
 
-      <Children v-if="course.children.length > 0" :children="course.children" />
+      <Children v-if="course.modules.length > 0" :children="course.modules" />
     </div>
   </div>
   `

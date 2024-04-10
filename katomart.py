@@ -379,6 +379,11 @@ def api_logs():
 
     return jsonify(logs)
 
+@api_bp.route('/courses_progress', methods=['GET'])
+def api_courses_progress():
+    global Downloader_instance
+    return jsonify({'message': 'Este método precisa ser implementado'})
+
 
 
 # Ponto de entrada principal para execução do servidor

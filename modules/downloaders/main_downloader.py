@@ -88,9 +88,9 @@ class Downloader:
                 download_path.mkdir(parents=True)
             print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
             for module in content['modules']:
-                module_path = download_path / remover_caracteres_problematicos(module['name'])
+                module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
                 for lesson in module['lessons']:
-                    lesson_path = module_path / remover_caracteres_problematicos(lesson['name'])
+                    lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
                     if not lesson_path.exists():
                         lesson_path.mkdir(parents=True)
 

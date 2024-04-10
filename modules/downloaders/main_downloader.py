@@ -79,11 +79,11 @@ class Downloader:
             print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
             for module in content['modules']:
                 module_path = download_path / module['name']
-                for lesson in module['pages']:
+                for lesson in module['lessons']:
                     lesson_path = module_path / lesson['name']
                     if not lesson_path.exists():
                         lesson_path.mkdir(parents=True)
-    
+
     def download_content(self, url_download:str, download_path:str, file_name:str):
         """
         Baixa um conteúdo de uma URL.

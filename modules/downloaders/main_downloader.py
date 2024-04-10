@@ -70,11 +70,19 @@ class Downloader:
         """
         Itera sobre os conteúdos de uma conta.
         """
+        # Aqui a gente assume que o método da conta organizou todo o conteúdo, então não precisamos ir buscar informaçções
+        # Pode vir ser necessário no futuro, então... TODO: Implementar um chamada para buscar informações precisas
         for content in self.account.downloadable_products:
-            download_path = pathlib.Path(self.account._database_manager.get_setting('download_path')) / content['name']
+            download_path = pathlib.Path(self.account.database_manager.get_setting('download_path')) / content['name']
             if not download_path.exists():
                 download_path.mkdir(parents=True)
             print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
+            for module in content['modules']:
+                module_path = download_path / module['name']
+                for lesson in module['pages']:
+                    lesson_path = module_path / lesson['name']
+                    if not lesson_path.exists():
+                        lesson_path.mkdir(parents=True)
     
     def download_content(self, url_download:str, download_path:str, file_name:str):
         """

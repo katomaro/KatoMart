@@ -368,6 +368,17 @@ def start_download():
     
     return jsonify({"message": "Como você veio parar aqui? Não há cursos selecionados para download!"})
 
+# Raiva ódio e rancor
+@app.route('/api/logs', methods=['GET'])
+def api_logs():
+    db_manager = get_db()
+    start_date = request.args.get('startDate')
+    end_date = request.args.get('endDate')
+
+    logs = db_manager.execute_query("SELECT * logs WHERE log_created_at >= ? AND log_created_at <= ? SORT BY id DESC LIMIT 1000;", (start_date, end_date))
+
+    return jsonify(logs)
+
 
 # Ponto de entrada principal para execução do servidor
 if __name__ == "__main__":

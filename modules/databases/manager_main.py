@@ -301,6 +301,8 @@ class DatabaseManager:
 
             cursor.execute("INSERT INTO Events (type, data) VALUES (?, ?)", (log_type, sensitive_data, log_data, log_created_at))
             conn.commit()
+    
+    # TODO: Implementar função de log paginado
 
 
 if __name__ == "__main__":

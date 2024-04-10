@@ -14,14 +14,18 @@ from flask import (
 
 from modules.accounts.hotmart import Hotmart
 from modules.databases.manager_main import DatabaseManager
+from modules.downloaders.main_downloader import Downloader
+
 
 platform_classes = {
     1: Hotmart,
 }
 
+Downloader_instance = None
 
 app = Flask(
-    __name__, template_folder="modules/front/templates", static_folder="modules/front/static"
+    __name__, template_folder="modules/front/templates", 
+    static_folder="modules/front/static"
 )
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True

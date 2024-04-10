@@ -23,10 +23,16 @@ export default {
       endDate: ""
     };
 
-    return { logsData, logsQuery }
+    return { logsData, logsQuery, intervalId: null }
   },
   async mounted() {
-    this.loadLogsQuery()
+    await this.loadLogsQuery()
+    this.intervalId = setInterval(this.loadLogsQuery, 7500)
+  },
+  beforeUnmount() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
+    }
   },
   methods: {
     async loadLogsQuery() {

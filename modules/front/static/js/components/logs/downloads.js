@@ -1,5 +1,3 @@
-const { ref, onMounted } = Vue
-
 import { COURSES_PLACEHOLDER_EXAMPLE } from "../../constants.js"
 import courseCard from "./course-card.js"
 import searchBar from "./search-bar.js"
@@ -11,20 +9,31 @@ export default {
     "TotalProgress": totalProgress,
     "CourseCard": courseCard
   },
-  setup() {
-    const courses = ref([])
-    const logs = ref([])
-    onMounted(async () => {
-      // TODO: Call an API that will returns the courses progress :D
-      // courses.value, logs.value = await Promise.all([
-      //   fetch('/api/courses').then(res => res.json()),
-      //   fetch('/api/logs').then(res => res.json())
-      // ])
-
-      // TODO: remove this placeholder when the API is ready
-      courses.value = COURSES_PLACEHOLDER_EXAMPLE
-    })
-    return { courses, logs }
+  data() {
+    return { courses: [], intervalId: null }
+  },
+  methods: {
+    async fetchData() {
+      const res = await fetch("/api/courses_progress")
+      if (res.ok) {
+        try {
+          this.courses = await res.json()
+        } catch {
+          this.courses = COURSES_PLACEHOLDER_EXAMPLE
+        }
+      } else {
+        this.courses = COURSES_PLACEHOLDER_EXAMPLE
+      }
+    }
+  },
+  async mounted() {
+    await this.fetchData()
+    this.intervalId = setInterval(this.fetchData, 7500)
+  },
+  beforeUnmount() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
+    }
   },
   template: `
   <div class="w-full">

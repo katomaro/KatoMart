@@ -18,75 +18,149 @@ export const COURSES_PLACEHOLDER_EXAMPLE = [
   {
     id: 1,
     name: "Como Desenhar Hentai - Kato 3.0",
-    status: "Baixando",
     progress: 0.7,
-    children: [
+    modules: [
       {
         id: '1.1',
         name: "Módulo 1 - Ahegao",
-        status: "Completo",
         progress: 1,
-        children: []
+        lessons: []
       },
       {
         id: '1.2',
         name: "Módulo 2 - Shota",
-        status: "Completo",
         progress: 1,
-        children: []
+        lessons: []
       },
       {
         id: '1.3',
         name: "Módulo 3 - Milf",
-        status: "Baixando",
         progress: 0.5,
-        children: [
+        lessons: [
           {
             id: '1.3.1',
             name: "Aula 1",
-            status: "Completo",
             progress: 1,
-            downloadedThings: ['Video', 'PDF', 'Audio', 'Texto'],
+            files: [
+              {
+                name: "aulinha.mp4",
+                type: "Video",
+                progress: 1
+              },
+              {
+                name: "material de consulta.pdf",
+                type: "PDF",
+                progress: 1
+              },
+              {
+                name: "áudio.mp3",
+                type: "Audio",
+                progress: 1
+              },
+              {
+                name: "descrição.txt",
+                type: "Texto",
+                progress: 1
+              }
+            ],
           },
           {
             id: '1.3.1',
             name: "Aula 2",
-            status: "Completo",
             progress: 1,
-            downloadedThings: ['Video', 'PDF', 'Audio', 'Texto'],
+            files: [
+              {
+                name: "aulinha.mp4",
+                type: "Video",
+                progress: 1
+              },
+              {
+                name: "material de consulta.pdf",
+                type: "PDF",
+                progress: 1
+              },
+              {
+                name: "áudio.mp3",
+                type: "Audio",
+                progress: 1
+              },
+              {
+                name: "descrição.txt",
+                type: "Texto",
+                progress: 1
+              }
+            ],
           },
           {
             id: '1.3.1',
             name: "Aula 3",
-            status: "Baixando",
             progress: 0,
-            downloadedThings: [],
+            files: [
+              {
+                name: "aulinha.mp4",
+                type: "Video",
+                progress: 0
+              },
+              {
+                name: "material de consulta.pdf",
+                type: "PDF",
+                progress: 0
+              },
+              {
+                name: "áudio.mp3",
+                type: "Audio",
+                progress: 0
+              },
+              {
+                name: "descrição.txt",
+                type: "Texto",
+                progress: 0
+              }
+            ],
           },
 
           {
             id: '1.3.1',
             name: "Aula 3",
-            status: "Não Iniciado",
             progress: 0,
-            downloadedThings: [],
+            files: [
+              {
+                name: "aulinha.mp4",
+                type: "Video",
+                progress: 0
+              },
+              {
+                name: "material de consulta.pdf",
+                type: "PDF",
+                progress: 0
+              },
+              {
+                name: "áudio.mp3",
+                type: "Audio",
+                progress: 0
+              },
+              {
+                name: "descrição.txt",
+                type: "Texto",
+                progress: 0
+              }
+            ],
           }
         ]
       },
       {
         id: '1.4',
         name: "Módulo 4 - Posições",
-        status: "Não Iniciado",
         progress: 0,
-        children: []
+        lessons: []
       }
     ]
   },
   {
     id: 2,
     name: "Outro curso só de exemplo",
-    status: "Não Iniciado",
     progress: 0,
-    children: []
+    modules: []
   }
 ]
 

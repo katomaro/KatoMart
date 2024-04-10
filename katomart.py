@@ -344,8 +344,12 @@ def load_course_data():
 def start_download():
     global selected_platform_instance
     global Downloader_instance
+
     if selected_platform_instance is None:
-        return redirect(url_for("index"))
+        return jsonify({'message':"Nenhuma conta Inicializada. Selecione uma conta para iniciar o download. (bug?)"})
+    
+    if Downloader_instance is not None:
+        return jsonify({"message": "Já existe um download em andamento. Acompanhe pela página de logs."})
 
     data = request.get_json()
     if data.get("courses") is None:
@@ -383,7 +387,6 @@ def api_logs():
 def api_courses_progress():
     global Downloader_instance
     return jsonify({'message': 'Este método precisa ser implementado'})
-
 
 
 # Ponto de entrada principal para execução do servidor

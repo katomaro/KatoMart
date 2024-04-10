@@ -363,4 +363,4 @@ if __name__ == "__main__":
         "fechar o navegador e voltar até o site para gerenciar o Katomart quando quiser"
     )
     app.register_blueprint(api_bp)
-    app.run(debug=True, port=PORT)
+    app.run(port=PORT)

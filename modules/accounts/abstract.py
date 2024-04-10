@@ -121,7 +121,7 @@ class Account(ABC):
         """
 
     @abstractmethod
-    def get_product_information(self, product_id):
+    def get_product_information(self, product_id : str | int):
         """
         Método abstrato para obter informações de um produto específico.
         """

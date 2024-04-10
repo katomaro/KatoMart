@@ -353,7 +353,18 @@ def start_download():
     selected_courses = data["courses"]
     for course in selected_courses:
         if course.get("selected", False):
+            # TODO: Tornar o post GLOBAL
+            # {'domain': 'https://comodesenharchibis.club.hotmart.com', 'id': INT, 'roles': ['STUDENT'], 'status': 'ACTIVE', 'subdomain': 'comodesenharchibis', 'user_area_id': INT, 'selected': True}
+            # Pode-se remover o atributo 'roles', e o subdomain. Necessário ver a melhor forma de padronizar i que as plataformas podem dar.
+            # Vendo que cada conta tem um método responsável para adicionar o curso selecionado à sua lista de download,
+            # O ideal seria compilar as informações relevantes para um dicionario 'extra' retornando apenas selected e esse dicionário
+            # e deixar que o método de cada classe cuide do dicionário com suas peculiaridades.
             selected_platform_instance.download_content(course)
+    
+    if selected_platform_instance.downloadable_products is not None:
+        Downloader_instance = Downloader(selected_platform_instance)
+        return jsonify({"message": "Download iniciando, acompanhe pela página Logs."})
+    
 
     return jsonify(message="Ainn")
 

@@ -117,16 +117,17 @@ class Hotmart(Account):
         """
         Formata as informações de um produto específico associado à conta do usuário.
         """
-        return {
-            'product_id': product_info['id'],
-            'subdomain': product_info['subdomain'],
-            'status': product_info['status'],
-            'user_area_id': product_info['user_area_id'],
-            'roles': product_info['roles'],
-            'domain': product_info['domain']
-        }
+        product_info['modules'].sort(key=lambda x: x['moduleOrder'])
+        for i, module in enumerate(product_info['modules'], start=1):
+            module['moduleOrder'] = i
+        
+            module['pages'].sort(key=lambda x: x['pageOrder'])
+            for j, page in enumerate(module['pages'], start=1):
+                page['pageOrder'] = j
+        
+        return product_info
 
-    def get_product_information(self, club_name: str):
+    def get_product_information(self, product_id: str):
         """
         Retorna informações de um produto específico associado à conta do usuário.
         :club_name: nome da área de membros da htm.
@@ -134,14 +135,22 @@ class Hotmart(Account):
         :return: Dicionário com informações do produto.
         """
         self.session.headers['authorization'] = f'Bearer {self.auth_token}'
-        self.session.headers['club'] = club_name
+        self.session.headers['club'] = product_id
         response = self.session.get(self.MEMBER_AREA_URL)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         return response.json()
 
+    # TODO: Reorganizar este método quando o yuu re-organizar o front.
     def download_content(self, product_info: dict = None):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        pass
+        club_name = product_info['domain'].split('//')[1].split('.')[0]
+        product_info = self.get_product_information(club_name)
+        course_info = {
+            'name': club_name,
+            'modules': product_info.get('modules')
+        }
+        produto = self.format_product_information(course_info)
+        self.downloadable_products.append(produto)

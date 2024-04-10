@@ -50,7 +50,7 @@ export default {
       </tbody>
     </table>
 
-    <p class="mt-4 mb-4" v-if="logs.length === 0">Nenhum log encontrado</p>
+    <p class="mt-8 mb-4 text-center text-2xl" v-if="logs.length === 0">Nenhum log encontrado</p>
 
 </div>
   `

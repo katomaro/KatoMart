@@ -1,4 +1,7 @@
 import json
+import os
+import pathlib
+import shutil
 import time
 
 import m3u8
@@ -9,7 +12,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
 from modules.accounts.abstract import Account
-from modules.databases.manager_main import DatabaseManager
 
 
 
@@ -61,13 +63,18 @@ class Downloader:
         self.download_path = None
         self.file_name = None
 
+        self.iter_account_contents()
+
 
     def iter_account_contents(self):
         """
         Itera sobre os conteúdos de uma conta.
         """
-        # TODO: Iterar pelo self.account.downloadable_products
-        pass
+        for content in self.account.downloadable_products:
+            download_path = pathlib.Path(self.account._database_manager.get_setting('download_path')) / content['name']
+            if not download_path.exists():
+                download_path.mkdir(parents=True)
+            print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
     
     def download_content(self, url_download:str, download_path:str, file_name:str):
         """

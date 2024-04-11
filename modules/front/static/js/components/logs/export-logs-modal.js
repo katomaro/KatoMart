@@ -3,13 +3,13 @@ export default {
     query: Object
   },
   data() {
-    return { isOpen: false }
+    return { isOpen: false, includeSensitiveData: false }
   },
 
   methods: {
     toggleModal() {
       this.isOpen = !this.isOpen
-    }
+    },
   },
 
   template: `
@@ -33,7 +33,25 @@ export default {
           Exportar Logs <i class="fa-solid ml-2 fa-file-export" />
       </h3>
 
-      <p>Vai aparecer um formulário aqui em algum momento, nos próximos commits, vrau!</p>
+      <form action="/api/export_logs" method="post" class="flex flex-col gap-4 items-center">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Incluir Dados Sensíveis?</span>
+          </label>
+          <input type="checkbox" class="checkbox checkbox-primary" name="include_sensitive_data" v-model="includeSensitiveData" />
+        </div>
+
+        <div class="form-control w-full" v-if="includeSensitiveData">
+          <label class="label">
+            <span class="label-text">Dados sensíveis serão substituídos por</span>
+          </label>
+          <input type="text" value="*" class="input input-bordered w-full" name="sensitive_data_replacement" disabled />
+        </div>
+
+        <button class="btn btn-primary" @click="toggleModal()">
+          Exportar
+        </button>
+      </form>
     </div>
   </div>
   `

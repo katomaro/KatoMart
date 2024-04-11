@@ -9,3 +9,7 @@ test_stuff/
 __pycache__/
 venv/
 .venv/
+
+# Arquivos gerados pelo downloader
+Cursos/
+jsons/

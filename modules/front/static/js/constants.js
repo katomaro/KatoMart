@@ -164,18 +164,15 @@ export const COURSES_PLACEHOLDER_EXAMPLE = [
   }
 ]
 
-export const LOGS_PLACEHOLDER_EXAMPLE = {
-  total: 10,
-  logs: [
-    { id: 1, message: "O bot morreu, eeeee", level: "error", date: "2022-10-20 10:00:00", sensitive: true },
-    { id: 2, message: "O bot começou a funcionar novamente!", level: "info", date: "2022-10-20 10:00:01", sensitive: false },
-    { id: 3, message: "Erro ao baixar um arquivo, vai tentar de novo", level: "warn", date: "2022-10-20 10:00:02", sensitive: true },
-    { id: 4, message: "Aula baixada com sucesso!", level: "info", date: "2022-10-20 10:00:03", sensitive: false },
-    { id: 5, message: "Iniciando download de vídeo", level: "debug", date: "2022-10-20 10:00:04", sensitive: true },
-    { id: 6, message: "Esperando 5 segundos antes de tentar novamente...", level: "info", date: "2022-10-20 10:00:05", sensitive: false },
-    { id: 7, message: "Course concluído", level: "info", date: "2022-10-20 10:00:06", sensitive: false },
-    { id: 8, message: "Erro fatal ao baixar um pdf", level: "error", date: "2022-10-20 10:00:07", sensitive: true },
-    { id: 9, message: "Iniciando download de audio", level: "debug", date: "2022-10-20 10:00:08", sensitive: true },
-    { id: 10, message: "Iniciando download de video", level: "debug", date: "2022-10-20 10:00:09", sensitive: true },
-  ]
-}
+export const LOGS_PLACEHOLDER_EXAMPLE = [
+  { id: 1, message: "O bot morreu, eeeee", level: "error", date: "2022-10-20 10:00:00", sensitive: true },
+  { id: 2, message: "O bot começou a funcionar novamente!", level: "info", date: "2022-10-20 10:00:01", sensitive: false },
+  { id: 3, message: "Erro ao baixar um arquivo, vai tentar de novo", level: "warn", date: "2022-10-20 10:00:02", sensitive: true },
+  { id: 4, message: "Aula baixada com sucesso!", level: "info", date: "2022-10-20 10:00:03", sensitive: false },
+  { id: 5, message: "Iniciando download de vídeo", level: "debug", date: "2022-10-20 10:00:04", sensitive: true },
+  { id: 6, message: "Esperando 5 segundos antes de tentar novamente...", level: "info", date: "2022-10-20 10:00:05", sensitive: false },
+  { id: 7, message: "Course concluído", level: "info", date: "2022-10-20 10:00:06", sensitive: false },
+  { id: 8, message: "Erro fatal ao baixar um pdf", level: "error", date: "2022-10-20 10:00:07", sensitive: true },
+  { id: 9, message: "Iniciando download de audio", level: "debug", date: "2022-10-20 10:00:08", sensitive: true },
+  { id: 10, message: "Iniciando download de video", level: "debug", date: "2022-10-20 10:00:09", sensitive: true },
+]

@@ -1,29 +1,23 @@
 
 import { LOGS_PLACEHOLDER_EXAMPLE } from "../../constants.js";
+import ExportLogsModal from "./export-logs-modal.js";
 import LogsContent from "./logs-content.js";
-import LogsFilter from "./logs-filter.js";
 import LogsPagination from "./logs-pagination.js";
 
 export default {
   components: {
-    LogsFilter,
     LogsContent,
-    LogsPagination
+    LogsPagination,
+    ExportLogsModal
   },
   data() {
-    const logsData = {
-      total: 0,
-      logs: []
-    }
+    const logsData = []
     const logsQuery = {
-      level: "warn",
       perPage: 15,
       page: 1,
-      startDate: "",
-      endDate: ""
     };
 
-    return { logsData, logsQuery, intervalId: null }
+    return { logsData, logsQuery, intervalId: null, isModalOpen: false }
   },
   async mounted() {
     await this.loadLogsQuery()
@@ -58,12 +52,13 @@ export default {
   template: `
   <div class="w-full">
     <h1 class="text-2xl text-center font-bold">LOGs</h1>
-    <LogsFilter :query="logsQuery" />
-    <LogsContent :logs="logsData.logs" />
+    <LogsContent :logs="logsData" />
     <LogsPagination
-      :total="logsData.total"
+      :total="logsData.lenght"
       v-model="logsQuery"
     />
+
+    <ExportLogsModal :query="logsQuery" />
   </div>
   `
 }

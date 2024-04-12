@@ -87,7 +87,6 @@ class Hotmart(Account):
         for resource in response:
             if resource.get('type') == 'PRODUCT':
                 product_dict = {
-                    'data': {
                         'name': resource.get('resource', {}).get('subdomain'),
                         'id': int(resource.get('resource', {}).get('productId')),
                         'subdomain': resource.get('resource', {}).get('subdomain'),
@@ -96,7 +95,6 @@ class Hotmart(Account):
                         'roles': resource.get('roles'),
                         'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com",
                         'modules': []
-                    }
                 }
                 products.append(product_dict)
         return products
@@ -158,4 +156,5 @@ class Hotmart(Account):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        self.downloadable_products.append(product_info.get("data", {}))
+        # self.downloadable_products.append(product_info.get("data", {}))
+        self.downloadable_products.append(product_info)

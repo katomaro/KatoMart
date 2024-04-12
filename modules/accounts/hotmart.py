@@ -81,17 +81,22 @@ class Hotmart(Account):
         response = self.session.get(self.PRODUCTS_URL, params=data)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
+        
         response = response.json()['resources']
         products = []
         for resource in response:
             if resource.get('type') == 'PRODUCT':
                 product_dict = {
-                    'id': int(resource.get('resource', {}).get('productId')),
-                    'subdomain': resource.get('resource', {}).get('subdomain'),
-                    'status': resource.get('resource', {}).get('status'),
-                    'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
-                    'roles': resource.get('roles'),
-                    'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com"
+                    'data': {
+                        'name': resource.get('resource', {}).get('subdomain'),
+                        'id': int(resource.get('resource', {}).get('productId')),
+                        'subdomain': resource.get('resource', {}).get('subdomain'),
+                        'status': resource.get('resource', {}).get('status'),
+                        'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
+                        'roles': resource.get('roles'),
+                        'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com",
+                        'modules': []
+                    }
                 }
                 products.append(product_dict)
         return products
@@ -100,18 +105,18 @@ class Hotmart(Account):
         """
         Formata os produtos associados à conta do usuário na Hotmart.
         """
-        if product_info:
-            product_id = product_info['id']
-        if product_id:
-            product_info = self.get_product_information(product_id)
-        return {
-            'product_id': product_info['id'],
-            'subdomain': product_info['subdomain'],
-            'status': product_info['status'],
-            'user_area_id': product_info['user_area_id'],
-            'roles': product_info['roles'],
-            'domain': product_info['domain']
-        }
+        # if product_info:
+        #     product_id = product_info['id']
+        # if product_id:
+        #     product_info = self.get_product_information(product_id)
+        # return {
+        #     'product_id': product_info['id'],
+        #     'subdomain': product_info['subdomain'],
+        #     'status': product_info['status'],
+        #     'user_area_id': product_info['user_area_id'],
+        #     'roles': product_info['roles'],
+        #     'domain': product_info['domain']
+        # }
     
     def format_product_information(self, product_info: dict):
         """
@@ -147,7 +152,6 @@ class Hotmart(Account):
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         return response.json()
 
-    # TODO: Reorganizar este método quando o yuu re-organizar o front.
     def download_content(self, product_info: dict = None):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.

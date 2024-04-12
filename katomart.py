@@ -353,7 +353,7 @@ def start_download():
 
     data = request.get_json()
     if data.get("courses") is None:
-        return jsonify({"message": "Nenhum curso foi selecionado."}), 400
+        return jsonify({"message": "Nenhum curso foi selecionado."})
 
     selected_courses = data["courses"]
     for course in selected_courses:

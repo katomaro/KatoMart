@@ -86,7 +86,7 @@ class Downloader:
             download_path = pathlib.Path(self.account.database_manager.get_setting('download_path')) / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
-            print(f"[DOWNLOADER] Baixando {content['name']} em {download_path}")
+            self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.account.get_platform_id()}", log_created_at=self.account.get_current_time())
             for module in content['modules']:
                 module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
                 for lesson in module['lessons']:

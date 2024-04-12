@@ -150,17 +150,12 @@ class Hotmart(Account):
         response = self.session.get(self.MEMBER_AREA_URL)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
-        return response.json()
+        
+        fmt_info = self.format_product_information(response.json())
+        return fmt_info
 
     def download_content(self, product_info: dict = None):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        club_name = product_info['domain'].split('//')[1].split('.')[0]
-        product_info = self.get_product_information(club_name)
-        course_info = {
-            'name': club_name,
-            'modules': product_info.get('modules')
-        }
-        produto = self.format_product_information(course_info)
-        self.downloadable_products.append(produto)
+        self.downloadable_products.append(product_info.get("data", {}))

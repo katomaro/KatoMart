@@ -315,12 +315,13 @@ def courses():
     consent = int(db_manager.get_setting("user_consent"))
     if not consent:
         return redirect(url_for("index"))
+    extra_data = int(db_manager.get_setting("get_product_extra_info"))
 
     global selected_platform_instance
     if selected_platform_instance is None:
         return jsonify({"error": "Nenhuma Conta Selecionada."}), 400
 
-    return jsonify(courses=selected_platform_instance.get_account_products())
+    return jsonify(courses=selected_platform_instance.get_account_products(get_extra_info=extra_data))
 
 
 @api_bp.route("/load_course_data", methods=["POST"])

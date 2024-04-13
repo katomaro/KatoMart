@@ -73,7 +73,7 @@ class Hotmart(Account):
         """
         pass
 
-    def get_account_products(self):
+    def get_account_products(self, get_extra_info: int = 0):
         """
         Retorna os produtos associados à conta do usuário na Hotmart.
         """
@@ -92,31 +92,33 @@ class Hotmart(Account):
                 subdomain = resource.get('resource', {}).get('subdomain')
                 composed_domain = f'https://{subdomain}.club.hotmart.com'
 
-                fake_session = self.clone_main_session()
-                headers = {}
-                headers['user-agent'] = fake_session.headers['user-agent']
-                headers['authorization'] = f'Bearer {self.auth_token}'
 
-                headers['origin'] = composed_domain
-                headers['referer'] = composed_domain
-                headers["accept"] = "application/json, text/plain, */*"
-                headers['club'] = subdomain
-                headers["pragma"] = "no-cache"
-                headers["cache-control"] = "no-cache"
-                fake_session.headers.update(headers)
-                course_name = fake_session.get(
-                    f'{self.CLUB_API}/membership?attach_token=false'
-                ).json().get('name', 'Sem Nome Discriminado osh')
-                # Segurança mínima para contas com muitos cursos
-                if len(response) > 10:
-                    time.sleep(2)
-                
-                del fake_session
+                if get_extra_info:
+                    fake_session = self.clone_main_session()
+                    headers = {}
+                    headers['user-agent'] = fake_session.headers['user-agent']
+                    headers['authorization'] = f'Bearer {self.auth_token}'
+
+                    headers['origin'] = composed_domain
+                    headers['referer'] = composed_domain
+                    headers["accept"] = "application/json, text/plain, */*"
+                    headers['club'] = subdomain
+                    headers["pragma"] = "no-cache"
+                    headers["cache-control"] = "no-cache"
+                    fake_session.headers.update(headers)
+                    course_name = fake_session.get(
+                        f'{self.CLUB_API}/membership?attach_token=false'
+                    ).json().get('name', 'Sem Nome Discriminado osh')
+                    # Segurança mínima para contas com muitos cursos
+                    if len(response) > 10:
+                        time.sleep(2)
+                    
+                    del fake_session
 
                 product_dict = {
                         'save_path': self.get_save_path(),
                         'data': {
-                            'name': course_name,
+                            'name': course_name if get_extra_info else subdomain,
                             'id': int(resource.get('resource', {}).get('productId')),
                             'subdomain': subdomain,
                             'status': resource.get('resource', {}).get('status'),

@@ -9,7 +9,7 @@ export default {
       <h3 class="font-bold text-l mb-2 text-red-500">Desenvolvedor Front-End Fixo</h3>
       <p class="text-gray-400 text-sm">Responsabilidade no Projeto:</p>
       <p class="text-gray-200 text-sm italic">
-        <span class="text-pink-500">Estudante responsável integral e autoridade máxima pelo Front-End do projeto</span>, visando garantir a melhor experiência do usuário. Também atua corrigindo bugs pontuais e prestando suporte à comunidade.
+        <span class="text-pink-500">Estudante de Front-End, responsável integral e autoridade máxima pela UI/UX do usuário.</span> Também atua corrigindo bugs pontuais e prestando suporte à comunidade por integrar à mesma.
       </p>
       <p class="text-gray-200 text-sm italic">
         Felipe é um estudante de programação e matemática, possui algumas

@@ -22,7 +22,7 @@ class Hotmart(Account):
         # Estas URLs estão para mudar!
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         self.PRODUCTS_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/check_token'
-        self.MEMBER_AREA_URL = 'https://club-api.cb.hotmart.com/rest/v3/navigation'
+        self.MEMBER_AREA_URL = 'https://api-club.cb.hotmart.com/rest/v3/navigation'
         self.CLUB_API = 'https://club-api.hotmart.com/hot-club-api/rest/v3'
 
         self.load_account_information()

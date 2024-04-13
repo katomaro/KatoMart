@@ -162,5 +162,4 @@ class Hotmart(Account):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        # self.downloadable_products.append(product_info.get("data", {}))
-        self.downloadable_products.append(product_info)
+        self.downloadable_products.append(product_info.get("data", {}))

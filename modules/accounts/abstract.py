@@ -151,7 +151,7 @@ class Account(ABC):
         """
 
     @abstractmethod
-    def get_content_module_info(self, product_info: dict):
+    def get_content_module_info(self, product_info: dict, module_id: str | int):
         """
         Método abstrato para obter os módulos de um produto.
         """

@@ -137,7 +137,7 @@ class Hotmart(Account):
         """
         print("I'm a little teapot, short and stout!")
     
-    def get_content_module_info(self, product_info: dict):
+    def get_content_module_info(self, product_info: dict, module_id: str | int):
         """
         Desnecessario para a Hotmart.
         """

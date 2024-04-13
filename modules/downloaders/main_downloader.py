@@ -96,12 +96,23 @@ class Downloader:
                     self.get_content_lessons()
                 for lesson in module.get('lessons'):
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
-                    if not lesson_path.exists():
-                        lesson_path.mkdir(parents=True)
+                    if not lesson.get('files'):
+                        self.get_content_files()
+                    for file in lesson.get('files'):
+                        file_name = remover_caracteres_problematicos(f"{file['lessonOrder']}. " + file['name'])
+                        # Checagem feia e computacionalmente desnecessária, porém é uma forma de garantir não ter pastas vazias
+                        if not lesson_path.exists():
+                            lesson_path.mkdir(parents=True)
 
+    def get_content_files(self):
+        """
+        Busca os arquivos de uma lição.
+        """
+        pass
+    
     def get_content_lessons(self):
         """
-        Busca as lições de um conteúdo.
+        Busca as lições de um módulo.
         """
         pass
     

@@ -138,6 +138,8 @@ def update_settings():
 
     db_manager.update_setting("download_widevine", int(form.get("download_widevine", False)))
     db_manager.update_setting("widevine_cdm_path", form.get("widevine_cdm_path", ""))
+    
+    db_manager.update_setting("get_product_extra_info", int(form.get("get_product_extra_info", False)))
 
     for field in ["download_path", "default_user_agent", "download_threads"]:
         value = form.get(field, None)

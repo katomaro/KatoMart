@@ -8,6 +8,7 @@ import DownloadPathInput from "./downloadPathInput.js"
 import DownloadThreads from "./downloadThreads.js"
 import downloadWidevineCheckbox from "./downloadWidevineCheckbox.js"
 import DRMTypesCheckbox from "./drmTypesCheckbox.js"
+import GetProductExtraInfo from "./GetProductExtraInfo.js"
 import MediaDeliveryTypeCheckbox from "./mediaDeliveryTypeCheckbox.js"
 import mediaTypeCheckbox from "./mediaTypeCheckbox.js"
 import UseCustomFFMPEGCheckbox from "./useCustomFFMPEGCheckbox.js"
@@ -30,6 +31,7 @@ export default {
     MediaDeliveryTypeCheckbox,
     DefaultUserAgentInput,
     DownloadThreads,
+    GetProductExtraInfo
   },
   setup() {
     const settings = ref({})
@@ -84,6 +86,8 @@ export default {
     <DefaultUserAgentInput v-model="settings.default_user_agent" />
 
     <DownloadThreads v-model="settings.download_threads" />
+
+    <GetProductExtraInfo v-model="settings.get_product_extra_info" />
 
     <download-widevine-checkbox v-model="settings.download_widevine" />
 

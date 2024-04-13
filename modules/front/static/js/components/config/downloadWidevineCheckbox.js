@@ -1,12 +1,15 @@
 export default {
-    props: {
-      modelValue: Boolean
-    },
-    template: `
+  props: {
+    modelValue: Boolean
+  },
+  template: `
     <label class="cursor-pointer label bg-base-200 rounded-lg">
       <span class="label-text mb-2">
       <i class="fa-solid fa-lock-open mr-1"></i>
-        <span class="font-semibold">Baixar mídias bloqueadas pelo Widevine? <span style="color: red;">REQUER CDM (caminho completo)</span></span>
+        <span class="font-semibold">
+          Baixar mídias bloqueadas pelo Widevine?
+          <span class="text-error">REQUER CDM (caminho completo)</span>
+        </span>
       </span>
       <input
         type="checkbox"
@@ -18,4 +21,4 @@ export default {
       />
     </label>
     `
-  }
+}

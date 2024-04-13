@@ -96,7 +96,7 @@ class Hotmart(Account):
                 fake_session.headers['club'] = subdomain
                 course_name = fake_session.get(
                     f'{self.PRODUCTS_URL}/membership?attach_token=false'
-                ).json().get('name', 'Sem Nome Discriminado osh')
+                ).json()['name']
                 del fake_session
 
                 product_dict = {

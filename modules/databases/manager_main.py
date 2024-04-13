@@ -299,7 +299,7 @@ class DatabaseManager:
             if log_created_at == 0:
                 log_created_at = int(time.time())
 
-            cursor.execute("INSERT INTO Events (type, data) VALUES (?, ?)", (log_type, sensitive_data, log_data, log_created_at))
+            cursor.execute("INSERT INTO Logs (log_type, sensitive_data, log_data, log_created_at) VALUES (?, ?, ?, ?)", (log_type, sensitive_data, log_data, log_created_at))
             conn.commit()
     
     # TODO: Implementar função de log paginado

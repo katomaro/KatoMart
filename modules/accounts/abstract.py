@@ -84,6 +84,21 @@ class Account(ABC):
             self.refresh_token_expires_at = data[3]
             self.other_data = data[4]
     
+    def clone_main_session(self) -> requests.Session:
+        """
+        Clona a sessão principal da conta para uso temporário em requisições
+        que podem mudar dados da sessão principal.
+        """
+        ephemereal_session = requests.Session()
+        ephemereal_session.headers = self.session.headers.copy()
+        ephemereal_session.cookies = requests.utils.cookiejar_from_dict({c.name: c.value for c in self.session.cookies})
+        ephemereal_session.auth = self.session.auth
+        ephemereal_session.proxies = self.session.proxies.copy()
+        ephemereal_session.hooks = self.session.hooks.copy()
+        ephemereal_session.verify = self.session.verify
+
+        return ephemereal_session
+    
     @abstractmethod
     def get_platform_id(self) -> int:
         """

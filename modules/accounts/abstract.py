@@ -109,7 +109,7 @@ class Account(ABC):
         download_path = settings.get('download_path', 'downloads')
         download_path = pathlib.Path(os.path.abspath(__file__)).parent / download_path
 
-        return download_path
+        return download_path.resolve()
     
     @abstractmethod
     def get_platform_id(self) -> int:

@@ -86,35 +86,41 @@ class Hotmart(Account):
         products = []
         for resource in response:
             if resource.get('type') == 'PRODUCT':
+
+                subdomain = resource.get('resource', {}).get('subdomain')
+                composed_domain = f'https://{subdomain}.club.hotmart.com',
+
+                fake_session = self.clone_main_session()
+                fake_session.headers['origin'] = composed_domain
+                fake_session.headers['referer'] = composed_domain
+                fake_session.headers['club'] = subdomain
+                course_name = fake_session.get(
+                    f'{self.PRODUCTS_URL}/membership?attach_token=false'
+                ).json().get('name', 'Sem Nome Discriminado osh')
+                del fake_session
+
                 product_dict = {
-                        'name': resource.get('resource', {}).get('subdomain'),
+                        'save_path': self.get_save_path(),
+                        'data': {
+                        'name': course_name,
                         'id': int(resource.get('resource', {}).get('productId')),
-                        'subdomain': resource.get('resource', {}).get('subdomain'),
+                        'subdomain': subdomain,
                         'status': resource.get('resource', {}).get('status'),
                         'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
                         'roles': resource.get('roles'),
-                        'domain': f"https://{resource.get('resource', {}).get('subdomain')}.club.hotmart.com",
+                        'domain': composed_domain,
                         'modules': []
+                        }
                 }
                 products.append(product_dict)
+        
         return products
 
     def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
         """
         Formata os produtos associados à conta do usuário na Hotmart.
         """
-        # if product_info:
-        #     product_id = product_info['id']
-        # if product_id:
-        #     product_info = self.get_product_information(product_id)
-        # return {
-        #     'product_id': product_info['id'],
-        #     'subdomain': product_info['subdomain'],
-        #     'status': product_info['status'],
-        #     'user_area_id': product_info['user_area_id'],
-        #     'roles': product_info['roles'],
-        #     'domain': product_info['domain']
-        # }
+        print("I'm a little teapot, short and stout!")
     
     def format_product_information(self, product_info: dict):
         """
@@ -156,5 +162,4 @@ class Hotmart(Account):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        # self.downloadable_products.append(product_info.get("data", {}))
-        self.downloadable_products.append(product_info)
+        self.downloadable_products.append(product_info.get("data", {}))

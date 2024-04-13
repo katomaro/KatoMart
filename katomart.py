@@ -318,12 +318,19 @@ def courses():
     if not consent:
         return redirect(url_for("index"))
     extra_data = int(db_manager.get_setting("get_product_extra_info"))
+    download_path = db_manager.get_setting("download_path")
 
     global selected_platform_instance
     if selected_platform_instance is None:
         return jsonify({"error": "Nenhuma Conta Selecionada."}), 400
 
-    return jsonify(courses=selected_platform_instance.get_account_products(get_extra_info=extra_data))
+    dl_courses = selected_platform_instance.get_account_products(get_extra_info=extra_data)
+    for course in dl_courses:
+        course['save_path'] = Path(__file__).parent / download_path
+        course['save_path'] = str(course['save_path'].resolve())
+    
+    return jsonify(courses=dl_courses)
+    
 
 
 @api_bp.route("/load_course_data", methods=["POST"])

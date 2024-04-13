@@ -116,7 +116,6 @@ class Hotmart(Account):
                     del fake_session
 
                 product_dict = {
-                        'save_path': self.get_save_path(),
                         'data': {
                             'name': course_name if get_extra_info else subdomain,
                             'id': int(resource.get('resource', {}).get('productId')),

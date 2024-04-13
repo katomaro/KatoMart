@@ -100,17 +100,7 @@ class Account(ABC):
         ephemereal_session.verify = self.session.verify
 
         return ephemereal_session
-    
-    def get_save_path(self) -> str:
-        """
-        Retorna o caminho de salvamento dos arquivos baixados.
-        """
-        settings = self.database_manager.get_all_settings()
-        download_path = settings.get('download_path', 'downloads')
-        download_path = pathlib.Path(os.path.abspath(__file__)).parent / download_path
 
-        return str(download_path.resolve())
-    
     @abstractmethod
     def get_platform_id(self) -> int:
         """

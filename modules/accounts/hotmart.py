@@ -88,7 +88,7 @@ class Hotmart(Account):
             if resource.get('type') == 'PRODUCT':
 
                 subdomain = resource.get('resource', {}).get('subdomain')
-                composed_domain = f'https://{subdomain}.club.hotmart.com',
+                composed_domain = f'https://{subdomain}.club.hotmart.com'
 
                 fake_session = self.clone_main_session()
                 fake_session.headers['origin'] = composed_domain

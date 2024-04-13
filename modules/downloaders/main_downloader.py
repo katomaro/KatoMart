@@ -98,6 +98,8 @@ class Downloader:
                     self.get_content_lessons()
                 for lesson in module.get('lessons'):
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
+                    print(lesson)
+                    time.sleep(60)
                     if not lesson.get('files'):
                         self.get_content_files()
                     for file in lesson.get('files'):
@@ -107,23 +109,23 @@ class Downloader:
                             lesson_path.mkdir(parents=True)
                         self.download_content(file, lesson_path, file_name)
 
-    def get_content_files(self):
-        """
-        Busca os arquivos de uma lição.
-        """
-        pass
-    
-    def get_content_lessons(self):
-        """
-        Busca as lições de um módulo.
-        """
-        pass
-    
     def get_content_modules(self):
         """
         Busca os módulos de um conteúdo.
         """
         pass
+
+    def get_content_lessons(self):
+        """
+        Busca as lições de um módulo.
+        """
+        pass
+
+    def get_content_files(self):
+        """
+        Busca os arquivos de uma lição.
+        """
+        # self.account.get_content_lesson_info()
     
     def download_content(self, file: any, download_path:str, file_name:str):
         """

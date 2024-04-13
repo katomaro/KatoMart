@@ -9,7 +9,7 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('get_product_extra_info', '0'),
 ('download_widevine', '0'),
 ('widevine_cdm_path', ''),
-('bento4_toolbox_path', ''),
+('bento4_toolbox_path', 'SYSTEM'),
 ('scan_html_for_videos', '0'),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM'),

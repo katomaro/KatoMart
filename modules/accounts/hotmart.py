@@ -91,6 +91,7 @@ class Hotmart(Account):
                 composed_domain = f'https://{subdomain}.club.hotmart.com'
 
                 fake_session = self.clone_main_session()
+                fake_session.headers['authorization'] = f'Bearer {self.auth_token}'
                 fake_session.headers['origin'] = composed_domain
                 fake_session.headers['referer'] = composed_domain
                 fake_session.headers['club'] = subdomain

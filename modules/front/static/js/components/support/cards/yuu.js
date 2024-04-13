@@ -18,7 +18,7 @@ export default {
               medalhas
           </a>
         </span> em olimpíadas de matemática e computação.
-        Atualmente trabalha com <span class="text-accent">Python</span> e <span class="text-accent">TypesScript</span> utilizando fremworks/bibliotecas como <span class="text-accent">ReactJs</span>, <span class="text-accent">NextJs</span>, <span class="text-accent">FastAPI</span>, <span class="text-accent">Flask</span>, etc.
+        Atualmente trabalha com <span class="text-accent">Python <i class="fa-brands fa-python" /></span> e <span class="text-accent">TypesScript </span> utilizando fremworks/bibliotecas como <span class="text-accent">ReactJs/NextJs <i class="fa-brands fa-react" /></span>, <span class="text-accent">VueJs <i class="fa-brands fa-vuejs" /> <i class="fas fa-heart" /></span>, <span class="text-accent">FastAPI</span>, <span class="text-accent">Flask</span>, etc.
       </p>
     </div>
     <div class="grid grid-cols-2 gap-2 mt-4">

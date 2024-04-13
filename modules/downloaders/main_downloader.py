@@ -87,13 +87,30 @@ class Downloader:
             if not download_path.exists():
                 download_path.mkdir(parents=True)
             self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.account.get_platform_id()}", log_created_at=self.account.get_current_time())
-            for module in content['modules']:
+            if not content.get('modules'):
+                self.get_content_modules()
+            for module in content.get('modules'):
                 module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
-                for lesson in module['lessons']:
+                
+                if not module.get('lessons'):
+                    self.get_content_lessons()
+                for lesson in module.get('lessons'):
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
                     if not lesson_path.exists():
                         lesson_path.mkdir(parents=True)
 
+    def get_content_lessons(self):
+        """
+        Busca as lições de um conteúdo.
+        """
+        pass
+    
+    def get_content_modules(self):
+        """
+        Busca os módulos de um conteúdo.
+        """
+        pass
+    
     def download_content(self, url_download:str, download_path:str, file_name:str):
         """
         Baixa um conteúdo de uma URL.

@@ -23,7 +23,7 @@ class Hotmart(Account):
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         self.PRODUCTS_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/check_token'
         self.MEMBER_AREA_URL = 'https://api-club.cb.hotmart.com/rest/v3/navigation'
-        self.CLUB_API = 'https://club-api.hotmart.com/hot-club-api/rest/v3'
+        self.CLUB_API = 'https://api-club-hot-club-api.cb.hotmart.com/rest/v3'
 
         self.load_account_information()
         self.load_tokens()
@@ -106,17 +106,29 @@ class Hotmart(Account):
                     headers["pragma"] = "no-cache"
                     headers["cache-control"] = "no-cache"
                     fake_session.headers.update(headers)
-                    course_name = fake_session.get(
+                    course_information = fake_session.get(
                         f'{self.CLUB_API}/membership?attach_token=false'
-                    ).json().get('name', 'Sem Nome Discriminado osh')
+                    ).json()
+                    course_name = course_information.get('name', subdomain)
+                    has_drm = int(course_information.get('protectionDrm', 0))
+                    if has_drm:
+                        has_drm = 2
+                    elif course_information.get('streamingDrmProtection', False):
+                        has_drm = 1
+                    
                     # Segurança mínima para contas com muitos cursos
                     if len(response) > 10:
                         time.sleep(2)
                     
                     del fake_session
 
+                if not course_information:
+                    course_information = {}
+                    has_drm = 0
+
                 product_dict = {
                         'data': {
+                            'drm_enabled': has_drm if get_extra_info else 0,
                             'name': course_name if get_extra_info else subdomain,
                             'id': int(resource.get('resource', {}).get('productId')),
                             'subdomain': subdomain,
@@ -124,7 +136,12 @@ class Hotmart(Account):
                             'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
                             'roles': resource.get('roles'),
                             'domain': composed_domain,
-                            'modules': []
+                            'modules': [],
+                            'drm_data': {
+                                'code': course_information.get('code', ''),
+                                'product_id': course_information.get('productId', 0),
+                                'membership_owner_hash': course_information.get('membershipOwnerHash', ''),
+                            }
                         }
                 }
                 products.append(product_dict)

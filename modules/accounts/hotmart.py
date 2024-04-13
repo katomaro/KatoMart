@@ -113,24 +113,14 @@ class Hotmart(Account):
                         }
                 }
                 products.append(product_dict)
+        
         return products
 
     def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
         """
         Formata os produtos associados à conta do usuário na Hotmart.
         """
-        # if product_info:
-        #     product_id = product_info['id']
-        # if product_id:
-        #     product_info = self.get_product_information(product_id)
-        # return {
-        #     'product_id': product_info['id'],
-        #     'subdomain': product_info['subdomain'],
-        #     'status': product_info['status'],
-        #     'user_area_id': product_info['user_area_id'],
-        #     'roles': product_info['roles'],
-        #     'domain': product_info['domain']
-        # }
+        print("I'm a little teapot, short and stout!")
     
     def format_product_information(self, product_info: dict):
         """

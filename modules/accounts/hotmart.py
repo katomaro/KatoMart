@@ -102,14 +102,14 @@ class Hotmart(Account):
                 product_dict = {
                         'save_path': self.get_save_path(),
                         'data': {
-                        'name': course_name,
-                        'id': int(resource.get('resource', {}).get('productId')),
-                        'subdomain': subdomain,
-                        'status': resource.get('resource', {}).get('status'),
-                        'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
-                        'roles': resource.get('roles'),
-                        'domain': composed_domain,
-                        'modules': []
+                            'name': course_name,
+                            'id': int(resource.get('resource', {}).get('productId')),
+                            'subdomain': subdomain,
+                            'status': resource.get('resource', {}).get('status'),
+                            'user_area_id': int(resource.get('resource', {}).get('userAreaId')),
+                            'roles': resource.get('roles'),
+                            'domain': composed_domain,
+                            'modules': []
                         }
                 }
                 products.append(product_dict)

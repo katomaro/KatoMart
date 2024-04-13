@@ -161,6 +161,7 @@ class Hotmart(Account):
             lessons = []
             for j, page in enumerate(sorted_pages, start=1):
                 page['lessonOrder'] = j
+                del page['pageOrder']
                 page['id'] = page.pop('hash')
                 lessons.append(page)
             

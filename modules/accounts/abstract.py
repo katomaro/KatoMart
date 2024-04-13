@@ -130,7 +130,7 @@ class Account(ABC):
         """
 
     @abstractmethod
-    def get_account_products(self):
+    def get_account_products(self, get_extra_info: int = 0):
         """
         Método abstrato para obter os produtos associados à conta.
         """

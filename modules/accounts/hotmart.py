@@ -143,6 +143,12 @@ class Hotmart(Account):
         """
         print("Here is my handle, here is my spout!")
     
+    def get_content_lesson_info(self, product_info: dict, module_id: str | int, lesson_id: str | int):
+        """
+        Obtém os arquivos de uma lição da Hotmart.
+        """
+        print("When I get all steamed up, hear me shout!")
+    
     def format_product_information(self, product_info: dict):
         """
         Formata as informações de um produto específico associado à conta do usuário.

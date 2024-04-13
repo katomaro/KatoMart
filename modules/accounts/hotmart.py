@@ -90,15 +90,12 @@ class Hotmart(Account):
                 subdomain = resource.get('resource', {}).get('subdomain')
                 composed_domain = f'https://{subdomain}.club.hotmart.com'
 
-                fake_session = self.clone_main_session()
-                fake_session.headers['authorization'] = f'Bearer {self.auth_token}'
-                fake_session.headers['origin'] = composed_domain
-                fake_session.headers['referer'] = composed_domain
-                fake_session.headers['club'] = subdomain
-                course_name = fake_session.get(
+                self.session.headers['origin'] = composed_domain
+                self.session.headers['referer'] = composed_domain
+                self.session.headers['club'] = subdomain
+                course_name = self.session.get(
                     f'{self.PRODUCTS_URL}/membership?attach_token=false'
-                ).json()['name']
-                del fake_session
+                ).json().get('name', 'Sem Nome Discriminado osh')
 
                 product_dict = {
                         'save_path': self.get_save_path(),

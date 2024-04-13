@@ -38,7 +38,7 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ club: this.course.subdomain }),
+        body: JSON.stringify({ club: this.course.data.subdomain }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -48,9 +48,15 @@ export default {
               ...m,
               name: sanitizeString(m.name),
               lessons: m.lessons.map(lesson =>
-                ({ ...lesson, selected: true, isEditLessonName: false, name: sanitizeString(lesson.name) }))
+              ({
+                ...lesson,
+                selected: true,
+                isEditLessonName: false,
+                name: sanitizeString(lesson.name)
+              }))
 
-            }, selected: true
+            },
+            selected: true
           }))
           this.$emit('set-course-modules', this.content)
         })
@@ -63,7 +69,7 @@ export default {
   <input type="checkbox" class="modal-toggle" v-model="isOpen" />
   <div class="modal" role="dialog">
     <div class="modal-box w-full max-w-7xl">
-      <h3 class="font-bold text-2xl text-center my-4">Conteúdo do Curso {{ course.name }}</h3>
+      <h3 class="font-bold text-2xl text-center my-4">Conteúdo do Curso {{ course.data.name }}</h3>
 
       <div v-if="isLoading" class="alert alert-info flex justify-center my-4">
         <i class="fa-solid fa-spinner animate-spin"></i> Carregando...

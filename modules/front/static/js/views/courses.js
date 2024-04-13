@@ -15,7 +15,7 @@ export default {
 
     const filterCourses = () => {
       filteredCourses.value = courses.value.filter(course =>
-        course.subdomain.toLowerCase().includes(search.value.toLowerCase()))
+        course.data.name.toLowerCase().includes(search.value.toLowerCase()))
     }
 
     watch(search, () => {
@@ -71,7 +71,7 @@ export default {
       </div>
     </div>
     <div class="grid grid-cols-2 gap-4 justify-items-center">
-      <CourseItem v-for="course in filteredCourses" :key="course.subdomain" :course="course" />
+      <CourseItem v-for="course in filteredCourses" :key="course.data.name" :course="course" />
     </div>
 
     <input type="checkbox" class="modal-toggle" v-model="devWarning" />

@@ -9,14 +9,14 @@ export default {
   },
   setup(props) {
     const { course } = toRefs(props)
-    course.value.name = sanitizeString(course.value.name)
+    course.value.data.name = sanitizeString(course.value.data.name)
     const isModalOpen = ref(false)
     const isEditCourseName = ref(false)
-    const tempCourseName = ref(course.value.name)
+    const tempCourseName = ref(course.value.data.name)
 
     const editCourseName = () => {
       if (tempCourseName.value) {
-        course.value.name = sanitizeString(tempCourseName.value)
+        course.value.data.name = sanitizeString(tempCourseName.value)
         isEditCourseName.value = false
       }
     }
@@ -33,9 +33,9 @@ export default {
   <div class="card w-full max-w-xl bg-base-200 shadow-xl">
     <div class="card-body">
       <h2 class="card-title text-center justify-between">
-        <span>{{ course.name }}</span>
+        <span>{{ course.data.name }}</span>
         <div>
-          <div class="badge badge-secondary mr-2">{{ course.status }}</div>
+          <div class="badge badge-secondary mr-2">{{ course.data.status }}</div>
           <button :class="'btn btn-outline btn-sm btn-circle' + (isEditCourseName && ' hidden')" @click="isEditCourseName = !isEditCourseName">
             <i class="fa-solid fa-pen cursor-pointer h-3 w-3" />
           </button>
@@ -69,7 +69,7 @@ export default {
     :course="course"
     :isModalOpen="isModalOpen"
     @close-modal-request="isModalOpen = false"
-    @set-course-modules="course.modules = $event"
+    @set-course-modules="course.data.modules = $event"
   />
   `
 }

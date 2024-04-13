@@ -149,3 +149,9 @@ class Account(ABC):
         Método abstrato para baixar o conteúdo de um produto.
         cada plataforma pode requerer um pré-processamento diferente.
         """
+
+    @abstractmethod
+    def get_content_module_info(self, product_info: dict):
+        """
+        Método abstrato para obter os módulos de um produto.
+        """

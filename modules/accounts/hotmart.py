@@ -133,9 +133,15 @@ class Hotmart(Account):
 
     def format_account_products(self, product_id: int | str | None = None, product_info: dict = None):
         """
-        Formata os produtos associados à conta do usuário na Hotmart.
+        Desnecessario para a Hotmart.
         """
         print("I'm a little teapot, short and stout!")
+    
+    def get_content_module_info(self, product_info: dict):
+        """
+        Desnecessario para a Hotmart.
+        """
+        print("Here is my handle, here is my spout!")
     
     def format_product_information(self, product_info: dict):
         """

@@ -204,6 +204,4 @@ class Hotmart(Account):
             del download_dict['data']['modules']
             download_dict['data']['modules'] = new_modules.get('modules')
 
-        print(download_dict)
-
         self.downloadable_products.append(download_dict)

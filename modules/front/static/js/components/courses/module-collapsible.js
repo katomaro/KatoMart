@@ -1,3 +1,4 @@
+import { sanitizeString } from "../../utils.js"
 import ModuleContent from "./module-content.js"
 
 export default {
@@ -10,11 +11,12 @@ export default {
       isEditModuleName: false,
       showContent: false,
       searchContent: "",
+      sanitizeString,
     }
   },
   watch: {
     'module.selected'() {
-      this.module.pages.forEach(lesson => {
+      this.module.lessons.forEach(lesson => {
         lesson.selected = this.module.selected
       })
     }
@@ -35,7 +37,8 @@ export default {
         type="text"
         placeholder="Digite o nome do Módulo e pressione Enter"
         class="input input-bordered input-sm w-full"
-        v-model="module.name"
+        :value="module.name"
+        @input="module.name = sanitizeString($event.target.value)"
         v-if="isEditModuleName"
         @keydown.enter="isEditModuleName = !isEditModuleName"
       />
@@ -47,8 +50,8 @@ export default {
           class="checkbox checkbox-primary"
           v-model="module.selected"
           :indeterminate="
-            module.selected && module.pages.some(lesson => !lesson.selected) ||
-            !module.selected && module.pages.some(lesson => lesson.selected)"
+            module.selected && module.lessons.some(lesson => !lesson.selected) ||
+            !module.selected && module.lessons.some(lesson => lesson.selected)"
         />
         <span @click="showContent = !showContent">
           <button

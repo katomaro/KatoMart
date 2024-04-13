@@ -1,3 +1,6 @@
+import { sanitizeString } from "../../utils.js"
+
+
 export default {
   props: {
     module: Object,
@@ -5,11 +8,12 @@ export default {
   },
   data() {
     return {
-      lessons: this.module.pages,
+      lessons: this.module.lessons,
+      sanitizeString
     }
   },
   template: `
-  <div class="card w-full" v-for="lesson in module.pages.filter(lesson => lesson.name.toLowerCase().includes(search.toLowerCase()))">
+  <div class="card w-full" v-for="lesson in lessons.filter(lesson => lesson.name.toLowerCase().includes(search.toLowerCase()))">
     <div class="card-body px-2 py-1 bg-base-300 w-full">
       <h2 class="card-title justify-between">
         <span>{{ lesson.name || '-' }}</span>
@@ -24,7 +28,8 @@ export default {
         type="text"
         placeholder="Digite o nome da Aula e pressione Enter"
         class="input input-bordered input-sm w-full"
-        v-model="lesson.name"
+        :value="lesson.name"
+        @input="lesson.name = sanitizeString($event.target.value)"
         v-if="lesson.isEditLessonName"
         @keydown.enter="lesson.isEditLessonName = !lesson.isEditLessonName"
       />

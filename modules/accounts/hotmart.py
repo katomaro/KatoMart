@@ -110,6 +110,8 @@ class Hotmart(Account):
                 # Segurança mínima para contas com muitos cursos
                 if len(response) > 10:
                     time.sleep(2)
+                
+                del fake_session
 
                 product_dict = {
                         'save_path': self.get_save_path(),

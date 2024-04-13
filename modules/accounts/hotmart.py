@@ -1,6 +1,7 @@
 """Código referente ao consumo de produtos da Hotmart"""
 
 from .abstract import Account
+import time
 
 class Hotmart(Account):
     """
@@ -21,7 +22,8 @@ class Hotmart(Account):
         # Estas URLs estão para mudar!
         self.LOGIN_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/token'
         self.PRODUCTS_URL = 'https://sec-proxy-content-distribution.hotmart.com/club/security/oauth/check_token'
-        self.MEMBER_AREA_URL = 'https://api-club.cb.hotmart.com/rest/v3/navigation'
+        self.MEMBER_AREA_URL = 'https://club-api.cb.hotmart.com/rest/v3/navigation'
+        self.CLUB_API = 'https://club-api.hotmart.com/hot-club-api/rest/v3'
 
         self.load_account_information()
         self.load_tokens()
@@ -90,12 +92,24 @@ class Hotmart(Account):
                 subdomain = resource.get('resource', {}).get('subdomain')
                 composed_domain = f'https://{subdomain}.club.hotmart.com'
 
-                self.session.headers['origin'] = composed_domain
-                self.session.headers['referer'] = composed_domain
-                self.session.headers['club'] = subdomain
-                course_name = self.session.get(
-                    f'{self.PRODUCTS_URL}/membership?attach_token=false'
+                fake_session = self.clone_main_session()
+                headers = {}
+                headers['user-agent'] = fake_session.headers['user-agent']
+                headers['authorization'] = f'Bearer {self.auth_token}'
+
+                headers['origin'] = composed_domain
+                headers['referer'] = composed_domain
+                headers["accept"] = "application/json, text/plain, */*"
+                headers['club'] = subdomain
+                headers["pragma"] = "no-cache"
+                headers["cache-control"] = "no-cache"
+                fake_session.headers.update(headers)
+                course_name = fake_session.get(
+                    f'{self.CLUB_API}/membership?attach_token=false'
                 ).json().get('name', 'Sem Nome Discriminado osh')
+                # Segurança mínima para contas com muitos cursos
+                if len(response) > 10:
+                    time.sleep(2)
 
                 product_dict = {
                         'save_path': self.get_save_path(),

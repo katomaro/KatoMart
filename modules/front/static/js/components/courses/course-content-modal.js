@@ -1,3 +1,4 @@
+import { sanitizeString } from "../../utils.js"
 import ModuleCollapsible from "./module-collapsible.js"
 
 export default {
@@ -11,7 +12,8 @@ export default {
       isOpen: this.isModalOpen,
       content: [],
       isLoading: true,
-      search: ""
+      search: "",
+      sanitizeString
     }
   },
   watch: {
@@ -44,8 +46,9 @@ export default {
             ...{
 
               ...m,
-              pages: m.pages.map(lesson =>
-                ({ ...lesson, selected: true, isEditLessonName: false }))
+              name: sanitizeString(m.name),
+              lessons: m.lessons.map(lesson =>
+                ({ ...lesson, selected: true, isEditLessonName: false, name: sanitizeString(lesson.name) }))
 
             }, selected: true
           }))
@@ -60,7 +63,7 @@ export default {
   <input type="checkbox" class="modal-toggle" v-model="isOpen" />
   <div class="modal" role="dialog">
     <div class="modal-box w-full max-w-7xl">
-      <h3 class="font-bold text-2xl text-center my-4">Conteúdo do Curso {{ course.subdomain }}</h3>
+      <h3 class="font-bold text-2xl text-center my-4">Conteúdo do Curso {{ course.name }}</h3>
 
       <div v-if="isLoading" class="alert alert-info flex justify-center my-4">
         <i class="fa-solid fa-spinner animate-spin"></i> Carregando...

@@ -17,3 +17,10 @@ export const stringToDateTime = (value) => {
     second: "2-digit",
   });
 }
+
+export const sanitizeString = (input) => {
+  const pattern = /[<>:"/\\|?*]+/g;
+  const replacement = "";
+  const output = input.replace(pattern, replacement);
+  return output
+}

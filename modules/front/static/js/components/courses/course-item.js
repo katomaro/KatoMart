@@ -1,4 +1,5 @@
 const { ref, toRefs } = Vue
+import { sanitizeString } from "../../utils.js"
 import CourseContentModal from "./course-content-modal.js"
 
 export default {
@@ -8,13 +9,14 @@ export default {
   },
   setup(props) {
     const { course } = toRefs(props)
+    course.value.name = sanitizeString(course.value.name)
     const isModalOpen = ref(false)
     const isEditCourseName = ref(false)
-    const tempCourseName = ref(course.value.subdomain)
+    const tempCourseName = ref(course.value.name)
 
     const editCourseName = () => {
       if (tempCourseName.value) {
-        course.value.subdomain = tempCourseName.value
+        course.value.name = sanitizeString(tempCourseName.value)
         isEditCourseName.value = false
       }
     }
@@ -24,13 +26,14 @@ export default {
       isEditCourseName,
       tempCourseName,
       editCourseName,
+      sanitizeString
     }
   },
   template: `
   <div class="card w-full max-w-xl bg-base-200 shadow-xl">
     <div class="card-body">
       <h2 class="card-title text-center justify-between">
-        <span>{{ course.subdomain }}</span>
+        <span>{{ course.name }}</span>
         <div>
           <div class="badge badge-secondary mr-2">{{ course.status }}</div>
           <button :class="'btn btn-outline btn-sm btn-circle' + (isEditCourseName && ' hidden')" @click="isEditCourseName = !isEditCourseName">
@@ -42,9 +45,10 @@ export default {
         type="text"
         placeholder="Digite o nome do Curso e pressione Enter"
         class="input input-bordered input-sm w-full"
-        v-model="tempCourseName"
-        v-if="isEditCourseName"
+        :value="tempCourseName"
+        @input="tempCourseName = sanitizeString($event.target.value)"
         @keydown.enter="editCourseName"
+        v-if="isEditCourseName"
       />
       <div class="card-actions justify-end items-center gap-2">
         Selecionar para Download

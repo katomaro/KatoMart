@@ -36,7 +36,6 @@ export default {
     onMounted(loadCourses)
 
     const startDownload = async () => {
-      devWarning.value = true
       await fetch("/api/start_download", {
         method: "POST",
         headers: {
@@ -44,16 +43,15 @@ export default {
         },
         body: JSON.stringify({ courses: courses.value })
       })
+      router.push("/logs")
     }
 
-    const devWarning = ref(false)
 
     return {
       courses,
       search,
       filteredCourses,
       startDownload,
-      devWarning,
       router,
       isLoading
     }
@@ -72,20 +70,6 @@ export default {
     </div>
     <div class="grid grid-cols-2 gap-4 justify-items-center">
       <CourseItem v-for="course in filteredCourses" :key="course.data.name" :course="course" />
-    </div>
-
-    <input type="checkbox" class="modal-toggle" v-model="devWarning" />
-    <div class="modal">
-      <div class="modal-box">
-        <h3 class="font-bold text-lg">Atenção</h3>
-        <p class="py-4 text-warning">
-          Opa, o programa ainda está em desenvolvimento, isto significa que a
-          opção de download <strong class="text-error font-bold text-lg">NÃO</strong> está disponível ainda.
-        </p>
-        <div class="modal-action">
-          <button class="btn btn-secondary" @click="router.push('/')">Ir para a Home</button>
-        </div>
-      </div>
     </div>
 
     <div class="flex justify-center mt-4">

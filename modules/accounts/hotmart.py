@@ -177,4 +177,20 @@ class Hotmart(Account):
         """
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
-        self.downloadable_products.append(product_info.get("data", {}))
+        if product_info is None:
+            return
+
+        if not product_info['data']['modules']:
+            subdomain = product_info['data'].get('subdomain', '')
+            new_modules = self.get_product_information(subdomain)
+            
+            download_dict = {
+                'save_path': product_info.get('save_path'),
+                'data': product_info.get('data')
+            }
+            del download_dict['data']['modules']
+            download_dict['data']['modules'] = new_modules.get('modules')
+
+        print(download_dict)
+
+        self.downloadable_products.append(download_dict)

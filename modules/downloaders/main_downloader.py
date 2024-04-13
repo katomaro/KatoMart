@@ -83,7 +83,9 @@ class Downloader:
         # Aqui a gente assume que o método da conta organizou todo o conteúdo, então não precisamos ir buscar informaçções
         # Pode vir ser necessário no futuro, então... TODO: Implementar um chamada para buscar informações precisas
         for content in self.account.downloadable_products:
-            download_path = pathlib.Path(self.account.database_manager.get_setting('download_path')) / remover_caracteres_problematicos(content['name'])
+            download_path = pathlib.Path(content.get('save_path'))
+            content = content.get('data')
+            download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
             self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.account.get_platform_id()}")
@@ -103,6 +105,7 @@ class Downloader:
                         # Checagem feia e computacionalmente desnecessária, porém é uma forma de garantir não ter pastas vazias
                         if not lesson_path.exists():
                             lesson_path.mkdir(parents=True)
+                        self.download_content(file, lesson_path, file_name)
 
     def get_content_files(self):
         """
@@ -122,13 +125,17 @@ class Downloader:
         """
         pass
     
-    def download_content(self, url_download:str, download_path:str, file_name:str):
+    def download_content(self, file: any, download_path:str, file_name:str):
         """
         Baixa um conteúdo de uma URL.
         """
-        self.url_download = url_download
-        self.download_path = download_path
-        self.file_name = file_name
+        file_info = file
+        print(file)
+        time.sleep(60)
+
+        url_download = file_info.get('url')
+        download_path = download_path
+        file_name = file_name
 
         if self.url_download.endswith('.m3u8'):
             self.get_video_playlist()

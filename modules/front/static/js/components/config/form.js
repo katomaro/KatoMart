@@ -1,6 +1,7 @@
 import Button from "../button.js"
 import Collapsible from "../collapsible.js"
 import Tooltip from "../tooltip.js"
+import Bento4PathInput from "./bento4PathInput.js"
 import CDMPathInput from "./CDMPathInput.js"
 import CustomFFMPEGPathInput from "./customFFMPEGPathInput.js"
 import DefaultUserAgentInput from "./defaultUserAgentInput.js"
@@ -21,17 +22,18 @@ export default {
     Button,
     Tooltip,
     Collapsible,
-    DRMTypesCheckbox,
-    UseCustomFFMPEGCheckbox,
-    CustomFFMPEGPathInput,
-    'download-widevine-checkbox': downloadWidevineCheckbox,
-    'media-type-checkbox': mediaTypeCheckbox,
     CDMPathInput,
+    Bento4PathInput,
+    DRMTypesCheckbox,
     DownloadPathInput,
-    MediaDeliveryTypeCheckbox,
+    GetProductExtraInfo,
     DefaultUserAgentInput,
+    CustomFFMPEGPathInput,
+    UseCustomFFMPEGCheckbox,
+    MediaDeliveryTypeCheckbox,
     DownloadThreads,
-    GetProductExtraInfo
+    'media-type-checkbox': mediaTypeCheckbox,
+    'download-widevine-checkbox': downloadWidevineCheckbox,
   },
   setup() {
     const settings = ref({})
@@ -92,6 +94,8 @@ export default {
     <download-widevine-checkbox v-model="settings.download_widevine" />
 
     <CDMPathInput v-if="settings.download_widevine" v-model="settings.widevine_cdm_path" />
+
+    <Bento4PathInput v-if="settings.download_widevine" v-model="settings.bento4_toolbox_path" />
 
     <UseCustomFFMPEGCheckbox v-model="settings.use_custom_ffmpeg" />
 

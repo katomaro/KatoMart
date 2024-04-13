@@ -134,10 +134,11 @@ def update_settings():
         return jsonify({"success": False, "message": "Dados inválidos... Chame suporte."}), 400
 
     db_manager.update_setting("use_custom_ffmpeg", int(form.get("use_custom_ffmpeg")))
-    db_manager.update_setting("custom_ffmpeg_path", form.get("custom_ffmpeg_path", "SYSTEM"))
+    db_manager.update_setting("custom_ffmpeg_path", form.get("custom_ffmpeg_path", None) or "SYSTEM")
 
     db_manager.update_setting("download_widevine", int(form.get("download_widevine", False)))
-    db_manager.update_setting("widevine_cdm_path", form.get("widevine_cdm_path", ""))
+    db_manager.update_setting("widevine_cdm_path", form.get("widevine_cdm_path", None) or "SYSTEM")
+    db_manager.update_setting("bento4_toolbox_path", form.get("bento4_toolbox_path", None) or "SYSTEM")
     
     db_manager.update_setting("get_product_extra_info", int(form.get("get_product_extra_info", False)))
 

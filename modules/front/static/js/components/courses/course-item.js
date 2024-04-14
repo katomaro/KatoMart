@@ -1,4 +1,5 @@
 const { ref, toRefs } = Vue
+import { DRM_STATUS_COLOR_LIST, DRM_STATUS_MESSAGE_LIST } from "../../constants.js"
 import { sanitizeString } from "../../utils.js"
 import CourseContentModal from "./course-content-modal.js"
 
@@ -26,7 +27,15 @@ export default {
       isEditCourseName,
       tempCourseName,
       editCourseName,
-      sanitizeString
+      sanitizeString,
+    }
+  },
+  computed: {
+    drmColor() {
+      return 'badge-' + DRM_STATUS_COLOR_LIST[this.course.data.drm_enabled]
+    },
+    drmMessage() {
+      return DRM_STATUS_MESSAGE_LIST[this.course.data.drm_enabled]
     }
   },
   template: `
@@ -34,12 +43,12 @@ export default {
     <div class="card-body">
       <h2 class="card-title text-center justify-between">
         <span>{{ course.data.name }}</span>
-        <div>
-          <div class="badge badge-secondary mr-2">{{ course.data.status }}</div>
-          <button :class="'btn btn-outline btn-sm btn-circle' + (isEditCourseName && ' hidden')" @click="isEditCourseName = !isEditCourseName">
-            <i class="fa-solid fa-pen cursor-pointer h-3 w-3" />
-          </button>
-        </div>
+        <button
+          :class="'btn btn-outline btn-sm btn-circle' + (isEditCourseName && ' hidden')"
+          @click="isEditCourseName = !isEditCourseName"
+        >
+          <i class="fa-solid fa-pen cursor-pointer h-3 w-3" />
+        </button>
       </h2>
       <input
         type="text"
@@ -50,6 +59,17 @@ export default {
         @keydown.enter="editCourseName"
         v-if="isEditCourseName"
       />
+
+      <div class="flex justify-end items-center gap-2">
+        <div
+          :class="['badge', drmColor, 'mr-2']">
+        {{ drmMessage }}
+        </div>
+        <div class="badge badge-secondary mr-2">
+          {{ course.data.status }}
+        </div>
+      </div>
+
       <div class="card-actions justify-end items-center gap-2">
         Selecionar para Download
         <input type="checkbox" class="checkbox checkbox-primary" v-model="course.selected" />

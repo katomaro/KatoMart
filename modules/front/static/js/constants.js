@@ -176,3 +176,13 @@ export const LOGS_PLACEHOLDER_EXAMPLE = [
   { id: 9, message: "Iniciando download de audio", level: "debug", date: "2022-10-20 10:00:08", sensitive: true },
   { id: 10, message: "Iniciando download de video", level: "debug", date: "2022-10-20 10:00:09", sensitive: true },
 ]
+
+
+
+export const DRM_STATUS_COLOR_LIST = [
+  "error", "warning", "success"
+]
+
+export const DRM_STATUS_MESSAGE_LIST = [
+  "Não Requer CDM", "Possívelmente Requer CDM", "Requer CDM"
+]

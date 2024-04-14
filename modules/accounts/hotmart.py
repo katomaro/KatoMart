@@ -87,6 +87,7 @@ class Hotmart(Account):
         response = response.json()['resources']
         products = []
         for resource in response:
+            course_information = None
             if resource.get('type') == 'PRODUCT':
 
                 subdomain = resource.get('resource', {}).get('subdomain')

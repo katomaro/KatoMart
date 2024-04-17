@@ -390,7 +390,10 @@ def api_logs():
 @api_bp.route('/courses_progress', methods=['GET'])
 def api_courses_progress():
     global Downloader_instance
-    return jsonify({'message': 'Este método precisa ser implementado'})
+    if Downloader_instance is not None:
+        return jsonify(Downloader_instance.get_courses_progress())
+    
+    return jsonify({'message': 'Nenhum download em andamento.'})
 
 
 # Ponto de entrada principal para execução do servidor

@@ -5,20 +5,20 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('user_consent', '0'),
 ('download_path', 'Cursos/'),
 ('user_os', ''),
-('use_original_media_name', '0')
-('download_subtitles', '0')
-('subtitle_language', 'ALL')
-('download_quality', 'BEST')
-('download_quality_fallback', 'BEST')
+('use_original_media_name', '0'),
+('download_subtitles', '1'),
+('subtitle_language', 'ALL'),
+('download_quality', 'BEST'),
+('download_quality_fallback', 'BEST'),
 ('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
-('get_product_extra_info', '0'),
+('get_product_extra_info', '1'),
 ('download_widevine', '0'),
 ('widevine_cdm_path', ''),
 ('bento4_toolbox_path', 'SYSTEM'),
-('scan_html_for_videos', '0'),
+('scan_html_for_videos', '1'),
 ('use_custom_ffmpeg', '0'),
 ('custom_ffmpeg_path', 'SYSTEM'),
-('download_threads', '2');
+('download_threads', '3');
 
 
 INSERT OR IGNORE INTO MediaDeliverySources (name, description) VALUES 

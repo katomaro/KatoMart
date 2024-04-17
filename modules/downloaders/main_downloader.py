@@ -149,18 +149,26 @@ class Downloader:
         """
         courses_progress = []
         for course in self.account.downloadable_products:
-            course_progress = {
-                'course_id': course['id'],
-                'course_name': course['name'],
-                'course_progress': course['progress'],
-                'modules': [{module['id']: module['id'], 
-                             module['name']: module['name'],
-                             module['progress']: module['progress'],
-                             module['lessons']: module['lessons']} for module in course['modules']],
-            }
-            for lesson in course_progress['modules']['lessons']:
-                lesson['progress'] = lesson['progress']
-                lesson['files'] = lesson.get('files', {})
+            if course['id'] == self.current_content_id:
+                course_progress = {
+                    'course_id': course['id'],
+                    'course_name': course['name'],
+                    'course_progress': self.current_content_progress,
+                    'modules': [{module['id']: module['id'], 
+                                module['name']: module['name'],
+                                module['progress']: module.get('progress', 0),
+                                module['lessons']: module.get('lessons', [])} for module in course['modules']],
+                }
+                for module in course_progress['modules']:
+                    if module['id'] == self.current_module_id:
+                        module['progress'] = self.current_module_progress
+                    else:
+                        module['progress'] = module.get('progress', 0)
+                for lesson in course_progress['modules']['lessons']:
+                    if lesson['id'] == self.current_lesson_id:
+                        lesson['progress'] = self.current_lesson_progress
+                    else:
+                        lesson['progress'] = lesson.get('progress', 0)
             courses_progress.append(course_progress)
         return courses_progress
 

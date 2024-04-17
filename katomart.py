@@ -402,8 +402,7 @@ def api_logs():
 @api_bp.route('/courses_progress', methods=['GET'])
 def api_courses_progress():
     global Downloader_instance
-    progresso = Downloader_instance.get_courses_progress()
-    return jsonify(progresso)
+    return jsonify(message="Não implementado ainda")
 
 # Ponto de entrada principal para execução do servidor
 if __name__ == "__main__":

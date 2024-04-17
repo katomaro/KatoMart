@@ -51,6 +51,7 @@ class Hotmart(Account):
                 'password': self.password
             }
             response = self.session.post(self.LOGIN_URL, data=login_data)
+            print('[DEBUG] Chamada POST para login na Hotmart.', response.status_code, response.url, response.text)
 
             if response.status_code != 200:
                 raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
@@ -81,6 +82,7 @@ class Hotmart(Account):
             'token': self.auth_token
         }
         response = self.session.get(self.PRODUCTS_URL, params=data)
+        print('[DEBUG] Chamada GET para obter produtos da Hotmart.', response.status_code, response.url, response.text)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         

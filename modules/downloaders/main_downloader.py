@@ -110,7 +110,7 @@ class Downloader:
         self.download_quality = settings['download_quality']
         self.download_quality_fallback = settings['download_quality_fallback']
         self.download_interval = settings['download_interval']
-        self.download_retries = settings['v']
+        self.download_retries = settings['download_retries']
         self.download_segments_in_order = settings['download_segments_in_order']
         self.download_timeout = settings['download_timeout']
         self.use_original_media_name = settings['use_original_media_name']

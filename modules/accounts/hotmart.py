@@ -184,6 +184,9 @@ class Hotmart(Account):
                 lessons.append(page)
             
             module['lessons'] = lessons
+            if module.get('medias'):
+                module['files'] = module.get('medias', {})
+                del module['medias']
             del module['pages']
         
         return product_info

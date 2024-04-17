@@ -190,17 +190,19 @@ class Downloader:
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
-            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.current_platform_id}")
+            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} para o caminho {download_path} ^-^")
             if not content.get('modules'):
                 self.get_content_modules()
             for module in content.get('modules'):
                 self.current_module_id = module['id']
                 module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
+                self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando módulo: {module['name']} para o caminho {module_path} ^-^")
                 if not module.get('lessons'):
                     self.get_content_lessons()
                 for lesson in module.get('lessons'):
                     self.current_lesson_id = lesson['id']
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
+                    self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando lição: {lesson['name']} para o caminho {lesson_path} ^-^")
                     if not lesson.get('files'):
                         lesson['files'] = self.get_content_files()
                     if lesson.get('files'):
@@ -212,12 +214,14 @@ class Downloader:
                             file_name = 'Conteúdo_Textual.html'
                             with open(lesson_path / file_name, 'w', encoding='utf-8') as f:
                                 f.write(lesson_files['text_content'])
+                            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Salvando conteúdo textual: {lesson_path}")
 
                         if lesson_files.get('references'):
                             file_name = 'Referências.txt'
                             with open(lesson_path / file_name, 'w', encoding='utf-8') as f:
                                 for reference in lesson_files['references']:
                                     f.write(f"{reference}\n")
+                            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Salvando referências: {lesson_path}")
 
                         if lesson_files.get('medias'):
                             for media_index, media in enumerate(lesson_files['medias'], start=1):
@@ -226,6 +230,7 @@ class Downloader:
                                     media_name = media_name.rsplit('.', 1)[0] + '.ts'
                                 else:
                                     media_name = f"{media_index}. Aula.ts"
+                                self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando {len(lesson_files['medias'])} mídias, atual: {lesson_path}/{media['name']}")
                                 self.download_content(media, lesson_path, media_name, is_attachment=False)
 
                         if lesson_files.get('attachments'):
@@ -235,6 +240,7 @@ class Downloader:
                                     attachment_name = f"{attachment_index}. {attachment['name']}"
                                 else:
                                     attachment_name = f"{attachment_index}. Anexo.{attachment['name'].split('.')[-1]}"
+                                self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando {len(lesson_files['attachments'])} anexos, atual: {lesson_path}/{attachment['name']}")
                                 self.download_content(attachment, temp_path, attachment_name, is_attachment=True)
 
     def get_content_modules(self):
@@ -287,7 +293,7 @@ class Downloader:
 
         response = self.request_session.get(self.media_url)
         if response.status_code != 200:
-            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist de vídeo: {self.media_url}")
+            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist de vídeo: {self.media_url} - {self.current_content_name} - {self.current_module_name} - {self.current_lesson_name}")
             return
 
         content_type = response.headers.get('Content-Type', '')
@@ -470,7 +476,7 @@ class Downloader:
         """
         Baixa um arquivo de mídia do Hotmart.
         """
-        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando anexo da hotmart: {self.file_name} ^-^ {self.media_size} bytes")
+        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando anexo da hotmart: {self.current_content_name} - {self.current_module_name} - {self.current_lesson_name} - {self.file_name} ^-^ {self.media_size} bytes")
         file_hash = self.media_id
         file_size = self.media_size
         file_name = self.file_name

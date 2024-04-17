@@ -143,6 +143,27 @@ class Downloader:
         content_types = self.account.database_manager.get_all_media_types()
         self.download_content_types = content_types
 
+    def get_courses_progress(self) -> list:
+        """
+        Retorna uma lista de dicionário com o progresso dos cursos.
+        """
+        courses_progress = []
+        for course in self.account.downloadable_products:
+            course_progress = {
+                'course_id': course['id'],
+                'course_name': course['name'],
+                'course_progress': course['progress'],
+                'modules': [{module['id']: module['id'], 
+                             module['name']: module['name'],
+                             module['progress']: module['progress'],
+                             module['lessons']: module['lessons']} for module in course['modules']],
+            }
+            for lesson in course_progress['modules']['lessons']:
+                lesson['progress'] = lesson['progress']
+                lesson['files'] = lesson.get('files', {})
+            courses_progress.append(course_progress)
+        return courses_progress
+
     def iter_account_contents(self):
         """
         Itera sobre os conteúdos de uma conta.
@@ -152,8 +173,11 @@ class Downloader:
         for content in self.account.downloadable_products:
             download_path = pathlib.Path(content.get('save_path'))
             content = content.get('data')
+            content['progress'] = 0
             self.current_content_id = content['id']
             self.current_content_url = content['domain']
+            self.current_content_name = content['name']
+            self.current_content_progress = content['progress']
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)

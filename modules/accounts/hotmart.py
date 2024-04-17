@@ -214,7 +214,7 @@ class Hotmart(Account):
                 attachment['is_stream'] = False
                 attachment['name'] = attachment.pop('fileName')
                 attachment['size'] = attachment.pop('fileSize')
-                attachment['id'] = attachment.pop('fileMembershipId')
+                attachment['hash'] = attachment.pop('fileMembershipId')
         
         return full_lesson
     

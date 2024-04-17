@@ -34,6 +34,7 @@ def remover_caracteres_problematicos(name:str) -> str:
 class Downloader:
     def __init__(self, account: Account=None) -> None:
         self.account = account
+        self.current_platform_id = self.account.get_platform_id()
 
         self.request_session: requests.Session = None
 
@@ -189,7 +190,7 @@ class Downloader:
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
-            self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.account.get_platform_id()}")
+            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} ^-^ {self.account.account_id} - {self.current_platform_id}")
             if not content.get('modules'):
                 self.get_content_modules()
             for module in content.get('modules'):
@@ -221,9 +222,10 @@ class Downloader:
                         if lesson_files.get('medias'):
                             for media_index, media in enumerate(lesson_files['medias'], start=1):
                                 if self.use_original_media_name:
-                                    media_name = f"{media_index}. {media['name']}"
+                                    media_name = f"{media_index}. {remover_caracteres_problematicos(media['name'])}"
+                                    media_name = media_name.rsplit('.', 1)[0] + '.ts'
                                 else:
-                                    media_name = f"{media_index}. Aula"
+                                    media_name = f"{media_index}. Aula.ts"
                                 self.download_content(media, lesson_path, media_name, is_attachment=False)
 
                         if lesson_files.get('attachments'):
@@ -232,7 +234,7 @@ class Downloader:
                                 if self.use_original_media_name:
                                     attachment_name = f"{attachment_index}. {attachment['name']}"
                                 else:
-                                    attachment_name = f"{attachment_index}. Anexo"
+                                    attachment_name = f"{attachment_index}. Anexo.{attachment['name'].split('.')[-1]}"
                                 self.download_content(attachment, temp_path, attachment_name, is_attachment=True)
 
     def get_content_modules(self):
@@ -262,11 +264,8 @@ class Downloader:
         Baixa um conteúdo de uma URL.
         """
         self.download_path = download_path
-        if not is_attachment:
-            self.file_name = file_name.rsplit('.', 1)[0] + '.ts'
-        else:
-            self.file_name = file_name
-            input(file)
+        self.download_path.mkdir(parents=True, exist_ok=True)
+        self.file_name = file_name
         self.media_id = file.get('hash')
         self.media_size = file.get('size')
         self.media_duration_secs = file.get('duration')
@@ -274,7 +273,7 @@ class Downloader:
         if file.get('is_stream'):
             self.get_video_playlist()
         else:
-            self.download_raw_file()
+            self.download_raw_file(is_attachment=is_attachment)
 
     def get_video_playlist(self):
         """
@@ -288,7 +287,7 @@ class Downloader:
 
         response = self.request_session.get(self.media_url)
         if response.status_code != 200:
-            self.account.database_manager.log_event(log_type='ERROR', sensitive_data=1, log_data=f"Erro ao baixar a playlist de vídeo: {self.media_url}")
+            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist de vídeo: {self.media_url}")
             return
 
         content_type = response.headers.get('Content-Type', '')
@@ -348,7 +347,7 @@ class Downloader:
         """
         response = self.request_session.get(playlist_url)
         if response.status_code != 200:
-            self.account.database_manager.log_event(log_type='ERROR', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestre: {playlist_url}")
+            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestre: {playlist_url}")
 
         return response.text
 
@@ -358,7 +357,7 @@ class Downloader:
         """
         filtered_html = {}
         soup = BeautifulSoup(html_content, 'html.parser')
-        if self.account.get_platform_id() == 1:
+        if self.current_platform_id == 1:
             # Hotmart Specific HTML Parsing
             script_tag = soup.find('script', {'id': '__NEXT_DATA__'})
             if script_tag:
@@ -460,18 +459,37 @@ class Downloader:
                     with open(self.download_path / self.file_name, 'a+b') as f:
                         f.write(content)
 
-    def download_raw_file(self):
+    def download_raw_file(self, is_attachment:bool=False):
         """
         Baixa um arquivo diretamente.
         """
-        # TODO: Implementar o download de arquivos diretamente
-        response = self.request_session.get(self.media_url)
-        if response.status_code == 200:
-            with open(self.download_path / self.file_name, 'wb') as f:
-                f.write(response.content)
-        else:
-            print(f"Erro ao baixar o arquivo: {self.url_download}")
+        if self.current_platform_id == 1:
+            self.download_hotmart_media()
 
+    def download_hotmart_media(self):
+        """
+        Baixa um arquivo de mídia do Hotmart.
+        """
+        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando anexo da hotmart: {self.file_name} ^-^ {self.media_size} bytes")
+        file_hash = self.media_id
+        file_size = self.media_size
+        file_name = self.file_name
+        file_info = self.request_session.get(f"{self.account.MEMBER_AREA_URL.rsplit('/', 1)[0]}/attachment/{file_hash}/download?attachmentId={file_hash}").json()
+        if file_info.get('directDownloadUrl'):
+            url = file_info['directDownloadUrl']
+            file_data = requests.get(url)
+            with open(self.download_path / file_name, 'wb') as f:
+                f.write(file_data.content)
+        # aws
+        elif file_info.get('lambdaUrl'):
+            temp_session = self.account.clone_main_session()
+            temp_session.headers['authority'] = 'drm-protection.cb.hotmart.com'
+            temp_session.headers['token'] = file_info.get('token')
+            url = temp_session.get('https://drm-protection.cb.hotmart.com').text
+            file_data = requests.get(url)
+            with open(self.download_path / file_name, 'wb') as f:
+                f.write(file_data.content)
+    
     def download_ytdlp_media(self, url:str, referer:str=None, save_path:str=None):
         """
         Baixa um vídeo ou playlist de vídeos do YouTube usando yt-dlp.

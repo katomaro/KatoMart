@@ -1,4 +1,5 @@
 import time
+import datetime
 from pathlib import Path
 
 from flask import (
@@ -383,18 +384,26 @@ def start_download():
 def api_logs():
     db_manager = get_db()
     int(time.time())
-    logs = db_manager.execute_query("SELECT * FROM logs WHERE log_created_at <= ? ORDER BY id DESC LIMIT 1000;", (int(time.time()),)) # (start_date, end_date)
+    logs = db_manager.execute_query("SELECT id as id, log_data as message, log_type as level, log_created_at as date, sensitive_data as sensitive FROM logs WHERE log_created_at <= ? ORDER BY id DESC LIMIT 1000;", (int(time.time()),)) # (start_date, end_date)
+    logs = list(logs)
+    send = []
+    for log in logs:
+        temp = {
+            "id": log[0],
+            "message": log[1],
+            "level": log[2],
+            "date": datetime.datetime.fromtimestamp(log[3]).strftime("%Y-%m-%d %H:%M:%S"),
+            "sensitive": bool(log[4])
+        }
+        send.append(temp)
 
-    return jsonify(logs)
+    return jsonify(send)
 
 @api_bp.route('/courses_progress', methods=['GET'])
 def api_courses_progress():
     global Downloader_instance
-    if Downloader_instance is not None:
-        return jsonify(Downloader_instance.get_courses_progress())
-    
-    return jsonify({'message': 'Nenhum download em andamento.'})
-
+    progresso = Downloader_instance.get_courses_progress()
+    return jsonify(progresso)
 
 # Ponto de entrada principal para execução do servidor
 if __name__ == "__main__":

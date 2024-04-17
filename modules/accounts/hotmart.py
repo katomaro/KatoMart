@@ -167,6 +167,7 @@ class Hotmart(Account):
         """
         Obtém os arquivos de uma lição da Hotmart.
         """
+        print('[DEBUG] Obtendo informações da lição:', domain, lesson_id)
         lesson_url = f"{self.MEMBER_AREA_URL.rsplit('/', 1)[0]}/page/{lesson_id}?pageHash={lesson_id}"
         subdomain = domain.split('.')[0]
         composed_domain = domain
@@ -183,8 +184,9 @@ class Hotmart(Account):
         fake_session.headers.update(headers)
 
         response = fake_session.get(lesson_url)
+        print('[DEBUG] Chamada GET para obter informações da lição.', response.status_code, response.url, response.text)
         if response.status_code != 200:
-            self.database_manager.log_event('CRITICAL', 0, f'Erro ao acessar {response.url}: Status Code {response.status_code}')
+            self.database_manager.log_event('critical', 0, f'Erro ao acessar {response.url}: Status Code {response.status_code}')
             return None
         response = response.json()
         full_lesson = {}
@@ -202,6 +204,7 @@ class Hotmart(Account):
             full_lesson['references'] = response['complementaryReadings']
         
         if full_lesson.get('medias'):
+            print('[DEBUG] Medias:', full_lesson['medias'])
             for media in full_lesson['medias']:
                 media['name'] = media.pop('mediaName')
                 media['url'] = media.pop('mediaSrcUrl')

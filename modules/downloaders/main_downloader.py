@@ -11,6 +11,7 @@ import requests
 import yt_dlp
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 
 from modules.accounts.abstract import Account
@@ -55,6 +56,7 @@ class Downloader:
         self.url_download = None
         self.download_path = pathlib.Path('.')
         self.current_base_playlist_url = None
+        self.selected_quality_url = None
         self.total_segments = 0
         self.downloaded_segments = 0
         self.key_content = None
@@ -109,10 +111,10 @@ class Downloader:
         self.subtitle_language = settings['subtitle_language']
         self.download_quality = settings['download_quality']
         self.download_quality_fallback = settings['download_quality_fallback']
-        self.download_interval = settings['download_interval']
-        self.download_retries = settings['download_retries']
-        self.download_segments_in_order = settings['download_segments_in_order']
-        self.download_timeout = settings['download_timeout']
+        self.download_interval = float(settings['download_interval'])
+        self.download_retries = int(settings['download_retries'])
+        self.download_segments_in_order = bool(settings['download_segments_in_order'])
+        self.download_timeout = float(settings['download_timeout'])
         self.use_original_media_name = settings['use_original_media_name']
         self.download_widevine = settings['download_widevine']
         self.widevine_cdm_path = pathlib.Path(settings['widevine_cdm_path'])
@@ -213,7 +215,7 @@ class Downloader:
         Baixa um conteúdo de uma URL.
         """
         self.download_path = download_path
-        self.file_name = file_name
+        self.file_name = file_name.rsplit('.', 1)[0]
         self.media_id = file.get('hash')
         self.media_size = file.get('size')
         self.media_duration_secs = file.get('duration')
@@ -259,6 +261,7 @@ class Downloader:
         if len(data['media_assets']) > 0:
             for asset in data['media_assets']:
                 playlist_url = asset.get('url')
+                self.current_base_playlist_url = playlist_url.rsplit('/', 1)[0] +'/'
                 current_master_playstlist_content = self.load_playlist(playlist_url)
 
             playlist = m3u8.loads(current_master_playstlist_content)
@@ -266,9 +269,11 @@ class Downloader:
                 if self.subtitle_language.lower() == 'all':
                     subtitles = [media for media in playlist.media if media.type == 'SUBTITLES']
                     for subtitle in subtitles:
-                        with open(self.download_path + self.file_name + f"_{subtitle.language}.vtt", 'wb') as f:
-                            sub_data = self.request_session.get(playlist_url.rsplit('/', 1)[0] +'/' + subtitle.uri)
-                            f.write(sub_data.content)
+                        with open(self.download_path / (self.file_name + f"_{subtitle.language}.vtt"), 'wb') as f:
+                            actual_sub = self.request_session.get(self.current_base_playlist_url + subtitle.uri)
+                            subtitle_content = m3u8.loads(actual_sub.text)
+                            sub_ct = self.request_session.get(self.current_base_playlist_url + subtitle_content.segments[0].uri)
+                            f.write(sub_ct.content)
             
             if playlist.is_variant:
                 highest_bandwidth = 0
@@ -279,13 +284,12 @@ class Downloader:
                         best_quality_playlist = variant
                 self.current_base_playlist_url = playlist_url.rsplit('/', 1)[0] +'/'
                 playlist = m3u8.loads(self.load_playlist(self.current_base_playlist_url + best_quality_playlist.uri))
+                self.selected_quality_url = best_quality_playlist.uri
 
             
             if playlist.keys:
-                print('tem key')
                 self.download_encrypted_hls(playlist)
             else:
-                print('nao tem key')
                 self.download_raw_hls(playlist)
 
     def load_playlist(self, playlist_url:str) -> str:
@@ -295,9 +299,6 @@ class Downloader:
         response = self.request_session.get(playlist_url)
         if response.status_code != 200:
             self.account.database_manager.log_event(log_type='ERROR', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestre: {playlist_url}")
-
-        print(response.text)
-        input()
 
         return response.text
     
@@ -372,52 +373,43 @@ class Downloader:
         """
         Baixa o arquivo m3u8 e os segmentos de vídeo.
         """
-        output_video_file = self.download_path / (self.file_name + '.ts')
+        for segment in playlist.segments:
+            segment_url = segment.uri
+            if not segment_url.startswith('http'):
+                segment_url = self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + segment.uri
 
-        with open(output_video_file, 'wb') as f:
-            for segment in playlist.segments:
-                segment_url = segment.uri
-                if not segment_url.startswith('http'):
-                    segment_url = self.current_base_playlist_url + segment.uri
-
-                content = self.download_segment()
-                if content:
+            content = self.download_segment()
+            if content:
+                with open(self.download_path / self.file_name, 'a+b') as f:
                     f.write(content)
-                else:
-                    print(f"[DOWNLOADER]Não foi possível baixar o segmento: {segment_url}. Continuando para o próximo.")
 
     def download_encrypted_hls(self, playlist: m3u8.M3U8):
         """
         Baixa o arquivo m3u8 e os segmentos de vídeo criptografados.
         """
-        output_video_file = self.download_path / (self.file_name + '.ts')
-
         if playlist.keys:
             for key in playlist.keys:
                 if key:  # Se existir uma chave na playlist
                     key_uri = key.uri
-                    key_content = self.request_session.get(self.current_base_playlist_url + key_uri).content  # Baixa a chave de encriptação
-                    iv = key.iv  # Pode ser None, neste caso você pode querer gerar um IV baseado no número do segmento ou usar um IV padrão
-                    if iv:
-                        iv = bytes.fromhex(iv[2:])  # Remove o prefixo '0x' e converte para bytes
+                    self.key_content = self.request_session.get(self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + key_uri).content  # Baixa a chave de encriptação
+                    self.key_iv = key.iv  # Pode ser None, neste caso você pode querer gerar um IV baseado no número do segmento ou usar um IV padrão
+                    if self.key_iv:
+                        self.key_iv = bytes.fromhex(self.key_iv[2:])  # Remove o prefixo '0x' e converte para bytes
                     else:
                         # Aqui você precisaria definir um IV padrão ou gerar um baseado no segmento
-                        iv = b'\x00' * 16  # Exemplo de IV padrão
+                        self.key_iv = b'\x00' * 16  # Exemplo de IV padrão
                     break  # Este exemplo assume apenas uma chave para todos os segmentos
 
-        with open(output_video_file, 'wb') as f:
             for segment in playlist.segments:
                 segment_url = segment.uri
                 if not segment_url.startswith('http'):
-                    segment_url = self.current_base_playlist_url + segment.uri
+                    segment_url = self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + segment.uri
 
                 content = self.download_segment(segment_url)
-                if content and key_content:
+                if content and self.key_content:
                     content = self.decrypt_segment(content)
-                if content:
-                    f.write(content)
-                else:
-                    print(f"Não foi possível baixar ou descriptografar o segmento: {segment_url}. Continuando para o próximo.")
+                    with open(self.download_path / self.file_name, 'a+b') as f:
+                        f.write(content)
     
     def download_raw_file(self):
         """
@@ -461,7 +453,7 @@ class Downloader:
         """
         for attempt in range(self.download_retries):
             try:
-                response = self.request_session.get(segment_url, stream=True)
+                response = self.request_session.get(segment_url, timeout=self.download_timeout)
                 response.raise_for_status()
                 return response.content
             except requests.RequestException as e:
@@ -482,4 +474,9 @@ class Downloader:
         backend = default_backend()
         cipher = Cipher(algorithms.AES(self.key_content), modes.CBC(self.key_iv), backend=backend)
         decryptor = cipher.decryptor()
-        return decryptor.update(content) + decryptor.finalize()
+        decrypted_data = decryptor.update(content) + decryptor.finalize()
+        
+        unpadder = PKCS7(algorithms.AES.block_size).unpadder()
+        decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
+        
+        return decrypted_data

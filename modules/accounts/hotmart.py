@@ -185,7 +185,8 @@ class Hotmart(Account):
             
             module['lessons'] = lessons
             if module.get('medias'):
-                module['files'] = module.get('medias', {})
+                files = module.get('medias', [])
+                module['files'] = files
                 del module['medias']
             del module['pages']
         

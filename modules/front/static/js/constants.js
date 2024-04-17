@@ -17,24 +17,24 @@ export const DOWNLOAD_STATUS_COLOR_MAP = {
 export const COURSES_PLACEHOLDER_EXAMPLE = [
   {
     id: 1,
-    name: "Como Desenhar Hentai - Kato 3.0",
+    name: "Material Teste - Template",
     progress: 0.7,
     modules: [
       {
         id: '1.1',
-        name: "Módulo 1 - Ahegao",
+        name: "Módulo 1",
         progress: 1,
         lessons: []
       },
       {
         id: '1.2',
-        name: "Módulo 2 - Shota",
+        name: "Módulo 2",
         progress: 1,
         lessons: []
       },
       {
         id: '1.3',
-        name: "Módulo 3 - Milf",
+        name: "Módulo 3",
         progress: 0.5,
         lessons: [
           {

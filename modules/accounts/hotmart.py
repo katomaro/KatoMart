@@ -181,13 +181,11 @@ class Hotmart(Account):
                 page['lessonOrder'] = j
                 del page['pageOrder']
                 page['id'] = page.pop('hash')
+                if page.get('medias'):
+                    page['files'] = page.pop('medias')
                 lessons.append(page)
             
             module['lessons'] = lessons
-            if module.get('medias'):
-                files = module.get('medias', [])
-                module['files'] = files
-                del module['medias']
             del module['pages']
         
         return product_info

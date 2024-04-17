@@ -342,6 +342,7 @@ def load_course_data():
         return redirect(url_for("index"))
 
     data = request.get_json()
+    # TODO renomear isso para id no teu post
     course_id = data.get("club")
 
     global selected_platform_instance
@@ -381,10 +382,8 @@ def start_download():
 @api_bp.route('/logs', methods=['GET'])
 def api_logs():
     db_manager = get_db()
-    start_date = request.args.get('startDate')
-    end_date = request.args.get('endDate')
-
-    logs = db_manager.execute_query("SELECT * FROM logs WHERE log_created_at >= ? AND log_created_at <= ? ORDER BY id DESC LIMIT 1000;", (start_date, end_date))
+    int(time.time())
+    logs = db_manager.execute_query("SELECT * FROM logs WHERE log_created_at <= ? ORDER BY id DESC LIMIT 1000;", (int(time.time()),)) # (start_date, end_date)
 
     return jsonify(logs)
 

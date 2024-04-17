@@ -30,42 +30,6 @@ def remover_caracteres_problematicos(name:str) -> str:
 # TODO: Alterar os prints para um database.log ou um logger
 # TODO: Alterar todas as strings para Pathlib.Path para garantir uma manipulação de arquivos segura e universal
 
-def download_segment(segment_url:str = '', max_retries:int=5, delay_between_retries:int=3):
-    """
-    Tenta baixar um segmento com um determinado número de retentativas.
-    
-    :param segment_url: URL do segmento a ser baixado.
-    :param max_retries: Número máximo de retentativas.
-    :param delay_between_retries: Tempo de espera entre retentativas, em segundos.
-    :return: O conteúdo do segmento, se o download for bem-sucedido; None, caso contrário.
-    """
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(segment_url, stream=True)
-            response.raise_for_status()
-            return response.content
-        except requests.RequestException as e:
-            print(f"Erro ao baixar {segment_url}, tentativa {attempt + 1} de {max_retries}. Erro: {e}")
-            time.sleep(delay_between_retries)
-    print(f"[DOWNLOADER] Falha ao baixar o segmento após {max_retries} tentativas: {segment_url}")
-    return None
-
-
-def decrypt_segment(content, key, iv):
-    """
-    Descriptografa um segmento de mídia usando AES.
-    
-    :param content: O conteúdo criptografado do segmento.
-    :param key: A chave de criptografia.
-    :param iv: O vetor de inicialização.
-    :return: O conteúdo descriptografado do segmento.
-    """
-    backend = default_backend()
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
-    decryptor = cipher.decryptor()
-    return decryptor.update(content) + decryptor.finalize()
-
-
 class Downloader:
     def __init__(self, account: Account=None) -> None:
         self.account = account
@@ -412,12 +376,11 @@ class Downloader:
 
         with open(output_video_file, 'wb') as f:
             for segment in playlist.segments:
-
                 segment_url = segment.uri
                 if not segment_url.startswith('http'):
-                    segment_url = '/'.join(self.url_download.split('/')[:-1]) + '/' + segment.uri
+                    segment_url = self.current_base_playlist_url + segment.uri
 
-                content = download_segment(segment_url)
+                content = self.download_segment()
                 if content:
                     f.write(content)
                 else:
@@ -446,11 +409,11 @@ class Downloader:
             for segment in playlist.segments:
                 segment_url = segment.uri
                 if not segment_url.startswith('http'):
-                    segment_url = '/'.join(self.url_download.split('/')[:-1]) + '/' + segment.uri
+                    segment_url = self.current_base_playlist_url + segment.uri
 
-                content = download_segment(segment_url)
+                content = self.download_segment(segment_url)
                 if content and key_content:
-                    content = decrypt_segment(content, key_content, iv)
+                    content = self.decrypt_segment(content)
                 if content:
                     f.write(content)
                 else:
@@ -460,7 +423,8 @@ class Downloader:
         """
         Baixa um arquivo diretamente.
         """
-        response = requests.get(self.url_download)
+        # TODO: Implementar o download de arquivos diretamente
+        response = self.request_session.get(self.url_download)
         if response.status_code == 200:
             with open(self.download_path + self.file_name, 'wb') as f:
                 f.write(response.content)
@@ -485,3 +449,37 @@ class Downloader:
         Baixa um vídeo protegido por Widevine.
         """
         print('Desejo a todas inimigas vida longa')
+    
+    def download_segment(self, segment_url:str = ''):
+        """
+        Tenta baixar um segmento com um determinado número de retentativas.
+        
+        :param segment_url: URL do segmento a ser baixado.
+        :param max_retries: Número máximo de retentativas.
+        :param delay_between_retries: Tempo de espera entre retentativas, em segundos.
+        :return: O conteúdo do segmento, se o download for bem-sucedido; None, caso contrário.
+        """
+        for attempt in range(self.download_retries):
+            try:
+                response = self.request_session.get(segment_url, stream=True)
+                response.raise_for_status()
+                return response.content
+            except requests.RequestException as e:
+                print(f"Erro ao baixar {segment_url}, tentativa {attempt + 1} de {self.download_retries}. Erro: {e}")
+                time.sleep(self.download_timeout)
+        print(f"[DOWNLOADER] Falha ao baixar o segmento após {self.download_retries} tentativas: {segment_url}")
+        return None
+    
+    def decrypt_segment(self, content:bytes) -> bytes:
+        """
+        Descriptografa um segmento de mídia usando AES.
+        
+        :param content: O conteúdo criptografado do segmento.
+        :param key: A chave de criptografia.
+        :param iv: O vetor de inicialização.
+        :return: O conteúdo descriptografado do segmento.
+        """
+        backend = default_backend()
+        cipher = Cipher(algorithms.AES(self.key_content), modes.CBC(self.key_iv), backend=backend)
+        decryptor = cipher.decryptor()
+        return decryptor.update(content) + decryptor.finalize()

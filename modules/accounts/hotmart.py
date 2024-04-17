@@ -224,6 +224,7 @@ class Hotmart(Account):
         """
         Formata as informações de um produto específico associado à conta do usuário.
         """
+        print('[DEBUG] Formatação de informações do produto:', product_info)
         product_info['modules'].sort(key=lambda x: x['moduleOrder'])
         for i, module in enumerate(product_info['modules'], start=1):
             module['moduleOrder'] = i
@@ -254,6 +255,7 @@ class Hotmart(Account):
         self.session.headers['authorization'] = f'Bearer {self.auth_token}'
         self.session.headers['club'] = product_id
         response = self.session.get(self.MEMBER_AREA_URL)
+        print('[DEBUG] Chamada GET para obter informações do produto.', response.status_code, response.url, response.text)
         if response.status_code != 200:
             raise Exception(f'Erro ao acessar {response.url}: Status Code {response.status_code}')
         
@@ -265,10 +267,13 @@ class Hotmart(Account):
         Baixa o conteúdo de um produto específico associado à conta do usuário.
         """
         if product_info is None:
+            print('[DEBUG] Nenhum produto foi passado para download.')
             return
 
         if not product_info['data']['modules']:
+            print('[DEBUG] Nenhum módulo foi encontrado para download. Construindo módulos')
             subdomain = product_info['data'].get('subdomain', '')
+            print('[DEBUG] Subdomínio:', subdomain)
             new_modules = self.get_product_information(subdomain)
             
             download_dict = {

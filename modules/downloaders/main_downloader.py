@@ -193,6 +193,7 @@ class Downloader:
 
                         if lesson_files.get('attachments'):
                             for attachment_index, attachment in enumerate(lesson_files['attachments']):
+                                print(attachment)
                                 attachment_name = f"{attachment_index}. {attachment['name']}"
                                 self.download_content(attachment, lesson_path, attachment_name, is_attachment=True)
 

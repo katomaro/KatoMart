@@ -212,6 +212,9 @@ class Hotmart(Account):
         if full_lesson.get('attachments'):
             for attachment in full_lesson['attachments']:
                 attachment['is_stream'] = False
+                attachment['name'] = attachment.pop('fileName')
+                attachment['size'] = attachment.pop('fileSize')
+                attachment['id'] = attachment.pop('fileMembershipId')
         
         return full_lesson
     

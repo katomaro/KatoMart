@@ -37,13 +37,20 @@ class Downloader:
 
         self.request_session: requests.Session = None
 
+        # Current Content Information
         self.current_content_id = None
-        self.content_url = None
+        self.current_content_name = None
+        self.current_content_url = None
+        self.current_content_progress = None
         self.current_module_id = None
+        self.current_module_name = None
+        self.current_module_progress = None
         self.current_lesson_id = None
+        self.current_lesson_name = None
+        self.current_lesson_progress = None
 
         self.total_courses = 0
-        self.completedcourses = 0
+        self.completed_courses = 0
         self.total_modules = 0
         self.completed_modules = 0
         # Este atributo não é bom a nível global, impreciso.
@@ -146,7 +153,7 @@ class Downloader:
             download_path = pathlib.Path(content.get('save_path'))
             content = content.get('data')
             self.current_content_id = content['id']
-            self.content_url = content['domain']
+            self.current_content_url = content['domain']
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
@@ -182,11 +189,12 @@ class Downloader:
                         if lesson_files.get('medias'):
                             for media_index, media in enumerate(lesson_files['medias'], start=1):
                                 media_name = f"{media_index}. {media['name']}"
-                                self.download_content(media, lesson_path, media_name)
+                                self.download_content(media, lesson_path, media_name, is_attachment=False)
 
                         if lesson_files.get('attachments'):
-                            for attachment in enumerate(lesson_files['attachments']):
-                                self.download_content(attachment, lesson_path, attachment['name'])
+                            for attachment_index, attachment in enumerate(lesson_files['attachments']):
+                                attachment_name = f"{attachment_index}. {attachment['name']}"
+                                self.download_content(attachment, lesson_path, attachment_name, is_attachment=True)
 
     def get_content_modules(self):
         """
@@ -205,7 +213,7 @@ class Downloader:
         Busca os arquivos de uma lição.
         """
         data = self.account.get_content_lesson_info(self.current_content_id,
-                                                    self.content_url,
+                                                    self.current_content_url,
                                                     self.current_module_id,
                                                     self.current_lesson_id)
         return data
@@ -216,9 +224,10 @@ class Downloader:
         """
         self.download_path = download_path
         if not is_attachment:
-            self.file_name = file_name.rsplit('.', 1)[0]
+            self.file_name = file_name.rsplit('.', 1)[0] + '.ts'
         else:
             self.file_name = file_name
+            input(file)
         self.media_id = file.get('hash')
         self.media_size = file.get('size')
         self.media_duration_secs = file.get('duration')
@@ -236,7 +245,7 @@ class Downloader:
         has_drm = False
         data = {}
         self.request_session = self.account.clone_main_session()
-        self.request_session.headers['Referer'] = self.content_url
+        self.request_session.headers['Referer'] = self.current_content_url
 
         response = self.request_session.get(self.media_url)
         if response.status_code != 200:

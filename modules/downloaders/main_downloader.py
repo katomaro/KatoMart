@@ -102,12 +102,12 @@ class Downloader:
                     time.sleep(60)
                     if not lesson.get('files'):
                         self.get_content_files()
-                    for file in lesson.get('files'):
-                        file_name = remover_caracteres_problematicos(f"{file['lessonOrder']}. " + file['name'])
-                        # Checagem feia e computacionalmente desnecessária, porém é uma forma de garantir não ter pastas vazias
+                    if lesson.get('files'):
                         if not lesson_path.exists():
                             lesson_path.mkdir(parents=True)
-                        self.download_content(file, lesson_path, file_name)
+                        for file in lesson.get('files'):
+                            file_name = remover_caracteres_problematicos(f"{file['lessonOrder']}. " + file['name'])
+                            self.download_content(file, lesson_path, file_name)
 
     def get_content_modules(self):
         """

@@ -188,14 +188,20 @@ class Downloader:
 
                         if lesson_files.get('medias'):
                             for media_index, media in enumerate(lesson_files['medias'], start=1):
-                                media_name = f"{media_index}. {media['name']}"
+                                if self.use_original_media_name:
+                                    media_name = f"{media_index}. {media['name']}"
+                                else:
+                                    media_name = f"{media_index}. Aula"
                                 self.download_content(media, lesson_path, media_name, is_attachment=False)
 
                         if lesson_files.get('attachments'):
+                            temp_path = lesson_path / 'Anexos'
                             for attachment_index, attachment in enumerate(lesson_files['attachments']):
-                                print(attachment)
-                                attachment_name = f"{attachment_index}. {attachment['name']}"
-                                self.download_content(attachment, lesson_path, attachment_name, is_attachment=True)
+                                if self.use_original_media_name:
+                                    attachment_name = f"{attachment_index}. {attachment['name']}"
+                                else:
+                                    attachment_name = f"{attachment_index}. Anexo"
+                                self.download_content(attachment, temp_path, attachment_name, is_attachment=True)
 
     def get_content_modules(self):
         """

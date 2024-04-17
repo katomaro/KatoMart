@@ -38,7 +38,7 @@ def move_contents_from_folder(source_folder):
     os.rmdir(source_folder)
 
 def main():
-    print("Atualização do sistema Katomart. IMPORTANTE: Se você estiver executando após o dia XX/XX/XXXX, delete o arquivo 'main.sqlite3' manualmente para que ele seja recriado corretamente. Você precisará reconfigurar o sistema ao fazer isso. Não delete a pasta jsons nem a pasta cursos para atualizar.")
+    print("Atualização do sistema Katomart. IMPORTANTE: Se você estiver executando após o dia 15/04/2024 (ou se o aviso na página inicial mandou), delete o arquivo 'main.sqlite3' manualmente para que ele seja recriado corretamente na próxima execução alguma mudança significativa na estrutura ocorreu. Você precisará reconfigurar o sistema ao fazer isso. Não delete a pasta jsons nem a pasta cursos para atualizar caso existam.")
     user_consent = input("Deseja atualizar o sistema? (s/n)\n").strip().lower()
     if user_consent != "s":
         print("A atualização foi cancelada pelo usuário.")

@@ -167,23 +167,23 @@ class Downloader:
                         if not lesson_path.exists():
                             lesson_path.mkdir(parents=True)
                         lesson_files = lesson.get('files')
-                        
+
                         if lesson_files.get('text_content'):
                             file_name = 'Conteúdo_Textual.html'
                             with open(lesson_path / file_name, 'w', encoding='utf-8') as f:
                                 f.write(lesson_files['text_content'])
-                        
+
                         if lesson_files.get('references'):
                             file_name = 'Referências.txt'
                             with open(lesson_path / file_name, 'w', encoding='utf-8') as f:
                                 for reference in lesson_files['references']:
                                     f.write(f"{reference}\n")
-                        
+
                         if lesson_files.get('medias'):
                             for media_index, media in enumerate(lesson_files['medias'], start=1):
                                 media_name = f"{media_index}. {media['name']}"
                                 self.download_content(media, lesson_path, media_name)
-                        
+
                         if lesson_files.get('attachments'):
                             for attachment in enumerate(lesson_files['attachments']):
                                 self.download_content(attachment, lesson_path, attachment['name'])
@@ -209,13 +209,16 @@ class Downloader:
                                                     self.current_module_id,
                                                     self.current_lesson_id)
         return data
-    
-    def download_content(self, file: any, download_path:str, file_name:str):
+
+    def download_content(self, file: any, download_path:str, file_name:str, is_attachment:bool=False):
         """
         Baixa um conteúdo de uma URL.
         """
         self.download_path = download_path
-        self.file_name = file_name.rsplit('.', 1)[0]
+        if not is_attachment:
+            self.file_name = file_name.rsplit('.', 1)[0]
+        else:
+            self.file_name = file_name
         self.media_id = file.get('hash')
         self.media_size = file.get('size')
         self.media_duration_secs = file.get('duration')
@@ -244,18 +247,18 @@ class Downloader:
 
         if 'application/json' in content_type:
             data = response.json()
-        
+
         if 'text/html' in content_type:
             html_content = response.text
             data = self.handle_html_response(html_content)
-        
+
         if data['transmission_type'].lower() in ('vod'):
             is_stream = True
-        
+
         if data['media_has_drm']:
             has_drm = True
             # self.download_widevine_media()
-        
+
         current_master_playstlist_content = None
         playlist_url = ''
         if len(data['media_assets']) > 0:
@@ -274,7 +277,7 @@ class Downloader:
                             subtitle_content = m3u8.loads(actual_sub.text)
                             sub_ct = self.request_session.get(self.current_base_playlist_url + subtitle_content.segments[0].uri)
                             f.write(sub_ct.content)
-            
+
             if playlist.is_variant:
                 highest_bandwidth = 0
                 best_quality_playlist = None
@@ -286,7 +289,6 @@ class Downloader:
                 playlist = m3u8.loads(self.load_playlist(self.current_base_playlist_url + best_quality_playlist.uri))
                 self.selected_quality_url = best_quality_playlist.uri
 
-            
             if playlist.keys:
                 self.download_encrypted_hls(playlist)
             else:
@@ -301,7 +303,7 @@ class Downloader:
             self.account.database_manager.log_event(log_type='ERROR', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestre: {playlist_url}")
 
         return response.text
-    
+
     def handle_html_response(self, html_content:str) -> dict:
         """
         Lida com uma resposta HTML usando o BeautifulSoup.
@@ -341,7 +343,7 @@ class Downloader:
                 media_build_id = application_data.get('buildId', '')
                 asset_prefix = application_data.get('assetPrefix', '')
                 is_fallback = application_data.get('isFallback', False)
-                
+
                 # Retorno dos dados filtrados, necessário globalizar depois
                 filtered_html['media_has_drm'] = media_has_drm
                 filtered_html['is_media_public'] = is_media_public
@@ -365,9 +367,8 @@ class Downloader:
                 filtered_html['media_build_id'] = media_build_id
                 filtered_html['asset_prefix'] = asset_prefix
                 filtered_html['is_fallback'] = is_fallback
-        
-        return filtered_html
 
+        return filtered_html
 
     def download_raw_hls(self, playlist: m3u8.M3U8):
         """
@@ -410,19 +411,19 @@ class Downloader:
                     content = self.decrypt_segment(content)
                     with open(self.download_path / self.file_name, 'a+b') as f:
                         f.write(content)
-    
+
     def download_raw_file(self):
         """
         Baixa um arquivo diretamente.
         """
         # TODO: Implementar o download de arquivos diretamente
-        response = self.request_session.get(self.url_download)
+        response = self.request_session.get(self.media_url)
         if response.status_code == 200:
-            with open(self.download_path + self.file_name, 'wb') as f:
+            with open(self.download_path / self.file_name, 'wb') as f:
                 f.write(response.content)
         else:
             print(f"Erro ao baixar o arquivo: {self.url_download}")
-    
+
     def download_ytdlp_media(self, url:str, referer:str=None, save_path:str=None):
         """
         Baixa um vídeo ou playlist de vídeos do YouTube usando yt-dlp.
@@ -435,13 +436,13 @@ class Downloader:
             if referer:
                 ytdlp.params['http_headers'] = {'Referer': referer}
             ytdlp.download([url])
-    
+
     def download_widevine_media(self, url:str, save_path:str):
         """
         Baixa um vídeo protegido por Widevine.
         """
         print('Desejo a todas inimigas vida longa')
-    
+
     def download_segment(self, segment_url:str = ''):
         """
         Tenta baixar um segmento com um determinado número de retentativas.
@@ -461,7 +462,7 @@ class Downloader:
                 time.sleep(self.download_timeout)
         print(f"[DOWNLOADER] Falha ao baixar o segmento após {self.download_retries} tentativas: {segment_url}")
         return None
-    
+
     def decrypt_segment(self, content:bytes) -> bytes:
         """
         Descriptografa um segmento de mídia usando AES.
@@ -475,8 +476,8 @@ class Downloader:
         cipher = Cipher(algorithms.AES(self.key_content), modes.CBC(self.key_iv), backend=backend)
         decryptor = cipher.decryptor()
         decrypted_data = decryptor.update(content) + decryptor.finalize()
-        
+
         unpadder = PKCS7(algorithms.AES.block_size).unpadder()
         decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
-        
+
         return decrypted_data

@@ -6,6 +6,7 @@ INSERT OR IGNORE INTO Settings (key, value) VALUES
 ('download_path', 'Cursos/'),
 ('user_os', ''),
 ('use_original_media_name', '0')
+('download_subtitles', '0')
 ('default_user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0'),
 ('get_product_extra_info', '0'),
 ('download_widevine', '0'),

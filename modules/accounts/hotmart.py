@@ -161,11 +161,59 @@ class Hotmart(Account):
         """
         print("Here is my handle, here is my spout!")
     
-    def get_content_lesson_info(self, product_info: dict, module_id: str | int, lesson_id: str | int):
+    def get_content_lesson_info(self, content_id: str | int, domain: str, module_id: str | int, lesson_id: str | int):
         """
         Obtém os arquivos de uma lição da Hotmart.
         """
-        print("When I get all steamed up, hear me shout!")
+        lesson_url = f"{self.MEMBER_AREA_URL.rsplit('/', 1)[0]}/page/{lesson_id}?pageHash={lesson_id}"
+        subdomain = domain.split('.')[0]
+        composed_domain = domain
+        fake_session = self.clone_main_session()
+        headers = {}
+        headers['user-agent'] = fake_session.headers['user-agent']
+        headers['authorization'] = f'Bearer {self.auth_token}'
+        headers['origin'] = composed_domain
+        headers['referer'] = composed_domain
+        headers["accept"] = "application/json, text/plain, */*"
+        headers['club'] = subdomain.rsplit('/', 1)[-1]
+        headers["pragma"] = "no-cache"
+        headers["cache-control"] = "no-cache"
+        fake_session.headers.update(headers)
+
+        response = fake_session.get(lesson_url)
+        if response.status_code != 200:
+            self.database_manager.log_event('CRITICAL', 0, f'Erro ao acessar {response.url}: Status Code {response.status_code}')
+            return None
+        response = response.json()
+        full_lesson = {}
+        if response.get('content'):
+            full_lesson['text_content'] = response['content']
+        if response.get('moduleCode'):
+            full_lesson['modular_drm'] = response['moduleCode']
+        if response.get('mediasSrc'):
+            full_lesson['medias'] = response['mediasSrc']
+        if response.get('attachments'):
+            full_lesson['attachments'] = response['attachments']
+        # if response.get('type') == 'WEBINAR':
+        #     full_lesson['webinar'] = response['webinar']
+        if response.get('complementaryReadings'):
+            full_lesson['references'] = response['complementaryReadings']
+        
+        if full_lesson.get('medias'):
+            for media in full_lesson['medias']:
+                media['name'] = media.pop('mediaName')
+                media['url'] = media.pop('mediaSrcUrl')
+                media['type'] = media.pop('mediaType')
+                media['hash'] = media.pop('mediaCode')
+                media['size'] = media.pop('mediaSize')
+                media['duration'] = media.pop('mediaDuration')
+                media['is_stream'] = True
+        
+        if full_lesson.get('attachments'):
+            for attachment in full_lesson['attachments']:
+                attachment['is_stream'] = False
+        
+        return full_lesson
     
     def format_product_information(self, product_info: dict):
         """
@@ -182,7 +230,8 @@ class Hotmart(Account):
                 del page['pageOrder']
                 page['id'] = page.pop('hash')
                 if page.get('medias'):
-                    page['files'] = page.pop('medias')
+                    page.pop('medias')
+                #     page['files'] = page.pop('medias')
                 lessons.append(page)
             
             module['lessons'] = lessons

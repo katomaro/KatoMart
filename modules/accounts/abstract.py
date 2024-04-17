@@ -157,7 +157,7 @@ class Account(ABC):
         """
     
     @abstractmethod
-    def get_content_lesson_info(self, product_info: dict, module_id: str | int, lesson_id: str | int):
+    def get_content_lesson_info(self, content_id: str | int, domain:str, module_id: str | int, lesson_id: str | int):
         """
         Método abstrato para obter as lições de um módulo.
         """

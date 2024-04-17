@@ -128,6 +128,8 @@ class Downloader:
         # Media Types to Download
         self.download_content_types = {}
 
+        self.widevine_key_mappings = {}
+
         self.load_settings()
 
         self.iter_account_contents()
@@ -431,7 +433,7 @@ class Downloader:
             for key in playlist.keys:
                 if key:  # Se existir uma chave na playlist
                     key_uri = key.uri
-                    key_content = self.request_session.get(key_uri).content  # Baixa a chave de encriptação
+                    key_content = self.request_session.get(self.current_base_playlist_url + key_uri).content  # Baixa a chave de encriptação
                     iv = key.iv  # Pode ser None, neste caso você pode querer gerar um IV baseado no número do segmento ou usar um IV padrão
                     if iv:
                         iv = bytes.fromhex(iv[2:])  # Remove o prefixo '0x' e converte para bytes

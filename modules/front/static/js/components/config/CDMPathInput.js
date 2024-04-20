@@ -8,7 +8,7 @@ export default {
       AVISO: Esta é uma configuração bem avançada, você não precisa para a 
       maioria dos downloads, se você precisa interagir com isso, se refira ao
       grupo da comunidade para ter acesso à guias e a ajuda. Você vai precisar.
-      <a href="https://t.me/gatosdodois" target="_blank" class="text-accent hover:underline">Link da Comuninidade</a>
+      <a href="https://t.me/katomart" target="_blank" class="text-accent hover:underline">Link da Comuninidade</a>
       </p>
     <label class="label">
       <span class="label-text">

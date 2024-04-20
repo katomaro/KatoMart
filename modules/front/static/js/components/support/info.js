@@ -52,8 +52,8 @@ export default {
       <p>
         Caso você não consiga acessar o Github, você pode pedir suporte
         <strong class="text-red-500">COMUNITÁRIO</strong> no grupo do Telegram:
-        <a href="https://t.me/gatosdodois" class="text-pink-500 underline hover:text-pink-400">
-            <strong>https://t.me/gatosdodois</strong>
+        <a href="https://t.me/gatoverso" class="text-pink-500 underline hover:text-pink-400">
+            <strong>https://t.me/gatoverso</strong>
         </a>.
         <strong class="text-red-500">NÃO ENVIE INFORMAÇÕES SENSÍVEIS NESTE GRUPO!</strong>
         Além disso, atente-se as regras do grupo que ficam nas mensagens fixadas,

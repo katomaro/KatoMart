@@ -3,6 +3,7 @@ import os
 import pathlib
 import re
 import shutil
+import subprocess
 import time
 
 from bs4 import BeautifulSoup
@@ -15,7 +16,6 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 
 from modules.accounts.abstract import Account
-
 
 
 def remover_caracteres_problematicos(name:str) -> str:
@@ -280,6 +280,17 @@ class Downloader:
             self.get_video_playlist()
         else:
             self.download_raw_file(is_attachment=is_attachment)
+        
+        self.post_download()
+    
+    def post_download(self) -> None:
+        """
+        Pós processamento após o download.
+        """
+        if self.file_name.endswith('.ts'):
+            self.ts_to_mp4(self.download_path / self.file_name)
+        self.completed_files += 1
+        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Download de {self.file_name} concluído! ^-^")
 
     def get_video_playlist(self):
         """
@@ -500,10 +511,11 @@ class Downloader:
         """
         Baixa um vídeo ou playlist de vídeos do YouTube usando yt-dlp.
         """
-        ytdlp_opts = {'retries': 8,
-                'fragment_retries': 6,
-                'quiet': True,
-                "outtmpl": save_path}
+        ytdlp_opts = {
+            'retries': 8,
+            'fragment_retries': 6,
+            'quiet': True,
+            'outtmpl': save_path}
         with yt_dlp.YoutubeDL(ytdlp_opts) as ytdlp:
             if referer:
                 ytdlp.params['http_headers'] = {'Referer': referer}
@@ -553,3 +565,22 @@ class Downloader:
         decrypted_data = unpadder.update(decrypted_data) + unpadder.finalize()
 
         return decrypted_data
+    
+    def ts_to_mp4(self, input_file: pathlib.Path) -> None:
+        """
+        Transforma a junção de segmentos ts para um arquivo mp4.
+        
+        :param input_file: O arquivo ts a ser transformado em mp4.
+        """
+        output_file = input_file.with_suffix('.mp4')
+        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Convertendo {input_file} para {output_file}")
+        ffmpeg_path = None
+        if not self.use_custom_ffmpeg:
+            ffmpeg_path = shutil.which('ffmpeg')
+        if self.use_custom_ffmpeg:
+            ffmpeg_path = self.custom_ffmpeg_path
+        if not ffmpeg_path:
+            self.account.database_manager.log_event(log_type='error', sensitive_data=0, log_data="FFMPEG não encontrado, abortando conversão de ts para mp4!")
+            return
+        subprocess.run([ffmpeg_path, '-i', input_file, '-c', 'copy', output_file], check=True)
+        input_file.unlink()

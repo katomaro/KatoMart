@@ -458,7 +458,11 @@ class Downloader:
             for key in playlist.keys:
                 if key:  # Se existir uma chave na playlist
                     key_uri = key.uri
-                    self.key_content = self.request_session.get(self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + key_uri).content  # Baixa a chave de encriptação
+                    if not key_uri.startswith('http'):
+                        self.key_content = self.request_session.get(self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + key_uri).content  # Baixa a chave de encriptação
+                    else:
+                        self.key_content = self.request_session.get(key_uri).content
+                    
                     self.key_iv = key.iv  # Pode ser None, neste caso você pode querer gerar um IV baseado no número do segmento ou usar um IV padrão
                     if self.key_iv:
                         self.key_iv = bytes.fromhex(self.key_iv[2:])  # Remove o prefixo '0x' e converte para bytes

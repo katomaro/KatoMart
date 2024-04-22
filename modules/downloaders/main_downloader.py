@@ -37,6 +37,7 @@ class Downloader:
         self.current_platform_id = self.account.get_platform_id()
 
         self.request_session: requests.Session = None
+        self.create_download_session()
 
         # Current Content Information
         self.current_content_id = None
@@ -108,6 +109,12 @@ class Downloader:
 
         self.iter_account_contents()
 
+
+    def create_download_session(self):
+        """
+        Copia a sessão principal para ser manipulada pelo downloader.
+        """
+        self.request_session = self.account.clone_main_session()
 
     def load_settings(self):
         """
@@ -308,7 +315,6 @@ class Downloader:
         is_stream = False
         has_drm = False
         data = {}
-        self.request_session = self.account.clone_main_session()
         self.request_session.headers['Referer'] = self.current_content_url
 
         response = self.request_session.get(self.media_url)

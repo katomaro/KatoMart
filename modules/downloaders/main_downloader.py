@@ -195,12 +195,14 @@ class Downloader:
                 self.get_content_modules()
             for module in content.get('modules'):
                 self.current_module_id = module['id']
+                self.current_module_name = module['name']
                 module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
                 self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando módulo: {module['name']} para o caminho {module_path} ^-^")
                 if not module.get('lessons'):
                     self.get_content_lessons()
                 for lesson in module.get('lessons'):
                     self.current_lesson_id = lesson['id']
+                    self.current_lesson_name = lesson['name']
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
                     self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando lição: {lesson['name']} para o caminho {lesson_path} ^-^")
                     if not lesson.get('files'):

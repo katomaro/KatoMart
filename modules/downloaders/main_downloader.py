@@ -200,7 +200,11 @@ class Downloader:
                             file_name = 'Conteúdo_Textual.html'
                             with open(lesson_path / file_name, 'w', encoding='utf-8') as f:
                                 f.write(lesson_files['text_content'])
-                            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Salvando conteúdo textual: {lesson_path}")
+                            if not self.scan_html_for_videos:
+                                self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data=f"Conteúdo textual salvo: {lesson_path}")
+                            else:
+                                self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Conteúdo textual salvo, como o scan por vídeos está ativado, o programa vai tentar procurar vídeos no conteúdo textual e salvar na pasta: {lesson_path}")
+                                self.scan_text_content(lesson_files['text_content'], lesson_path)
 
                         if lesson_files.get('references'):
                             file_name = 'Referências.txt'
@@ -235,6 +239,52 @@ class Downloader:
                             self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Não foram encontrados anexos para a aula: {lesson_path}")
                     else:
                         self.account.database_manager.log_event(log_type='error', sensitive_data=0, log_data=f"Não foram encontrados materiais para a aula: {lesson_path}")
+
+    def scan_text_content(self, text_content:str, save_path:pathlib.Path):
+        """
+        Procura por links de vídeo em um conteúdo textual.
+        """
+        soup = BeautifulSoup(text_content, 'html.parser')
+        found_videos = []
+        # Procura por vídeos em tags de vídeo
+        for video in soup.find_all('video'):
+            video_url = video.get('src')
+            found_videos.append(video_url)
+        # Procura por vídeos em iFrames
+        for iframe in soup.find_all('iframe'):
+            iframe_url = iframe.get('src')
+            found_videos.append(iframe_url)
+        # Procura por vídeos em links
+        for link in soup.find_all('a'):
+            link_url = link.get('href')
+            found_videos.append(link_url)
+        # Procura por vídeos em texto
+        # for paragraph in soup.find_all('p'):
+        #     paragraph_text = paragraph.get_text()
+        #     if 'video' in paragraph_text.lower():
+        #         self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Possível vídeo encontrado no conteúdo textual em um parágrafo: {paragraph_text}")
+        # Procura por vídeos em scripts
+        # for script in soup.find_all('script'):
+        #     script_text = script.get_text()
+        #     if 'video' in script_text.lower():
+        #         self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Possível vídeo encontrado no conteúdo textual em um script: {script_text}")
+        if found_videos:
+            self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Foram encontrados {len(found_videos)} possíveis vídeos no conteúdo textual, testando um a um e tentando baixar para: {save_path}")
+            for video_url in found_videos:
+                self.resolve_linked_player(video_url, save_path)
+        else:
+            self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data="Nenhum possível vídeo encontrado no conteúdo textual")
+
+    def resolve_linked_player(self, video_url:str, save_path:pathlib.Path):
+        """
+        Resolve um player de vídeo e baixa o conteúdo pelo método correto.
+        """
+        # youtube.com, youtu.be, vimeo.com
+        odio = r'https?://(www\.)?(youtube\.com/watch\?v=|youtu\.be/|vimeo\.com/\d+|player.vimeo.com/video/\d+)[\w-]*\??[\w=&]*'
+        link = re.search(odio, video_url)
+        if link:
+            self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Vídeo encontrado: {link}")
+            self.download_ytdlp_media(link.group(0), referer=self.current_content_url, save_path=save_path)
 
     def get_content_modules(self):
         """
@@ -514,12 +564,13 @@ class Downloader:
         ytdlp_opts = {
             'retries': 8,
             'fragment_retries': 6,
-            'quiet': True,
-            'outtmpl': save_path}
+            'concurrent_fragment_downloads': int(self.download_threads),
+            'outtmpl': save_path.as_posix() + '/%(title)s.%(ext)s',}
         with yt_dlp.YoutubeDL(ytdlp_opts) as ytdlp:
             if referer:
                 ytdlp.params['http_headers'] = {'Referer': referer}
             ytdlp.download([url])
+        self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data=f"Download de {url} concluído! ^-^")
 
     def download_widevine_media(self, url:str, save_path:str):
         """

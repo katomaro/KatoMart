@@ -190,21 +190,21 @@ class Downloader:
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)
-            self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando conteúdo: {content['name']} para o caminho {download_path} ^-^")
+            self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data=f"Download do curso {content['name']} iniciado para o caminho {download_path} ^-^")
             if not content.get('modules'):
                 self.get_content_modules()
             for module in content.get('modules'):
                 self.current_module_id = module['id']
                 self.current_module_name = module['name']
                 module_path = download_path / remover_caracteres_problematicos(f"{module['moduleOrder']}. " + module['name'])
-                self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando módulo: {module['name']} para o caminho {module_path} ^-^")
+                self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Listando conteúdos do módulo: {module_path} ^-^")
                 if not module.get('lessons'):
                     self.get_content_lessons()
                 for lesson in module.get('lessons'):
                     self.current_lesson_id = lesson['id']
                     self.current_lesson_name = lesson['name']
                     lesson_path = module_path / remover_caracteres_problematicos(f"{lesson['lessonOrder']}. " + lesson['name'])
-                    self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando lição: {lesson['name']} para o caminho {lesson_path} ^-^")
+                    self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando a aula: {lesson_path} ^-^")
                     if not lesson.get('files'):
                         lesson['files'] = self.get_content_files()
                     if lesson.get('files'):
@@ -237,6 +237,7 @@ class Downloader:
 
                         if lesson_files.get('attachments'):
                             temp_path = lesson_path / 'Anexos'
+                            self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Esta aula possui anexos, tentando baixar para: {temp_path}")
                             for attachment_index, attachment in enumerate(lesson_files['attachments']):
                                 if self.use_original_media_name:
                                     attachment_name = f"{attachment_index}. {attachment['name']}"
@@ -244,6 +245,12 @@ class Downloader:
                                     attachment_name = f"{attachment_index}. Anexo.{attachment['name'].split('.')[-1]}"
                                 self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Baixando {len(lesson_files['attachments'])} anexos, atual: {lesson_path}/{attachment['name']}")
                                 self.download_content(attachment, temp_path, attachment_name, is_attachment=True)
+                                self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data=f"Anexo baixado com sucesso: {temp_path}/{attachment['name']}")
+                            self.account.database_manager.log_event(log_type='success', sensitive_data=0, log_data=f"Ciclo de download de anexos da aula finalizado ^-^")
+                        else:
+                            self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Não foram encontrados anexos para a aula: {lesson_path}")
+                    else:
+                        self.account.database_manager.log_event(log_type='error', sensitive_data=0, log_data=f"Não foram encontrados materiais para a aula: {lesson_path}")
 
     def get_content_modules(self):
         """
@@ -338,7 +345,7 @@ class Downloader:
                 if self.subtitle_language.lower() == 'all':
                     subtitles = [media for media in playlist.media if media.type == 'SUBTITLES']
                     for subtitle in subtitles:
-                        with open(self.download_path / (self.file_name + f"_{subtitle.language}.vtt"), 'wb') as f:
+                        with open(self.download_path / (self.file_name.rsplit('.', 1)[0] + f"_{subtitle.language}.vtt"), 'wb') as f:
                             actual_sub = self.request_session.get(self.current_base_playlist_url + subtitle.uri)
                             subtitle_content = m3u8.loads(actual_sub.text)
                             sub_ct = self.request_session.get(self.current_base_playlist_url + subtitle_content.segments[0].uri)
@@ -354,6 +361,9 @@ class Downloader:
                 self.current_base_playlist_url = playlist_url.rsplit('/', 1)[0] +'/'
                 playlist = m3u8.loads(self.load_playlist(self.current_base_playlist_url + best_quality_playlist.uri))
                 self.selected_quality_url = best_quality_playlist.uri
+            
+            if playlist.version is not None and int(playlist.version) >= 4:
+                self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Playlist de vídeo com versão {playlist.version}, pode gerar vídeos corrompidos!")
 
             if playlist.keys:
                 self.download_encrypted_hls(playlist)
@@ -366,7 +376,7 @@ class Downloader:
         """
         response = self.request_session.get(playlist_url)
         if response.status_code != 200:
-            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestre: {playlist_url}")
+            self.account.database_manager.log_event(log_type='error', sensitive_data=1, log_data=f"Erro ao baixar a playlist mestra: {playlist_url}")
 
         return response.text
 
@@ -512,6 +522,7 @@ class Downloader:
             file_data = requests.get(url)
             with open(self.download_path / file_name, 'wb') as f:
                 f.write(file_data.content)
+            self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Download de {file_name} concluído! Ele precisará de uma senha para ser aberto (provavelmente seu email da hotmart) ^-^")
     
     def download_ytdlp_media(self, url:str, referer:str=None, save_path:str=None):
         """
@@ -579,7 +590,7 @@ class Downloader:
         :param input_file: O arquivo ts a ser transformado em mp4.
         """
         output_file = input_file.with_suffix('.mp4')
-        self.account.database_manager.log_event(log_type='info', sensitive_data=0, log_data=f"Convertendo {input_file} para {output_file}")
+        self.account.database_manager.log_event(log_type='warning', sensitive_data=0, log_data=f"Convertendo {input_file} para {output_file}")
         ffmpeg_path = None
         if not self.use_custom_ffmpeg:
             ffmpeg_path = shutil.which('ffmpeg')

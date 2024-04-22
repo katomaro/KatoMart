@@ -3,7 +3,7 @@
 ### Patrocinadores do projeto
 ***Financeiros recebem suporte prioritário e pessoal do desenvolvedor responsável, também aproveitam de descontos para projetos próprios e possuem outros benefícios**  
 Github [![Sponsors](https://img.shields.io/github/sponsors/katomaro)](https://github.com/sponsors/katomaro)  
-Demais contribuidores (financeiros e de dados) podem ser encontrados no arquivo [CONTRIBUTIONS.json](https://github.com/katomaro/katomart/blob/master/CONTRIBUTIONS.json) localizado na raiz do repositório
+Demais contribuidores (financeiros e de dados) podem ser encontrados no arquivo [CONTRIBUTIONS.json](https://github.com/katomaro/katomart/blob/master/CONTRIBUTIONS.json) localizado na raiz do repositório.
 
 ## AVISO IMPORTANTE / DISCLAIMER
 
@@ -23,15 +23,15 @@ Além disso, se eu tenho o direito de consumo, eu não posso ser obrigado a cons
 E eu como desenvolvedor te garanto, é extremamente fácil criar uma API REST e um tema da THEME FOREST e criar uma plataforma de cursos, custa menos de 300 reais fazer isso. Muitas sequer tem sede.
 
 ## Como instalar e executar
-### STATUS DO DESENVOLVIMENTO: FINALIZANDO A BASE (DOWNLOADERS)
+### STATUS DO DESENVOLVIMENTO: Testando contra a plataforma onde tudo começou... :fire:
 Este guia não cobre usuários Linux, se você usa linux, você deve ter uma noção do que está fazendo.  
-Para que o programa funcione, será necessário instalar o interpretador do Python, e o FFMPEG, porém como os downloaders ainda não estão prontos, a instalação do FFMPEG será requisitada posteriormente. Vamos para a instalação do Python (tutorial em vídeo de tudo quando o projeto for finalizado, mas lembre-se do grupo de suporte lá em baixo).  
+Para que o programa funcione, será necessário instalar o interpretador do Python, e opcionalmente, o FFMPEG. Vamos para a instalação do Python (tutorial em vídeo de tudo quando o projeto for "finalizado", mas lembre-se do grupo de suporte lá em baixo).  
 
 Passo 1: Download do Python
 
 1. Acesse o site oficial do Python em [python.org](https://www.python.org/).
 2. Navegue até a seção **Downloads** e selecione **Windows**.
-3. Clique em **Download Python** seguido pela versão que você deseja instalar, que seja superior à 3.9. [Versão recomendada 3.12.2 64-bits](https://www.python.org/ftp/python/3.12.2/python-3.12.2-amd64.exe).  
+3. Clique em **Download Python** seguido pela versão que você deseja instalar, que seja superior à 3.10. [Versão recomendada 3.12.2 64-bits](https://www.python.org/ftp/python/3.12.2/python-3.12.2-amd64.exe).  
 
 Passo 2: Instalação do Python
 
@@ -67,3 +67,20 @@ Para que este aplicativo seja feito, é necessário que a pessoa produzindo o c�
 **Patrocinadores tem suporte prioritário  e pessoal comigo para qualquer finalidade dentro da lei**: Tornou-se um patrocinador? Entre em contato em [sponsors@katomaro.com](mailto:sponsors@katomaro.com).  
 
 Você pode obter ajuda comunitária no [Grupo do Telegram **(AVISO: O Grupo não é moderado e nem voltado para um assunto específico)**](https://t.me/katomart). Caso você necessite de ajuda com algo que **trate com dados sensíveis**, entre em contato comigo através do meu email: [github@katomaro.com](mailto:github@katomaro.com), ou diretamente em minhas contas pessoais do Telegram e Discord através do usuário **@katomaro**. Solicitações de ajuda pessoal de não-patrocinadores não são prioritárias, e existe toda uma documentação para ser lida, provavelmente a sua pergunta está respondida em algum lugar.
+
+
+### Tiers de Suporte
+
+1) Nível 0: Não contribuiu com nada, mas está usufruindo do projeto, assim como todos que contribuíram. NADA ficará atrás de um muro de pagamento, isto não é venda de serviço!  
+
+2) Nível 1: Contribuiu com pelo menos de 35,00 Reais, ou fez uma contribuição pequena de código, ou ajuda as vezes no grupo da comunidade. Recebem: Suporte prioritário 1:1 comigo. Pode parecer pouco ou bobo, mas dependendo da época eu recebo mais de 100 chats por dia. É importante ressaltar que o Katomart é feito para funcionar e tem uma documentação sendo elaborada e um grupo comunitário para se ajudarem, você apenas me dá um motivo para eu dedicar parte do meu tempo exclusivamente para você, dentro do possível, ao invés de eu encaminhar para documentação, é muita gente para eu lidar (não coleto dados, mas estimo entre 60 mil a 150 mil usuários do software historicamente, com base no que vejo comentarem nos grupos e os causos de plágio e vendas não autorizadas documentados).  
+
+3) Nível 2: Contribuiu com pelo menos 150,00 Reais, ou fez uma contribuição considerável de código, ou ajuda frequentemente no grupo da comunidade. Recebem: Acesso à um gitlab privativo meu que possui o código cru de cada plataforma explorada por mim, ideal para quem tem seus projetos pessoais e querem ver o que plataformas aleatórias praticam no mercado, de uma forma digerida. ESTE REPOSITÓRIO CONTÉM APENAS CÓDIGO E COMENTÁRIOS PONTUAIS.  
+
+4) Nível 3: Contribuiu com pelo menos 250,00 Reais. Recebem: Acesso à um gitlab privativo meu que possui o código cru de cada plataforma explorada por mim, DIFERENÇA DO NÍVEL ANTERIOR: Aqui você encontrará toda a documentação e explicação verbosa de cada trecho de código elaborado por mim e retornos de plataforma. Também neste repositório PODEM existir endpoints vulneráveis e documentadas que podem ser exploradas que eu descobri. IMPORTANTE: Eu sempre denuncio essas falhas para as plataformas, e publicaria essas falhas 1 mês após realizar minha denúncia, com uma print validando que eu tentei contato com eles expondo a falha, se eles não corrigiram, bem, qualquer um poderia encontrar, peço que não a utilize para fins maliciosos. Um exemplo prático: Nos meus tempos primordiais eu sabia que podia baixar todo o conteúdo da :fire: simplesmente enviando a ID do vídeo para a endpoint de anexo deles, você baixava o arquivo original inclusive, nem era o processado para HLS, eles demoraram 3 meses para corrigir essa falha. Esse Tier é ideal para quem quer o equivalente de aula comigo mas já tem alguma experiência com programação.  
+
+5) Nível 4: Contribuiu com pelo menos 300,00 Reais. Recebem: O mesmo do Tier 3, além de ter o direito de 1 encontro mensal comigo para eu te auxiliar em um projeto seu. Além disso, em diversos casos, irá incluir um vídeo privado de eu explorando a plataforma ao vivo para acompanhar o processo lógico   
+
+6) Nível 5: Contribuiu com pelo menos 350,00 Reais. Recebem: Desconto fixo de 30% em qualquer projeto que a pessoa quiser pegar comigo como desenvolvedor (não incluso contratos com a minha empresa), e inclui "favorzinhos" (assistência técnica/código que eu vejo que não me toma mais que 30 minutos, ou seja, a maioria)  
+
+7) Nível 6: Secreto.

@@ -128,9 +128,14 @@ class Downloader:
                 for lesson in module.get('lessons'):
                     product_lesson = katomart_structs.Lesson(lesson_id=lesson['id'],
                                                              name=lesson['name'])
-                    if not lesson.get('files'):
+                    # TODO: Prova de conceito
+                    # if not lesson.get('files'):
+                    if lesson.get('files'):
                         product_module.add_lesson(product_lesson)
                         continue
+                product.add_module(product_module)
+            products.append(product)
+        self.downloadable_products.extend(products)
 
     def create_download_session(self):
         """

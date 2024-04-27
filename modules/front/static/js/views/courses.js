@@ -68,6 +68,12 @@ export default {
         Sem resultados para o termo '{{ search }}'
       </div>
     </div>
+
+    <div class="flex justify-center items-center gap-2 text-xl" v-if="isLoading">
+      <i class="fa-solid fa-spinner animate-spin"></i>
+      Cerregando cursos... (caso tenha muitos cursos, isso pode demorar um pouco.)
+    </div>
+
     <div class="grid grid-cols-2 gap-4 justify-items-center">
       <CourseItem v-for="course in filteredCourses" :key="course.data.name" :course="course" />
     </div>

@@ -1,5 +1,4 @@
 
-import { LOGS_PLACEHOLDER_EXAMPLE } from "../../constants.js";
 import ExportLogsModal from "./export-logs-modal.js";
 import LogsContent from "./logs-content.js";
 import LogsPagination from "./logs-pagination.js";
@@ -37,10 +36,10 @@ export default {
           const data = await res.json()
           this.logsData = data
         } catch {
-          this.logsData = LOGS_PLACEHOLDER_EXAMPLE
+          // TODO: handle error
         }
       } else {
-        this.logsData = LOGS_PLACEHOLDER_EXAMPLE
+        // TODO: handle error
       }
     }
   },
@@ -51,14 +50,15 @@ export default {
   },
   template: `
   <div class="w-full">
-    <h1 class="text-2xl text-center font-bold">LOGs</h1>
+    <h1 class="flex justify-center items-center gap-3 text-2xl font-bold">
+      LOGs
+      <ExportLogsModal :query="logsQuery" />
+    </h1>
     <LogsContent :logs="logsData" />
     <LogsPagination
       :total="logsData.lenght"
       v-model="logsQuery"
     />
-
-    <ExportLogsModal :query="logsQuery" />
   </div>
   `
 }

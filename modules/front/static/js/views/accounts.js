@@ -1,4 +1,5 @@
 const { ref, onMounted, watch } = Vue
+import { REQUIRES_LOGIN_URL } from "../constants.js"
 import { convertUnixTimestampToDate } from "../utils.js"
 const { useRouter } = VueRouter
 
@@ -8,6 +9,9 @@ export default {
       platform_id: "",
       username: "",
       password: "",
+      extra_data: {
+        login_url: "",
+      }
     })
 
     const message = ref("")
@@ -43,6 +47,7 @@ export default {
         message.value = "Conta Adicionada com Sucesso!"
         form.value.username = ""
         form.value.password = ""
+        form.value.extra_data.login_url = ""
         await fetchAccounts(form.value.platform_id)
       } else {
         message.value = "Falha ao salvar a conta."
@@ -87,7 +92,7 @@ export default {
     }
 
 
-    return { form, platforms, accounts, message, handleSubmit, toggleAccount, deleteAccount, convertUnixTimestampToDate, initializeAccount }
+    return { form, platforms, accounts, message, handleSubmit, toggleAccount, deleteAccount, convertUnixTimestampToDate, initializeAccount, REQUIRES_LOGIN_URL }
   },
   template: `
   <h1 class="text-2xl font-bold text-center mb-8">
@@ -115,13 +120,22 @@ export default {
           </label>
           <input type="email" id="username" class="input input-bordered w-full" v-model="form.username" required>
         </div>
+
         <div class="form-group mb-6">
           <label for="password" class="label">
             <span class="label-text font-semibold">Senha:</span>
           </label>
           <input type="password" id="password" class="input input-bordered w-full" v-model="form.password" required>
         </div>
-          <button class="btn btn-primary w-full">Salvar Conta</button>
+
+        <div class="form-group mb-6" v-if="REQUIRES_LOGIN_URL.includes(platforms.find(p => p[0] === form.platform_id)[1].toLowerCase())">
+          <label for="extra_data_login_url" class="label">
+            <span class="label-text font-semibold">URL de Login da Plataforma:</span>
+          </label>
+          <input type="extra_data_login_url" id="extra_data_login_url" class="input input-bordered w-full" v-model="form.extra_data.login_url" required>
+        </div>
+
+        <button class="btn btn-primary w-full">Salvar Conta</button>
       </div>
     </form>
 

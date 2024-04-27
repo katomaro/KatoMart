@@ -563,11 +563,18 @@ class Downloader:
                 f.write(file_data.content)
         # aws
         elif file_info.get('lambdaUrl'):
-            temp_session = self.account.clone_main_session()
-            temp_session.headers['authority'] = 'drm-protection.cb.hotmart.com'
-            temp_session.headers['token'] = file_info.get('token')
-            url = temp_session.get('https://drm-protection.cb.hotmart.com').text
-            file_data = requests.get(url)
+            specific_session_hotmart = self.account.clone_main_session()
+            specific_session_hotmart.headers['authority'] = 'drm-protection.cb.hotmart.com'
+            specific_session_hotmart.headers['token'] = file_info.get('token')
+            url = self.download_with_retries(f"https://drm-protection.cb.hotmart.com/{file_info.get('lambdaUrl')}", use_specific_session=True, specific_session=specific_session_hotmart)
+            if not url:
+                self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, ele possui proteção DRM e a requisição foi NEGADA após {self.download_retries} tentativas, pulando para o próximo arquivo!")
+                return
+            url = url.decode('utf-8')
+            file_data = self.download_with_retries(url, use_raw_session=True)
+            if not file_data:
+                self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, ele possui proteção DRM e a requisição foi NEGADA após {self.download_retries} tentativas, pulando para o próximo arquivo!")
+                return
             with open(self.download_path / file_name, 'wb') as f:
                 f.write(file_data.content)
             self.account.database_manager.log_event(log_type='SUCCESS', sensitive_data=0, log_data=f"Download de {file_name} concluído! Ele precisará de uma senha para ser aberto (provavelmente seu email da hotmart) ^-^")

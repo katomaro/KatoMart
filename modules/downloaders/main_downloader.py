@@ -14,6 +14,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 
+import katomart_structs
 from modules.accounts.abstract import Account
 
 
@@ -95,7 +96,7 @@ class Downloader:
 
         self.load_settings()
 
-        self.iter_account_contents()
+        self.iter_account_downloadable_content()
 
 
     def create_download_session(self):
@@ -145,9 +146,9 @@ class Downloader:
         """
         pass
 
-    def iter_account_contents(self):
+    def iter_account_downloadable_content(self):
         """
-        Itera sobre os conteúdos de uma conta.
+        Itera sobre os conteúdos de uma conta realizando o download
         """
         # Aqui a gente assume que o método da conta organizou todo o conteúdo, então não precisamos ir buscar informaçções
         # Pode vir ser necessário no futuro, então... TODO: Implementar um chamada para buscar informações precisas

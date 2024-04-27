@@ -550,7 +550,7 @@ class Downloader:
         if not file_info:
             self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, pulando para o próximo arquivo!")
             return
-        file_info = json.load(file_info)
+        file_info = json.loads(file_info)
 
         if file_info.get('directDownloadUrl'):
             url = file_info['directDownloadUrl']
@@ -560,7 +560,7 @@ class Downloader:
                 self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, ele usa um link direto e não foi possível baixar, pulando para o próximo arquivo!")
                 return
             with open(self.download_path / file_name, 'wb') as f:
-                f.write(file_data.content)
+                f.write(file_data)
         # aws
         elif file_info.get('lambdaUrl'):
             specific_session_hotmart = self.account.clone_main_session()
@@ -576,7 +576,7 @@ class Downloader:
                 self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, ele possui proteção DRM e a requisição foi NEGADA após {self.download_retries} tentativas, pulando para o próximo arquivo!")
                 return
             with open(self.download_path / file_name, 'wb') as f:
-                f.write(file_data.content)
+                f.write(file_data)
             self.account.database_manager.log_event(log_type='SUCCESS', sensitive_data=0, log_data=f"Download de {file_name} concluído! Ele precisará de uma senha para ser aberto (provavelmente seu email da hotmart) ^-^")
     
     def download_ytdlp_media(self, url:str, referer:str=None, save_path:str=None, media_index:int=1):
@@ -625,8 +625,7 @@ class Downloader:
         for attempt in range(self.download_retries):
             try:
                 if not use_raw_session and not use_specific_session:
-                    response = self.request_session.get(file_url,
-                                                        timeout=self.download_timeout)
+                    ephemereal_session = self.request_session
                 elif use_specific_session:
                     ephemereal_session = specific_session
                 elif clone_main_session:
@@ -634,7 +633,8 @@ class Downloader:
                 else:
                     ephemereal_session = requests.Session()
                     ephemereal_session.headers['user-agent'] = self.request_session.headers['user-agent']
-                    ephemereal_session.headers['referer'] = self.request_session.headers['referer']
+                    if 'referer' in self.request_session.headers:
+                        ephemereal_session.headers['referer'] = self.request_session.headers['referer']
                 
                 response = ephemereal_session.get(file_url,
                                         timeout=self.download_timeout)

@@ -545,12 +545,20 @@ class Downloader:
         """
         self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Baixando anexo da hotmart: {self.current_content_name} - {self.current_module_name} - {self.current_lesson_name} - {self.file_name} ^-^ {self.media_size} bytes")
         file_hash = self.media_id
-        file_size = self.media_size
         file_name = self.file_name
-        file_info = self.request_session.get(f"{self.account.MEMBER_AREA_URL.rsplit('/', 1)[0]}/attachment/{file_hash}/download?attachmentId={file_hash}").json()
+        file_info = self.download_with_retries(f"{self.account.MEMBER_AREA_URL.rsplit('/', 1)[0]}/attachment/{file_hash}/download?attachmentId={file_hash}")
+        if not file_info:
+            self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, pulando para o próximo arquivo!")
+            return
+        file_info = json.load(file_info)
+
         if file_info.get('directDownloadUrl'):
             url = file_info['directDownloadUrl']
-            file_data = requests.get(url)
+
+            file_data = self.download_with_retries(url)
+            if not file_data:
+                self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_name}, ele usa um link direto e não foi possível baixar, pulando para o próximo arquivo!")
+                return
             with open(self.download_path / file_name, 'wb') as f:
                 f.write(file_data.content)
         # aws
@@ -587,21 +595,47 @@ class Downloader:
         """
         Baixa um vídeo protegido por Widevine.
         """
-        print('Desejo a todas inimigas vida longa')
+        raise NotImplementedError
 
-    def download_with_retries(self, file_url:str = '') -> bytes | None:
+    def download_with_retries(self, file_url:str = '',
+                              use_raw_session: bool = False,
+                              clone_main_session: bool = False,
+                              use_specific_session: bool = False,
+                              specific_session: requests.Session = None) -> bytes | None:
         """
         Tenta baixar um arquivo com o número de retentativas configurado no painel.
         
         :param file_url: URL do segmento a ser baixado.
+        :param use_raw_session: Se a sessão de download deve ser a sessão principal ou uma sessão 'crua'.
+        :param clone_main_session: Se a sessão de download deve ser clonada da sessão principal.
+        :param use_specific_session: Se a sessão de download deve ser uma sessão específica.
+        :param specific_session: A sessão específica a ser usada para o download.
+
         :return: O conteúdo do arquivo em bytes, se o download for bem-sucedido; None, caso contrário.
         """
+        ephemereal_session = None
+
         for attempt in range(self.download_retries):
             try:
-                response = self.request_session.get(file_url,
-                                                    timeout=self.download_timeout)
+                if not use_raw_session and not use_specific_session:
+                    response = self.request_session.get(file_url,
+                                                        timeout=self.download_timeout)
+                elif use_specific_session:
+                    ephemereal_session = specific_session
+                elif clone_main_session:
+                    ephemereal_session = self.account.clone_main_session()
+                else:
+                    ephemereal_session = requests.Session()
+                    ephemereal_session.headers['user-agent'] = self.request_session.headers['user-agent']
+                    ephemereal_session.headers['referer'] = self.request_session.headers['referer']
+                
+                response = ephemereal_session.get(file_url,
+                                        timeout=self.download_timeout)
+                
                 response.raise_for_status()
+                
                 return response.content
+            
             except requests.RequestException as e:
                 self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar falha ao baixar o arquivo, tentativa {attempt + 1} de {self.download_retries}. Erro: {e}")
                 time.sleep(self.download_timeout)
@@ -609,6 +643,12 @@ class Downloader:
         self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_url} após {self.download_retries} tentativas, prosseguindo")
 
         return None
+    
+    def recreate_session(self):
+        """
+        Recria a sessão de download a partir da conta.
+        """
+        raise NotImplementedError
 
     def decrypt_segment(self, content:bytes) -> bytes:
         """

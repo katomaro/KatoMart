@@ -13,8 +13,8 @@ export default {
   },
 
   template: `
-  <div class="tooltip tooltip-info tooltip-left absolute right-4" data-tip="Exportar Logs">
-    <button class="btn btn-accent" @click="toggleModal()">
+  <div class="tooltip tooltip-info tooltip-right" data-tip="Exportar Logs">
+    <button class="btn btn-accent btn-sm" @click="toggleModal()">
       <i class="fa-solid fa-file-export"></i>
     </button>
   </div>

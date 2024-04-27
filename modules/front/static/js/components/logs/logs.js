@@ -50,14 +50,15 @@ export default {
   },
   template: `
   <div class="w-full">
-    <h1 class="text-2xl text-center font-bold">LOGs</h1>
+    <h1 class="flex justify-center items-center gap-3 text-2xl font-bold">
+      LOGs
+      <ExportLogsModal :query="logsQuery" />
+    </h1>
     <LogsContent :logs="logsData" />
     <LogsPagination
       :total="logsData.lenght"
       v-model="logsQuery"
     />
-
-    <ExportLogsModal :query="logsQuery" />
   </div>
   `
 }

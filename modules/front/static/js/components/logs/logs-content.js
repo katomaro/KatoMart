@@ -11,10 +11,10 @@ export default {
   },
   methods: {
     levelColor(level) {
-      switch (level) {
+      switch (level.toLowerCase()) {
         case 'error':
           return 'error'
-        case 'warn':
+        case 'warning':
           return 'warning'
         case 'info':
           return 'info'
@@ -26,7 +26,7 @@ export default {
     }
   },
   template: `
-  <div class="overflow-x-auto">
+  <div class="h-[75vh] overflow-y-auto">
     <table class="table table-zebra">
       <thead class="text-center">
         <tr>
@@ -39,7 +39,7 @@ export default {
       <tbody class="text-center">
         <tr v-for="log in logs" :key="log.id">
           <th>{{ stringToDateTime(log.date) }}</th>
-          <td>{{ log.message }}</td>
+          <td class="text-wrap truncate text-xs max-w-xs w-full">{{ log.message }}</td>
           <td>
             <span :class="['badge', 'badge-' + levelColor(log.level), 'uppercase']">
               {{ log.level }}
@@ -51,7 +51,6 @@ export default {
     </table>
 
     <p class="mt-8 mb-4 text-center text-2xl" v-if="logs.length === 0">Nenhum log encontrado</p>
-
-</div>
+  </div>
   `
 }

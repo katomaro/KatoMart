@@ -96,8 +96,41 @@ class Downloader:
 
         self.load_settings()
 
-        self.iter_account_downloadable_content()
+        self.downloadable_products = []
 
+        self.map_downloadable_products()
+
+        self.iter_account_downloadable_products()
+
+    # TODO: Após essa mudança de implementação, será desejável remapear o iter_account_downloadable_products()
+    def map_downloadable_products(self):
+        """
+        Mapeia o conteúdo da conta para as estruturas definidas.
+        """
+        products = []
+        for downloadable_content in self.account.downloadable_products:
+            downloadable_content = downloadable_content.get('data')
+            product = katomart_structs.Product(product_id=downloadable_content['id'],
+                                                name=downloadable_content['name'],
+                                                progress=0.0)
+            if not downloadable_content.get('modules'):
+                products.append(product)
+                continue
+
+            for module in downloadable_content.get('modules'):
+                product_module = katomart_structs.Module(module_id=module['id'],
+                                                            name=module['name'],
+                                                            progress=0.0)
+                if not module.get('lessons'):
+                    product.add_module(product_module)
+                    continue
+
+                for lesson in module.get('lessons'):
+                    product_lesson = katomart_structs.Lesson(lesson_id=lesson['id'],
+                                                             name=lesson['name'])
+                    if not lesson.get('files'):
+                        product_module.add_lesson(product_lesson)
+                        continue
 
     def create_download_session(self):
         """
@@ -140,13 +173,7 @@ class Downloader:
         content_types = self.account.database_manager.get_all_media_types()
         self.download_content_types = content_types
 
-    def get_courses_progress(self) -> list:
-        """
-        Retorna uma lista de dicionário com o progresso dos cursos.
-        """
-        pass
-
-    def iter_account_downloadable_content(self):
+    def iter_account_downloadable_products(self):
         """
         Itera sobre os conteúdos de uma conta realizando o download
         """
@@ -155,11 +182,9 @@ class Downloader:
         for content in self.account.downloadable_products:
             download_path = pathlib.Path(content.get('save_path'))
             content = content.get('data')
-            content['progress'] = 0
             self.current_content_id = content['id']
             self.current_content_url = content['domain']
             self.current_content_name = content['name']
-            self.current_content_progress = content['progress']
             download_path = download_path / remover_caracteres_problematicos(content['name'])
             if not download_path.exists():
                 download_path.mkdir(parents=True)

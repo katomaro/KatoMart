@@ -644,7 +644,7 @@ class Downloader:
                 return response.content
             
             except requests.RequestException as e:
-                self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar falha ao baixar o arquivo, tentativa {attempt + 1} de {self.download_retries}. Erro: {e}")
+                self.account.database_manager.log_event(log_type='ERROR', sensitive_data=1, log_data=f"Erro ao baixar o arquivo, tentativa {attempt + 1} de {self.download_retries}. Erro: {e}")
                 time.sleep(self.download_timeout)
 
         self.account.database_manager.log_event(log_type='ERROR', sensitive_data=0, log_data=f"Erro ao baixar o arquivo {file_url} após {self.download_retries} tentativas, prosseguindo")

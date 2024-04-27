@@ -51,17 +51,6 @@ class Downloader:
         self.current_lesson_name = None
         self.current_lesson_progress = None
 
-        self.total_courses = 0
-        self.completed_courses = 0
-        self.total_modules = 0
-        self.completed_modules = 0
-        # Este atributo não é bom a nível global, impreciso.
-        self.total_lessons = 0
-        self.completed_lessons = 0
-        # Este atributo não é bom a nível global, impreciso.
-        self.total_files = 0
-        self.completed_files = 0
-
         self.url_download = None
         self.download_path = pathlib.Path('.')
         self.current_base_playlist_url = None
@@ -338,7 +327,6 @@ class Downloader:
         """
         if self.file_name.endswith('.ts'):
             self.ts_to_mp4(self.download_path / self.file_name)
-        self.completed_files += 1
         self.account.database_manager.log_event(log_type='INFO', sensitive_data=0, log_data=f"Download de {self.file_name} concluído! ^-^")
 
     def get_video_playlist(self):

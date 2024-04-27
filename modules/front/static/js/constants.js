@@ -178,7 +178,6 @@ export const LOGS_PLACEHOLDER_EXAMPLE = [
 ]
 
 
-
 export const DRM_STATUS_COLOR_LIST = [
   "error", "warning", "success"
 ]
@@ -186,3 +185,6 @@ export const DRM_STATUS_COLOR_LIST = [
 export const DRM_STATUS_MESSAGE_LIST = [
   "Não Requer CDM", "Possívelmente Requer CDM", "Requer CDM"
 ]
+
+
+export const REQUIRES_LOGIN_URL = ["memberkit", "astronmembers", "alpaclass", "cademi"]

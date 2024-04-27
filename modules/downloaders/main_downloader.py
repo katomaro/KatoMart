@@ -226,7 +226,7 @@ class Downloader:
                         if lesson_files.get('attachments'):
                             temp_path = lesson_path / 'Anexos'
                             self.account.database_manager.log_event(log_type='WARNING', sensitive_data=0, log_data=f"Esta aula possui anexos, tentando baixar para: {temp_path}")
-                            for attachment_index, attachment in enumerate(lesson_files['attachments']):
+                            for attachment_index, attachment in enumerate(lesson_files['attachments'], start=1):
                                 if self.use_original_media_name:
                                     attachment_name = f"{attachment_index}. {attachment['name']}"
                                 else:

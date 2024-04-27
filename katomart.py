@@ -343,8 +343,7 @@ def load_course_data():
         return redirect(url_for("index"))
 
     data = request.get_json()
-    # TODO renomear isso para id no teu post
-    course_id = data.get("club")
+    course_id = data.get("id")
 
     global selected_platform_instance
     if selected_platform_instance is None:

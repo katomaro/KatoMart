@@ -123,13 +123,13 @@ class Lesson:
             'has_text': self.has_text,
             'text': self.text,
             'has_video': self.has_video,
-            'videos': self.videos,
+            'videos': [video.to_dict() for video in self.videos],
             'has_audio': self.has_audio,
-            'audios': self.audios,
+            'audios': [audio.to_dict() for audio in self.audios],
             'has_external_links': self.has_external_links,
             'external_links': self.external_links,
             'has_attachments': self.has_attachments,
-            'attachments': self.attachments
+            'attachments': [attachment.to_dict() for attachment in self.attachments]
         }
 
 class Video:

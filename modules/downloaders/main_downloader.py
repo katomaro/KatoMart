@@ -136,6 +136,13 @@ class Downloader:
                 product.add_module(product_module)
             products.append(product)
         self.downloadable_products.extend(products)
+    
+    def dump_progress(self):
+        """
+        Retorna uma lista com o progresso atual
+        """
+        products = [json.dumps(course.to_dict(), indent=4) for course in self.downloadable_products]
+        return products
 
     def create_download_session(self):
         """

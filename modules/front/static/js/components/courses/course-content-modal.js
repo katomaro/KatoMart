@@ -38,7 +38,7 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ club: this.course.data.subdomain }),
+        body: JSON.stringify({ id: this.course.data.subdomain }),
       })
         .then((res) => res.json())
         .then((data) => {

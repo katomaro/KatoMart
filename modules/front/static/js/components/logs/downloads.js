@@ -1,4 +1,3 @@
-import { COURSES_PLACEHOLDER_EXAMPLE } from "../../constants.js"
 import courseCard from "./course-card.js"
 import searchBar from "./search-bar.js"
 import totalProgress from "./total-progress.js"
@@ -30,10 +29,10 @@ export default {
           }
           this.courses = await res.json()
         } catch {
-          this.courses = COURSES_PLACEHOLDER_EXAMPLE
+          // TODO: handle error
         }
       } else {
-        this.courses = COURSES_PLACEHOLDER_EXAMPLE
+        // TODO: handle error
       }
     }
   },

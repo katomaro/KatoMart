@@ -1,5 +1,4 @@
 
-import { LOGS_PLACEHOLDER_EXAMPLE } from "../../constants.js";
 import ExportLogsModal from "./export-logs-modal.js";
 import LogsContent from "./logs-content.js";
 import LogsPagination from "./logs-pagination.js";
@@ -37,10 +36,10 @@ export default {
           const data = await res.json()
           this.logsData = data
         } catch {
-          this.logsData = LOGS_PLACEHOLDER_EXAMPLE
+          // TODO: handle error
         }
       } else {
-        this.logsData = LOGS_PLACEHOLDER_EXAMPLE
+        // TODO: handle error
       }
     }
   },

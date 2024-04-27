@@ -22,4 +22,4 @@ export const DRM_STATUS_MESSAGE_LIST = [
 ]
 
 
-export const REQUIRES_LOGIN_URL = ["memberkit", "astronmembers", "alpaclass", "cademi"]
+export const REQUIRES_LOGIN_URL = ["memberkit", "astronmembers", "alpaclass", "cademi", "cicrle.so"]

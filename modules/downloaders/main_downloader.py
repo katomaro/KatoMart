@@ -616,6 +616,8 @@ class Downloader:
         :param save_path: Caminho para salvar o arquivo.
         :param media_index: Índice da mídia a ser salva.
         """
+        if url.startswith('//'):
+            url = 'https:' + url
         ytdlp_opts = {
             'retries': 8,
             'fragment_retries': 6,

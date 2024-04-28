@@ -14,7 +14,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 
-import katomart_structs
+from . import katomart_structs
 from modules.accounts.abstract import Account
 
 
@@ -32,6 +32,14 @@ def remover_caracteres_problematicos(name:str) -> str:
 # TODO: Alterar todas as strings para Pathlib.Path para garantir uma manipulação de arquivos segura e universal
 
 class Downloader:
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if not cls._instance:
+            cls._instance = cls()
+        return cls._instance
+
     def __init__(self, account: Account=None) -> None:
         self.account = account
         self.current_platform_id = self.account.get_platform_id()
@@ -100,9 +108,7 @@ class Downloader:
 
         self.map_downloadable_products()
 
-        self.iter_account_downloadable_products()
-
-    # TODO: Após essa mudança de implementação, será desejável remapear o iter_account_downloadable_products()
+    # TODO: Após essa mudança de implementação, será desejável remapear o download_account_downloadable_products()
     def map_downloadable_products(self):
         """
         Mapeia o conteúdo da conta para as estruturas definidas.
@@ -129,8 +135,7 @@ class Downloader:
                     product_lesson = katomart_structs.Lesson(lesson_id=lesson['id'],
                                                              name=lesson['name'])
                     # TODO: Prova de conceito
-                    # if not lesson.get('files'):
-                    if lesson.get('files'):
+                    if not lesson.get('files'):
                         product_module.add_lesson(product_lesson)
                         continue
                 product.add_module(product_module)
@@ -141,8 +146,7 @@ class Downloader:
         """
         Retorna uma lista com o progresso atual
         """
-        products = [json.dumps(course.to_dict(), indent=4) for course in self.downloadable_products]
-        return products
+        return [product.to_dict() for product in self.downloadable_products]
 
     def create_download_session(self):
         """
@@ -185,7 +189,7 @@ class Downloader:
         content_types = self.account.database_manager.get_all_media_types()
         self.download_content_types = content_types
 
-    def iter_account_downloadable_products(self):
+    def download_account_downloadable_products(self):
         """
         Itera sobre os conteúdos de uma conta realizando o download
         """

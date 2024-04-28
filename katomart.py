@@ -1,6 +1,7 @@
 import time
 import datetime
 from pathlib import Path
+from threading import Thread
 
 from flask import (
     Blueprint,
@@ -23,9 +24,10 @@ platform_classes = {
 }
 
 Downloader_instance = None
+download_thread = None
 
 app = Flask(
-    __name__, template_folder="modules/front/templates", 
+    __name__, template_folder="modules/front/templates",
     static_folder="modules/front/static"
 )
 
@@ -355,7 +357,7 @@ def load_course_data():
 @api_bp.route("/start_download", methods=["POST"])
 def start_download():
     global selected_platform_instance
-    global Downloader_instance
+    global Downloader_instance, download_thread
 
     if selected_platform_instance is None:
         return jsonify({'message':"Nenhuma conta Inicializada. Selecione uma conta para iniciar o download. (bug?)"})
@@ -374,7 +376,9 @@ def start_download():
     
     if selected_platform_instance.downloadable_products is not None:
         Downloader_instance = Downloader(selected_platform_instance)
-        return jsonify({"message": "Download iniciando, acompanhe pela página Logs."})
+        download_thread = Thread(target=Downloader_instance.download_account_downloadable_products, daemon=True)
+        download_thread.start()
+        return 200
     
     return jsonify({"message": "Como você veio parar aqui? Não há cursos selecionados para download!"})
 
@@ -400,8 +404,12 @@ def api_logs():
 
 @api_bp.route('/courses_progress', methods=['GET'])
 def api_courses_progress():
-    global Downloader_instance
-    return jsonify(message="Não implementado ainda")
+    global download_thread
+    if download_thread and download_thread.is_alive():
+        progress = Downloader_instance.dump_progress()
+        return jsonify(progress)
+
+    return "Nenhum download em andamento."
 
 # Ponto de entrada principal para execução do servidor
 if __name__ == "__main__":

@@ -378,7 +378,7 @@ def start_download():
         Downloader_instance = Downloader(selected_platform_instance)
         download_thread = Thread(target=Downloader_instance.download_account_downloadable_products, daemon=True)
         download_thread.start()
-        return 200
+        return jsonify({"message": "Download Iniciado."}), 200
     
     return jsonify({"message": "Como você veio parar aqui? Não há cursos selecionados para download!"})
 

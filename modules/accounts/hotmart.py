@@ -274,9 +274,7 @@ class Hotmart(Account):
             return
 
         if not product_info['data']['modules']:
-            print('[DEBUG] Nenhum módulo foi encontrado para download. Construindo módulos')
             subdomain = product_info['data'].get('subdomain', '')
-            print('[DEBUG] Subdomínio:', subdomain)
             new_modules = self.get_product_information(subdomain)
             
             download_dict = {
@@ -285,5 +283,18 @@ class Hotmart(Account):
             }
             del download_dict['data']['modules']
             download_dict['data']['modules'] = new_modules.get('modules')
+        else:
+            download_dict = {
+                'save_path': product_info.get('save_path'),
+                'data': product_info.get('data')
+            }
+
+            download_dict['data']['modules'] = [module for module in product_info['data']['modules'] if module.get('selected', False)]
+            for module in download_dict['data']['modules']:
+                lessons = [lesson for lesson in module['lessons'] if lesson.get('selected', False)]
+                if not lessons:
+                    continue
+                else:
+                    module['lessons'] = lessons
 
         self.downloadable_products.append(download_dict)

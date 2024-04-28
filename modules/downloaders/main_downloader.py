@@ -560,11 +560,12 @@ class Downloader:
                 if not segment_url.startswith('http') and not self.need_to_format_segment_url:
                     segment_url = self.current_base_playlist_url + self.selected_quality_url.split('/', 1)[0] + '/' + segment.uri
                 elif not segment_url.startswith('http') and self.need_to_format_segment_url:
-                    with open(self.download_path / 'playlist.txt', 'w',encoding='utf-8') as f:
-                        f.write(f'URL do segmento: {segment_url}\n'
-                           f'URL base da playlist: {self.current_base_playlist_url}\n'
-                           f'URL da playlist: {self.selected_quality_url}\n')
-                    input()
+                    segment_url = self.current_base_playlist_url + segment.uri
+                    # with open(self.download_path / 'playlist.txt', 'w',encoding='utf-8') as f:
+                    #     f.write(f'URL do segmento: {segment_url}\n'
+                    #        f'URL base da playlist: {self.current_base_playlist_url}\n'
+                    #        f'URL da playlist: {self.selected_quality_url}\n')
+                    # input()
 
                 content = self.download_with_retries(segment_url)
                 if content and self.key_content:

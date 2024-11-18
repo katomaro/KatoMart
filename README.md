@@ -17,7 +17,8 @@ Caso você seja um Sponsor, entre em contato através do e-mail suporte@katomart
 
 ### Instalando...
 
-(Para a utilizar a versão paga na íntegra, você deve ter pelo menos 6gb de ram livres)
+(Para a utilizar a versão paga na íntegra, você deve ter pelo menos 6gb de ram livres)  
+Instalação em vídeo e mostrando um pouquinho da diferença entre versões: https://youtu.be/pEaP9pZuJuA  
 
 1) Instale o Python 3.12.7
 2) Instale o Firefox (Edição normal)

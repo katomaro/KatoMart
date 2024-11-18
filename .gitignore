@@ -1,15 +1,37 @@
-Downloads/
-temp/
-*.sqlite3
-Cache/
+.pytest_cache/
+.vscode/
+.idea/
 
-test_stuff/
+Include/
+Lib/
+Scripts/
+Share/
+pyvenv.cfg
 
-# Python, adicionar seus arquivos/pastas antes de commitar, obg
+*.pyc
 __pycache__/
-venv/
-.venv/
 
-# Arquivos gerados pelo downloader
+*.bat
+*.sh
+*.exe
+*.dll
+*.zip
+*.json
+*.db
+*.sec
+*.log
+*.env
+*.old
+
+# Coisas pos execucao do server uma vez
+*.log
+executar_katomart.bat
+executar_katomart.sh
+katomart.sec
+pyvenv.cfg
+share/
+Lib/
+Include/
 Cursos/
-jsons/
+
+servidor/dist/

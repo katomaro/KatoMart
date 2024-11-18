@@ -2,3 +2,14 @@ Downloads/
 temp/
 *.sqlite3
 Cache/
+
+test_stuff/
+
+# Python, adicionar seus arquivos/pastas antes de commitar, obg
+__pycache__/
+venv/
+.venv/
+
+# Arquivos gerados pelo downloader
+Cursos/
+jsons/
